@@ -62,9 +62,9 @@ public class TrackSegment extends CFDataObject {
             {
                 // normal track segment
                 m_nTlu          = nTlu;
-                m_nCurvature    = fis.read() + fis.read() * 256;
-                m_nHeightChange = fis.read() + fis.read() * 256;
-                m_nFlags        = fis.read() + fis.read() * 256;
+                m_nCurvature    = loadInt( fis );
+                m_nHeightChange = loadInt( fis );
+                m_nFlags        = loadInt( fis );
                 m_nFenceDistR   = fis.read();
                 m_nFenceDistL   = fis.read();
             }
@@ -131,18 +131,18 @@ public class TrackSegment extends CFDataObject {
         if ( m_nCurvature == 0 )
         {
             // Straight
-            m_dPosXEnd = m_dPosXStart - (double) m_nTlu * Math.sin( dAngle );
-            m_dPosYEnd = m_dPosYEnd   + (double) m_nTlu * Math.cos( dAngle );
+            m_dPosXEnd = m_dPosXStart + (double) m_nTlu * Math.sin( dAngle );
+            m_dPosYEnd = m_dPosYStart + (double) m_nTlu * Math.cos( dAngle );
         }
         else
         {
             // Curve: first calculate center of circle
             m_dRadius = 1 / (m_nCurvature * ANGLE_SCALE);
-            m_dPosXCenter = m_dPosXStart - m_dRadius * Math.cos( dAngle );
+            m_dPosXCenter = m_dPosXStart + m_dRadius * Math.cos( dAngle );
             m_dPosYCenter = m_dPosYStart - m_dRadius * Math.sin( dAngle );
             // from center, calculate end point
             dAngle = m_nAngleEnd * ANGLE_SCALE;
-            m_dPosXEnd = m_dPosXCenter + m_dRadius * Math.cos( dAngle );
+            m_dPosXEnd = m_dPosXCenter - m_dRadius * Math.cos( dAngle );
             m_dPosYEnd = m_dPosYCenter + m_dRadius * Math.sin( dAngle );
         }
 
@@ -177,7 +177,7 @@ public class TrackSegment extends CFDataObject {
                     {
                         // curved segment
                         double dAngleMid = m_nAngleStart + nWidthChangeLength * m_nCurvature;
-			m_dPosXMid = m_dPosXCenter + m_dRadius * Math.cos(dAngleMid * ANGLE_SCALE);
+			m_dPosXMid = m_dPosXCenter - m_dRadius * Math.cos(dAngleMid * ANGLE_SCALE);
 			m_dPosYMid = m_dPosYCenter + m_dRadius * Math.sin(dAngleMid * ANGLE_SCALE);
                     }
                     else
