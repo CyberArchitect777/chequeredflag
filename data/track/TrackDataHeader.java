@@ -106,4 +106,12 @@ public class TrackDataHeader extends CFDataObject {
 
     // calculated values
     protected double m_dWidth;
+
+    public int getStartWidth() {
+        return m_nStartWidth;
+    }
+
+    public int getStartAngle() {
+        return m_nStartAngle;
+    }
 }
