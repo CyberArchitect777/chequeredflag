@@ -65,6 +65,15 @@ public class CCLine extends Vector {
         return nBytesWritten;
     }
 
+    // retrieves CCLineSegment by 1-based index
+    public CCLineSegment getAt( int nIndex )
+    {
+        if ( ( nIndex > elementCount ) || ( nIndex < 1 ) )
+            return null;
+        else
+            return (CCLineSegment) elementAt( nIndex + 1 );
+    }
+
     // instance data members
-    int m_nCumTlu;
+    protected int m_nCumTlu;
 }
