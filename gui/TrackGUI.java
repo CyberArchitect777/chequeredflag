@@ -193,6 +193,8 @@ private void viewMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         currentTrack.load(trackFile);
         positionWindows();
         mapWindow.setTrack( currentTrack );
+        treeWindow.setTrack(currentTrack);
+        treeWindow.populateTree();
         mainEditorWindow.add(treeWindow);
         mainEditorWindow.add(mapWindow);
         treeWindow.setVisible(true);
