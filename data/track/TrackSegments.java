@@ -57,10 +57,10 @@ public class TrackSegments extends Vector {
       Calculate all coordinates and angles of segments
     */
     public void calculateTrackLayout(int nStartWidth, int nStartAngle) {
-        int nPosX, nPosY;
+        double dPosX, dPosY;
         int nWidthLength, nWidthEnd;
-        nPosX = 0;
-        nPosY = 0;
+        dPosX = 0.0;
+        dPosY = 0.0;
         nWidthLength = 0;
         nWidthEnd = 0;
         for ( Enumeration e = elements(); e.hasMoreElements(); )
@@ -69,30 +69,28 @@ public class TrackSegments extends Vector {
             TrackSegment ts = (TrackSegment) e.nextElement();
             // calculate its layout
             ts.calculateLayout(
-                nPosX, nPosY,
+                dPosX, dPosY,
                 nStartWidth, nStartAngle,
                 nWidthLength,   // remaining length for change of track width
                 nWidthEnd       // track width to be reached
                 );
             // get starting data for next segment
-            // Changed by Barrie due to compile error. Original code shown below tried to pipe a double into an integer value.
-            // Just a warning under C++, but unfortunately an error under Java :)
-            
-            // Original code
-            //nPosX = ts.getPosXEnd();
-            //nPosY = ts.getPosYEnd();
-            
-            // New code
-            
-            nPosX = new Double(ts.getPosXEnd()).intValue();
-            nPosY = new Double(ts.getPosYEnd()).intValue();
-            
-            // End of changes
-            
+            dPosX = ts.getPosXEnd();
+            dPosY = ts.getPosYEnd();
             nStartWidth = ts.getWidthEnd();
             nStartAngle = ts.getAngleEnd();
             nWidthLength = ts.getWidthChangeLength();
             nWidthEnd = ts.getWidthChangeEnd();
         }
     }
+
+    /** gets the track segment at position i in the vector (1-based) */
+    public TrackSegment getAt(int i)
+    {
+        if ( ( i > elementCount ) || ( i < 1 ) )
+            return null;
+        else
+            return (TrackSegment) elementAt( i + 1 );
+    }
+
 }
