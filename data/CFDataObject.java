@@ -24,7 +24,8 @@ public class CFDataObject {
     // reading data
     public int loadInt( FileInputStream fis ) throws IOException
     {
-        return fis.read() + fis.read() * 256;
+        // Convert to short for correct creation of negative values
+        return (short) (fis.read() + fis.read() * 256);
     }
 
     public long loadLong( FileInputStream fis ) throws IOException
