@@ -20,8 +20,20 @@ public class FileDialog extends javax.swing.JDialog {
     
     public String showOpenDialog()
     {
+        // Displays an input dialog for opening F1GP tracks
+        
         fileChooser.setFileFilter(new TrackFilter());
         int userChoice = fileChooser.showOpenDialog(this);
+        String fileName = fileChooser.getSelectedFile().getPath();
+        return fileName;
+    }
+    
+    public String showSaveDialog()
+    {
+        // Displays a save dialog for storing F1GP tracks
+        
+        fileChooser.setFileFilter(new TrackFilter());
+        int userChoice = fileChooser.showSaveDialog(this);
         String fileName = fileChooser.getSelectedFile().getPath();
         return fileName;
     }

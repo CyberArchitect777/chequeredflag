@@ -75,8 +75,20 @@ public class TrackSegments extends Vector {
                 nWidthEnd       // track width to be reached
                 );
             // get starting data for next segment
-            nPosX = ts.getPosXEnd();
-            nPosY = ts.getPosYEnd();
+            // Changed by Barrie due to compile error. Original code shown below tried to pipe a double into an integer value.
+            // Just a warning under C++, but unfortunately an error under Java :)
+            
+            // Original code
+            //nPosX = ts.getPosXEnd();
+            //nPosY = ts.getPosYEnd();
+            
+            // New code
+            
+            nPosX = new Double(ts.getPosXEnd()).intValue();
+            nPosY = new Double(ts.getPosYEnd()).intValue();
+            
+            // End of changes
+            
             nStartWidth = ts.getWidthEnd();
             nStartAngle = ts.getAngleEnd();
             nWidthLength = ts.getWidthChangeLength();
