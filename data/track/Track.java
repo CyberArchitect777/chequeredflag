@@ -201,19 +201,50 @@ public class Track {
         }
     }
 
-    /** Data members */
-    File m_File;    // File where track was loaded from
+    /** Methods to get several parts of the track object */
+    public TrackDataHeader getTrackDataHeader()
+    {
+        return m_DataHeader;
+    }
 
-    byte m_baBackground[];
-    int m_nLapNumIndex;
-    TrackFileHeader m_FileHeader;
-    TrackObjects m_Objects;
-    TrackDataHeader m_DataHeader;
-    TrackSegments m_TrackSegments;
-    CCLine m_CCLine;
-    CCSetup m_CCSetup;
-    TrackSegments m_PitlaneSegments;
-    Footer m_Footer;
+    public TrackSegments getTrackSegments()
+    {
+        return m_TrackSegments;
+    }
+
+    public TrackSegments getPitlaneSegments()
+    {
+        return m_PitlaneSegments;
+    }
+
+    public CCLine getCCLine()
+    {
+        return m_CCLine;
+    }
+
+    public CCSetup getCCSetup()
+    {
+        return m_CCSetup;
+    }
+
+    public TrackObjects getTrackObjects()
+    {
+        return m_Objects;
+    }
+
+    /** Data members */
+    protected File m_File;    // File where track was loaded from
+
+    protected byte m_baBackground[];
+    protected int m_nLapNumIndex;
+    protected TrackFileHeader m_FileHeader;
+    protected TrackObjects m_Objects;
+    protected TrackDataHeader m_DataHeader;
+    protected TrackSegments m_TrackSegments;
+    protected CCLine m_CCLine;
+    protected CCSetup m_CCSetup;
+    protected TrackSegments m_PitlaneSegments;
+    protected Footer m_Footer;
 
     /** statics */
     // factor for converting width units in meters - probably fractions of feet
