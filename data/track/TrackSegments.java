@@ -92,5 +92,5 @@ public class TrackSegments extends Vector {
         else
             return (TrackSegment) elementAt( i - 1 );
     }
-
+    
 }

@@ -71,7 +71,9 @@ public class CCLine extends Vector {
         if ( ( nIndex > elementCount ) || ( nIndex < 1 ) )
             return null;
         else
-            return (CCLineSegment) elementAt( nIndex + 1 );
+            //return (CCLineSegment) elementAt( nIndex + 1 );
+            // Code bug found above by barrie. Suspected line is below
+            return (CCLineSegment) elementAt( nIndex - 1);
     }
 
     // instance data members
