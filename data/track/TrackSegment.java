@@ -20,6 +20,16 @@ public class TrackSegment extends CFDataObject {
     public TrackSegment() {
         m_nSign = 0;
         m_Commands = new Vector();
+        m_dPosXStart = 0;
+        m_dPosYStart = 0;
+        m_dPosXEnd = 0;
+        m_dPosYEnd = 0;
+        m_nAngleStart = 0;
+        m_nAngleEnd = 0;
+        m_nWidthStart = 0;
+        m_nWidthEnd = 0;
+        m_nWidthChangeLength = 0;
+        m_nWidthChangeEnd = 0;
     }
 
     public void load( FileInputStream fis )
@@ -98,6 +108,128 @@ public class TrackSegment extends CFDataObject {
         return nWritten;
     }
 
+    public double getPosXEnd() {
+        return m_dPosXEnd;
+    }
+
+    public double getPosYEnd() {
+        return m_dPosYEnd;
+    }
+
+    public int getWidthChangeLength() {
+        return m_nWidthChangeLength;
+    }
+
+    public int getWidthEnd() {
+        return m_nWidthEnd;
+    }
+
+    public int getWidthChangeEnd() {
+        return m_nWidthChangeEnd;
+    }
+
+    public int getAngleEnd() {
+        return m_nAngleEnd;
+    }
+
+    // calculate coordinates and angles depending on start values.
+    public void calculateLayout(int nPosX, int nPosY, int nWidthStart, int nAngleStart, int nWidthChangeLength, int nWidthChangeEnd) {
+        double dAngle;
+        double ANGLE_SCALE = (2 * Math.PI) / 65536;
+
+        m_dPosXStart = nPosX;
+        m_dPosYStart = nPosY;
+        m_nAngleStart = nAngleStart;
+        m_nWidthStart = nWidthStart;
+
+        // examine commands for track width change
+        Command cmd = findCommand( 0x85 );
+        if ( cmd != null )
+        {
+            nWidthChangeLength = cmd.getParam(1);
+            nWidthChangeEnd    = cmd.getParam(2); // width on each side of middle, in width scales = 0.0047625 meters
+        }
+        // track width change detected?
+	if (nWidthChangeLength > 0)
+	{
+            if (nWidthChangeLength > m_nTlu)
+            {
+                // width change to be continued on next segment
+                // calculate width at end of segment
+		m_nWidthEnd = m_nWidthStart + m_nTlu * (nWidthChangeEnd - m_nWidthStart) / nWidthChangeLength;
+                // store values needed by next segment
+                m_nWidthChangeEnd = nWidthChangeEnd;
+                m_nWidthChangeLength = nWidthChangeLength - m_nTlu;
+		// need flag to indicate width change ends in middle of segment? @@@
+	    }
+            else
+            {
+                // whole change takes place on this segment
+		if( nWidthChangeLength < m_nTlu)
+                {
+                    // change complete in the middle of the segment.
+                    // calculate point where the change ends.
+/* @@@ not working yet
+                    if(m_nCurvature <> 0)
+                    {
+                        // curved segment
+                        double dAngleMid = m_nAngleStart + nWidthChangeLength * m_nCurvature;
+			m_dPosXMid = m_dPosXCenter + m_dRadius * Math.cos(dAngleMid * dANGLESCALE);
+			m_dPosYMid = m_dPosYCenter + m_dRadius * Math.sin(dAngleMid * dANGLESCALE);
+                    }
+                    else
+                    {
+                        // straight
+			m_dPosXMid = m_dPosXStart - nWidthChangeLength * Math.sin(m_nAngleStart * dANGLESCALE);
+			m_dPosYMid = m_dPosYStart + nWidthChangeLength * Math.cos(m_nAngleStart * dANGLESCALE);
+                    }
+*/
+		}
+                m_nWidthEnd = nWidthChangeEnd;
+                // nothing to do on next segment
+                m_nWidthChangeLength = 0;
+                m_nWidthChangeEnd = 0;
+            }
+        }
+
+        // resulting direction
+        m_nAngleEnd = m_nAngleStart + m_nTlu * m_nCurvature;
+
+        // end coordinates
+        dAngle = m_nAngleStart * ANGLE_SCALE;
+        if ( m_nCurvature == 0 )
+        {
+            // Straight
+            m_dPosXEnd = m_dPosXStart - (double) m_nTlu * Math.sin( dAngle );
+            m_dPosYEnd = m_dPosYEnd   + (double) m_nTlu * Math.cos( dAngle );
+        }
+        else
+        {
+            // Curve: first calculate center of circle
+            double dCenterX;
+            double dCenterY;
+            double dRadius;
+            dRadius = 1 / (m_nCurvature * ANGLE_SCALE);
+            dCenterX = m_dPosXStart - dRadius * Math.cos( dAngle );
+            dCenterY = m_dPosYStart - dRadius * Math.sin( dAngle );
+            // from center, calculate end point
+            dAngle = m_nAngleEnd * ANGLE_SCALE;
+            m_dPosXEnd = dCenterX + dRadius * Math.cos( dAngle );
+            m_dPosYEnd = dCenterY + dRadius * Math.sin( dAngle );
+        }
+    }
+
+    public Command findCommand(int nType) {
+        for ( Enumeration e = m_Commands.elements(); e.hasMoreElements(); )
+        {
+            Command cmd = (Command) e.nextElement();
+            if ( cmd.getType() == nType )
+                return cmd;
+        }
+        // did not find a command of desired type
+        return null;
+    }
+
     // instance data members
     protected int m_nType;      // segment type
     protected int m_nSign;      // derived from Curvature, also used as flag
@@ -106,5 +238,14 @@ public class TrackSegment extends CFDataObject {
     protected int m_nHeightChange; // Curvature in Z direction
     protected int m_nFlags;     // bit coded attributes like kerbs, fences etc.
     protected int m_nFenceDistL, m_nFenceDistR; // distance between track and fence
-    protected Vector m_Commands;    // List of command objects associated with track segment
+    protected Vector m_Commands; // List of command objects associated with track segment
+
+    // calculated values
+    protected double m_dPosXStart, m_dPosYStart;   // coordinates for start of segment
+    protected double m_dPosXEnd, m_dPosYEnd;       // coordinates for end of segment
+    protected int m_nAngleStart, m_nAngleEnd;   // angle = direction at start and end of segment
+    protected int m_nWidthStart, m_nWidthEnd;   // track width at start and end of segment
+    protected int m_nWidthChangeLength, m_nWidthChangeEnd; // when track width changes across segment border,
+                                                           // these members hold the values needed by the next segment.
+
 }
