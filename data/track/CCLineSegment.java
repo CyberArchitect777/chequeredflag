@@ -42,11 +42,23 @@ public class CCLineSegment extends CFDataObject {
         }
     }
 
+    // accessor methods for internal data
+    public int getTlu()
+    { return m_nTlu; }
     public void setTlu( int nTlu )
-    {
-        m_nTlu = nTlu;
-    }
+    { m_nTlu = nTlu; }
 
+    public int getType()
+    { return m_nType; }
+    public void setType( int nType )
+    { m_nType = nType; }
+
+    public int getParam( int nIndex )
+    { return m_nParam[ nIndex + 1 ]; }
+    public void setParam( int nIndex, int nValue )
+    { m_nParam[ nIndex + 1 ] = nValue; }
+
+    // save object to disk
     public int save(FileOutputStream fos) throws IOException
     {
         int nBytesWritten = 0;
@@ -69,6 +81,6 @@ public class CCLineSegment extends CFDataObject {
     }
 
     // instance data members
-    int m_nType, m_nTlu;
-    int m_nParam[];
+    protected int m_nType, m_nTlu;
+    protected int m_nParam[];
 }
