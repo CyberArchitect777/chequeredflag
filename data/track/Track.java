@@ -82,6 +82,9 @@ public class Track {
         {
             System.err.println("Caught exception while loading track file");
         };
+        // do all necessary calculations
+        calculateTrackLayout();
+        calculateCCLine();
     }
 
     // Save back to file where it was loaded from
