@@ -215,4 +215,15 @@ public class Command extends CFDataObject {
     // instance data members
     int m_nType;
     int m_nParam[];
+
+    public int getParam(int nParam) {
+        if ( nParam <= 5 )
+            return m_nParam[ nParam ];
+        else
+            return 0;
+    }
+
+    public int getType() {
+        return m_nType;
+    }
 }
