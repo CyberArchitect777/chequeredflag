@@ -29,6 +29,9 @@ public class TrackGUI extends javax.swing.JFrame
         initComponents();
         setSize(576,432);
         setVisible(true);
+        
+        // WARNING: Very little internal window management being done at present
+        
         treeWindow = new TreeEditorWindow();
         mapWindow = new GraphicalEditorWindow();
         setContentPane(mainEditorWindow);
@@ -118,6 +121,8 @@ public class TrackGUI extends javax.swing.JFrame
 
     private void saveTrackFile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrackFile
         // Saves the current track file in memory by using ksix's track output processing
+        
+        // Warning: No overwrite checking code in place yet
         
         FileDialog fileDialog = new FileDialog(this,true);
         String fileName = fileDialog.showSaveDialog();
