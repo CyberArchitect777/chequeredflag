@@ -108,37 +108,13 @@ public class TrackSegment extends CFDataObject {
         return nWritten;
     }
 
-    public double getPosXEnd() {
-        return m_dPosXEnd;
-    }
-
-    public double getPosYEnd() {
-        return m_dPosYEnd;
-    }
-
-    public int getWidthChangeLength() {
-        return m_nWidthChangeLength;
-    }
-
-    public int getWidthEnd() {
-        return m_nWidthEnd;
-    }
-
-    public int getWidthChangeEnd() {
-        return m_nWidthChangeEnd;
-    }
-
-    public int getAngleEnd() {
-        return m_nAngleEnd;
-    }
-
     // calculate coordinates and angles depending on start values.
-    public void calculateLayout(int nPosX, int nPosY, int nWidthStart, int nAngleStart, int nWidthChangeLength, int nWidthChangeEnd) {
+    public void calculateLayout(double dPosX, double dPosY, int nWidthStart, int nAngleStart, int nWidthChangeLength, int nWidthChangeEnd) {
         double dAngle;
         double ANGLE_SCALE = (2 * Math.PI) / 65536;
 
-        m_dPosXStart = nPosX;
-        m_dPosYStart = nPosY;
+        m_dPosXStart = dPosX;
+        m_dPosYStart = dPosY;
         m_nAngleStart = nAngleStart;
         m_nWidthStart = nWidthStart;
 
@@ -229,6 +205,74 @@ public class TrackSegment extends CFDataObject {
         // did not find a command of desired type
         return null;
     }
+
+    /** methods for access to internal data */
+    public int getType()
+    { return m_nType; }
+    public void setType( int nType )
+    { m_nType = nType; }
+
+    public int getTlu()
+    { return m_nTlu; }
+    public void setTlu( int nTlu )
+    { m_nTlu = nTlu; }
+
+    public int getCurvature()
+    { return m_nCurvature; }
+    public void setCurvature( int nCurvature )
+    { m_nCurvature = nCurvature; }
+
+    public int getHeightChange()
+    { return m_nHeightChange; }
+    public void setHeightChange( int nHeightChange )
+    { m_nHeightChange = nHeightChange; }
+
+    public int getFenceDistL()
+    { return m_nFenceDistL; }
+    public void setFenceDistL( int nFenceDistL )
+    { m_nFenceDistL = nFenceDistL; }
+
+    public int getFenceDistR()
+    { return m_nFenceDistR; }
+    public void setFenceDistR( int nFenceDistR )
+    { m_nFenceDistR = nFenceDistR; }
+
+    public int getFlags()
+    { return m_nFlags; }
+    public void setFlags( int nFlags )
+    { m_nFlags = nFlags; }
+
+    // can only be read
+    Vector getCommands()
+    { return m_Commands; }
+
+    // all calculated members can only be read! Their value changes
+    // when "calculateLayout" is called.
+    public double getPosXStart()
+    { return m_dPosXStart; }
+    public double getPosXEnd()
+    { return m_dPosXEnd; }
+
+    public double getPosYStart()
+    { return m_dPosYStart; }
+    public double getPosYEnd()
+    { return m_dPosYEnd; }
+
+    public int getWidthChangeLength()
+    { return m_nWidthChangeLength; }
+
+    public int getWidthChangeEnd()
+    { return m_nWidthChangeEnd; }
+
+    public int getWidthStart()
+    { return m_nWidthStart; }
+    public int getWidthEnd()
+    { return m_nWidthEnd; }
+
+    public int getAngleStart()
+    { return m_nAngleStart; }
+    public int getAngleEnd()
+    { return m_nAngleEnd; }
 
     // instance data members
     protected int m_nType;      // segment type
