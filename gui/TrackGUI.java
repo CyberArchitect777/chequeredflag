@@ -50,6 +50,9 @@ public class TrackGUI extends javax.swing.JFrame
         saveTrack = new javax.swing.JMenuItem();
         menuSeparator1 = new javax.swing.JSeparator();
         exitItem = new javax.swing.JMenuItem();
+        viewMenu = new javax.swing.JMenu();
+        zoomIn = new javax.swing.JMenuItem();
+        zoomOut = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutItem = new javax.swing.JMenuItem();
 
@@ -102,6 +105,33 @@ public class TrackGUI extends javax.swing.JFrame
 
         mainMenuBar.add(fileMenu);
 
+        viewMenu.setText("View");
+        viewMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewMenuActionPerformed(evt);
+            }
+        });
+
+        zoomIn.setText("Zoom In");
+        zoomIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomInActionPerformed(evt);
+            }
+        });
+
+        viewMenu.add(zoomIn);
+
+        zoomOut.setText("Zoom Out");
+        zoomOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomOutActionPerformed(evt);
+            }
+        });
+
+        viewMenu.add(zoomOut);
+
+        mainMenuBar.add(viewMenu);
+
         helpMenu.setText("Help");
         aboutItem.setText("About");
         aboutItem.addActionListener(new java.awt.event.ActionListener() {
@@ -118,6 +148,18 @@ public class TrackGUI extends javax.swing.JFrame
 
         pack();
     }//GEN-END:initComponents
+
+private void zoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOutActionPerformed
+    mapWindow.zoomOut();
+}//GEN-LAST:event_zoomOutActionPerformed
+
+private void zoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInActionPerformed
+    mapWindow.zoomIn();
+}//GEN-LAST:event_zoomInActionPerformed
+
+private void viewMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewMenuActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_viewMenuActionPerformed
 
     private void saveTrackFile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrackFile
         // Saves the current track file in memory by using ksix's track output processing
@@ -150,6 +192,7 @@ public class TrackGUI extends javax.swing.JFrame
         currentTrack = new Track();
         currentTrack.load(trackFile);
         positionWindows();
+        mapWindow.setTrack( currentTrack );
         mainEditorWindow.add(treeWindow);
         mainEditorWindow.add(mapWindow);
         treeWindow.setVisible(true);
@@ -210,6 +253,9 @@ public class TrackGUI extends javax.swing.JFrame
     private javax.swing.JSeparator menuSeparator1;
     private javax.swing.JMenuItem openTrack;
     private javax.swing.JMenuItem saveTrack;
+    private javax.swing.JMenu viewMenu;
+    private javax.swing.JMenuItem zoomIn;
+    private javax.swing.JMenuItem zoomOut;
     // End of variables declaration//GEN-END:variables
     
 }
