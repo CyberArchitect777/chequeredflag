@@ -4,7 +4,9 @@
  * Created on 22 February 2005, 22:23
  */
 
-package Chequeredflag;
+package chequeredflag;
+
+import chequeredflag.gui.*;
 
 /**
  *

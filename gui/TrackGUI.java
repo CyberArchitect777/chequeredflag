@@ -4,7 +4,7 @@
  * Created on 22 February 2005, 22:28
  */
 
-package Chequeredflag;
+package chequeredflag.gui;
 
 import javax.swing.*;
 
