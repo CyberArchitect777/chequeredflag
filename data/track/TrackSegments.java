@@ -90,7 +90,7 @@ public class TrackSegments extends Vector {
         if ( ( i > elementCount ) || ( i < 1 ) )
             return null;
         else
-            return (TrackSegment) elementAt( i + 1 );
+            return (TrackSegment) elementAt( i - 1 );
     }
 
 }
