@@ -250,10 +250,19 @@ public class Track {
     // factor for converting width units in meters - probably fractions of feet
     final static double s_dWIDTHSCALE = 0.0047625;
 
-    public void calculateTrackLayout() {
+    public void calculateTrackLayout()
+    {
         m_TrackSegments.calculateTrackLayout(
             m_DataHeader.getStartWidth(),
             m_DataHeader.getStartAngle()
             );
     };
+
+    // Calculate coordinates for start/end/center points of CCLine segments.
+    public void calculateCCLine()
+    {
+        // To calculate the CCline, both CCline data itself and
+        // track segment data is needed.
+        // @@@ not implemented yet
+    }
 }
