@@ -20,10 +20,15 @@ public class TrackSegment extends CFDataObject {
     public TrackSegment() {
         m_nSign = 0;
         m_Commands = new Vector();
-        m_dPosXStart = 0;
-        m_dPosYStart = 0;
-        m_dPosXEnd = 0;
-        m_dPosYEnd = 0;
+        m_dPosXStart = 0.0;
+        m_dPosYStart = 0.0;
+        m_dPosXEnd = 0.0;
+        m_dPosYEnd = 0.0;
+        m_dPosXCenter = 0.0;
+        m_dPosYCenter = 0.0;
+        m_dPosXMid = 0.0;
+        m_dPosYMid = 0.0;
+        m_dRadius = 0.0;
         m_nAngleStart = 0;
         m_nAngleEnd = 0;
         m_nWidthStart = 0;
@@ -118,6 +123,29 @@ public class TrackSegment extends CFDataObject {
         m_nAngleStart = nAngleStart;
         m_nWidthStart = nWidthStart;
 
+        // resulting direction
+        m_nAngleEnd = m_nAngleStart + m_nTlu * m_nCurvature;
+
+        // end coordinates
+        dAngle = m_nAngleStart * ANGLE_SCALE;
+        if ( m_nCurvature == 0 )
+        {
+            // Straight
+            m_dPosXEnd = m_dPosXStart - (double) m_nTlu * Math.sin( dAngle );
+            m_dPosYEnd = m_dPosYEnd   + (double) m_nTlu * Math.cos( dAngle );
+        }
+        else
+        {
+            // Curve: first calculate center of circle
+            m_dRadius = 1 / (m_nCurvature * ANGLE_SCALE);
+            m_dPosXCenter = m_dPosXStart - m_dRadius * Math.cos( dAngle );
+            m_dPosYCenter = m_dPosYStart - m_dRadius * Math.sin( dAngle );
+            // from center, calculate end point
+            dAngle = m_nAngleEnd * ANGLE_SCALE;
+            m_dPosXEnd = m_dPosXCenter + m_dRadius * Math.cos( dAngle );
+            m_dPosYEnd = m_dPosYCenter + m_dRadius * Math.sin( dAngle );
+        }
+
         // examine commands for track width change
         Command cmd = findCommand( 0x85 );
         if ( cmd != null )
@@ -145,53 +173,25 @@ public class TrackSegment extends CFDataObject {
                 {
                     // change complete in the middle of the segment.
                     // calculate point where the change ends.
-/* @@@ not working yet
-                    if(m_nCurvature <> 0)
+                    if(m_nCurvature != 0)
                     {
                         // curved segment
                         double dAngleMid = m_nAngleStart + nWidthChangeLength * m_nCurvature;
-			m_dPosXMid = m_dPosXCenter + m_dRadius * Math.cos(dAngleMid * dANGLESCALE);
-			m_dPosYMid = m_dPosYCenter + m_dRadius * Math.sin(dAngleMid * dANGLESCALE);
+			m_dPosXMid = m_dPosXCenter + m_dRadius * Math.cos(dAngleMid * ANGLE_SCALE);
+			m_dPosYMid = m_dPosYCenter + m_dRadius * Math.sin(dAngleMid * ANGLE_SCALE);
                     }
                     else
                     {
                         // straight
-			m_dPosXMid = m_dPosXStart - nWidthChangeLength * Math.sin(m_nAngleStart * dANGLESCALE);
-			m_dPosYMid = m_dPosYStart + nWidthChangeLength * Math.cos(m_nAngleStart * dANGLESCALE);
+			m_dPosXMid = m_dPosXStart - nWidthChangeLength * Math.sin(m_nAngleStart * ANGLE_SCALE);
+			m_dPosYMid = m_dPosYStart + nWidthChangeLength * Math.cos(m_nAngleStart * ANGLE_SCALE);
                     }
-*/
 		}
                 m_nWidthEnd = nWidthChangeEnd;
                 // nothing to do on next segment
                 m_nWidthChangeLength = 0;
                 m_nWidthChangeEnd = 0;
             }
-        }
-
-        // resulting direction
-        m_nAngleEnd = m_nAngleStart + m_nTlu * m_nCurvature;
-
-        // end coordinates
-        dAngle = m_nAngleStart * ANGLE_SCALE;
-        if ( m_nCurvature == 0 )
-        {
-            // Straight
-            m_dPosXEnd = m_dPosXStart - (double) m_nTlu * Math.sin( dAngle );
-            m_dPosYEnd = m_dPosYEnd   + (double) m_nTlu * Math.cos( dAngle );
-        }
-        else
-        {
-            // Curve: first calculate center of circle
-            double dCenterX;
-            double dCenterY;
-            double dRadius;
-            dRadius = 1 / (m_nCurvature * ANGLE_SCALE);
-            dCenterX = m_dPosXStart - dRadius * Math.cos( dAngle );
-            dCenterY = m_dPosYStart - dRadius * Math.sin( dAngle );
-            // from center, calculate end point
-            dAngle = m_nAngleEnd * ANGLE_SCALE;
-            m_dPosXEnd = dCenterX + dRadius * Math.cos( dAngle );
-            m_dPosYEnd = dCenterY + dRadius * Math.sin( dAngle );
         }
     }
 
@@ -243,7 +243,7 @@ public class TrackSegment extends CFDataObject {
     { m_nFlags = nFlags; }
 
     // can only be read
-    Vector getCommands()
+    public Vector getCommands()
     { return m_Commands; }
 
     // all calculated members can only be read! Their value changes
@@ -258,9 +258,18 @@ public class TrackSegment extends CFDataObject {
     public double getPosYEnd()
     { return m_dPosYEnd; }
 
+    public double getPosXCenter()
+    { return m_dPosXCenter; }
+    public double getPosYCenter()
+    { return m_dPosYCenter; }
+
+    public double getPosXMid()
+    { return m_dPosXMid; }
+    public double getPosYMid()
+    { return m_dPosYMid; }
+
     public int getWidthChangeLength()
     { return m_nWidthChangeLength; }
-
     public int getWidthChangeEnd()
     { return m_nWidthChangeEnd; }
 
@@ -273,6 +282,9 @@ public class TrackSegment extends CFDataObject {
     { return m_nAngleStart; }
     public int getAngleEnd()
     { return m_nAngleEnd; }
+
+    public double getRadius()
+    { return m_dRadius; }
 
     // instance data members
     protected int m_nType;      // segment type
@@ -287,6 +299,10 @@ public class TrackSegment extends CFDataObject {
     // calculated values
     protected double m_dPosXStart, m_dPosYStart;   // coordinates for start of segment
     protected double m_dPosXEnd, m_dPosYEnd;       // coordinates for end of segment
+    protected double m_dPosXCenter, m_dPosYCenter; // coordinates for center of circle (curved segments)
+    protected double m_dPosXMid, m_dPosYMid;       // coordinates for point where track width change ends
+                                                   // when not same as end of segment.
+    protected double m_dRadius;                    // radius of circle (middle of track)
     protected int m_nAngleStart, m_nAngleEnd;   // angle = direction at start and end of segment
     protected int m_nWidthStart, m_nWidthEnd;   // track width at start and end of segment
     protected int m_nWidthChangeLength, m_nWidthChangeEnd; // when track width changes across segment border,
