@@ -7,6 +7,8 @@
 package chequeredflag.gui;
 
 import javax.swing.*;
+import java.io.*;
+import chequeredflag.data.track.*;
 
 /**
  *
@@ -14,6 +16,8 @@ import javax.swing.*;
  */
 public class TrackGUI extends javax.swing.JFrame 
 {
+    
+    private Track currentTrack;
     
     /** Creates new form TrackGUI */
     public TrackGUI() 
@@ -51,6 +55,12 @@ public class TrackGUI extends javax.swing.JFrame
         });
 
         openTrack.setText("Open F1GP/WC Track");
+        openTrack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openTrackFile(evt);
+            }
+        });
+
         fileMenu.add(openTrack);
 
         saveTrack.setText("Save F1GP/WC Track");
@@ -85,6 +95,17 @@ public class TrackGUI extends javax.swing.JFrame
 
         pack();
     }//GEN-END:initComponents
+
+    private void openTrackFile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openTrackFile
+        // Opens a new track file and reads in data by using ksix's track input processing
+        
+        FileDialog fileDialog = new FileDialog(this,true);  
+        String fileName = fileDialog.showOpenDialog();
+        File trackFile = new File(fileName);
+        currentTrack = new Track();
+        currentTrack.load(trackFile);
+    
+    }//GEN-LAST:event_openTrackFile
 
     private void displayAbout(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayAbout
         // Displays the About dialog
