@@ -218,4 +218,11 @@ public class Track {
     /** statics */
     // factor for converting width units in meters - probably fractions of feet
     final static double s_dWIDTHSCALE = 0.0047625;
+
+    public void calculateTrackLayout() {
+        m_TrackSegments.calculateTrackLayout(
+            m_DataHeader.getStartWidth(),
+            m_DataHeader.getStartAngle()
+            );
+    };
 }

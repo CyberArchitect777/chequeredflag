@@ -52,4 +52,35 @@ public class TrackSegments extends Vector {
 
         return nWritten;
     }
+
+    /**
+      Calculate all coordinates and angles of segments
+    */
+    public void calculateTrackLayout(int nStartWidth, int nStartAngle) {
+        int nPosX, nPosY;
+        int nWidthLength, nWidthEnd;
+        nPosX = 0;
+        nPosY = 0;
+        nWidthLength = 0;
+        nWidthEnd = 0;
+        for ( Enumeration e = elements(); e.hasMoreElements(); )
+        {
+            // get the next element
+            TrackSegment ts = (TrackSegment) e.nextElement();
+            // calculate its layout
+            ts.calculateLayout(
+                nPosX, nPosY,
+                nStartWidth, nStartAngle,
+                nWidthLength,   // remaining length for change of track width
+                nWidthEnd       // track width to be reached
+                );
+            // get starting data for next segment
+            nPosX = ts.getPosXEnd();
+            nPosY = ts.getPosYEnd();
+            nStartWidth = ts.getWidthEnd();
+            nStartAngle = ts.getAngleEnd();
+            nWidthLength = ts.getWidthChangeLength();
+            nWidthEnd = ts.getWidthChangeEnd();
+        }
+    }
 }
