@@ -21,8 +21,8 @@ public class MainGUI extends javax.swing.JFrame
         // Setting main frame information
         super("Chequered Flag - An open-source F1GP/WC editor");
         initComponents();
+        setSize(576,432);
         setVisible(true);
-        setSize(576,432);         
     }
     
     /** This method is called from within the constructor to
