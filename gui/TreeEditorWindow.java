@@ -90,6 +90,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         treeViewScroll = new javax.swing.JScrollPane();
         trackDetails = new javax.swing.JTree();
 
+        setTitle("Object View");
         trackDetails.setShowsRootHandles(true);
         treeViewScroll.setViewportView(trackDetails);
 
