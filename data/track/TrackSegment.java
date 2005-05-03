@@ -17,6 +17,7 @@ import chequeredflag.data.*;
 public class TrackSegment extends CFDataObject {
 
     /** Creates a new instance of TrackSegment */
+          
     public TrackSegment() {
         m_nSign = 0;
         m_Commands = new Vector();
@@ -34,7 +35,7 @@ public class TrackSegment extends CFDataObject {
         m_nWidthStart = 0;
         m_nWidthEnd = 0;
         m_nWidthChangeLength = 0;
-        m_nWidthChangeEnd = 0;
+        m_nWidthChangeEnd = 0;        
     }
 
     public void load( FileInputStream fis )
