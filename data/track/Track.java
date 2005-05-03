@@ -65,6 +65,9 @@ public class Track {
 
             // pitlane segment data
             m_PitlaneSegments.load(fis);
+            // Always read in one additional segment, like TrackSegments.
+            // Pitlane does not use this segment to carry commands, so drop it.
+            m_PitlaneSegments.remove(m_PitlaneSegments.size() - 1);
 
             lPos = m_PitlaneSegments.size();
             lPos = fc.position();
