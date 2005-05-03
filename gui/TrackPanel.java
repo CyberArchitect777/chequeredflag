@@ -16,7 +16,8 @@ import chequeredflag.data.track.*;
  */
 public class TrackPanel extends javax.swing.JPanel {
 
-    static double ANGLE_SCALE = 360.0 / 65536;
+    static double ANGLE_SCALE_DEG = 360.0 / 65536;
+    static double ANGLE_SCALE_RAD = 2 * Math.PI / 65536;
 
     /** Creates new form TrackPanel */
     public TrackPanel() {
@@ -64,10 +65,29 @@ public class TrackPanel extends javax.swing.JPanel {
             if ( trackSegment.getCurvature() == 0 )
             {
                 // Straight
+/*
                 g2d.drawLine( new Double(trackSegment.getPosXStart()).intValue(),
                               new Double(trackSegment.getPosYStart()).intValue(),
                               new Double(trackSegment.getPosXEnd()).intValue(),
                               new Double(trackSegment.getPosYEnd()).intValue() );
+*/
+                int aXPoints[] = new int[ 4 ];
+                int aYPoints[] = new int[ 4 ];
+                // Width unit is 1/1024 of TLU.
+                double dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                double dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                aXPoints[ 0 ] = new Double(trackSegment.getPosXStart() - dXDiff).intValue();
+                aYPoints[ 0 ] = new Double(trackSegment.getPosYStart() + dYDiff).intValue();
+                aXPoints[ 1 ] = new Double(trackSegment.getPosXStart() + dXDiff).intValue();
+                aYPoints[ 1 ] = new Double(trackSegment.getPosYStart() - dYDiff).intValue();
+
+                dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                aXPoints[ 2 ] = new Double(trackSegment.getPosXEnd() + dXDiff).intValue();
+                aYPoints[ 2 ] = new Double(trackSegment.getPosYEnd() - dYDiff).intValue();
+                aXPoints[ 3 ] = new Double(trackSegment.getPosXEnd() - dXDiff).intValue();
+                aYPoints[ 3 ] = new Double(trackSegment.getPosYEnd() + dYDiff).intValue();
+                g2d.drawPolygon( aXPoints, aYPoints, 4 );
             }
             else
             {
@@ -79,8 +99,8 @@ public class TrackPanel extends javax.swing.JPanel {
                                  new Double(trackSegment.getPosYCenter() - trackSegment.getRadius()).intValue(),
                                  new Double(trackSegment.getRadius() * 2).intValue(),
                                  new Double(trackSegment.getRadius() * 2).intValue(),
-                                 new Double(180.0 + trackSegment.getAngleStart() * ANGLE_SCALE).intValue(),
-                                 new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE).intValue() );
+                                 new Double(180.0 + trackSegment.getAngleStart() * ANGLE_SCALE_DEG).intValue(),
+                                 new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE_DEG).intValue() );
                 }
                 else
                 {
@@ -89,8 +109,8 @@ public class TrackPanel extends javax.swing.JPanel {
                                  new Double(trackSegment.getPosYCenter() + trackSegment.getRadius()).intValue(),
                                  new Double(trackSegment.getRadius() * -2).intValue(),
                                  new Double(trackSegment.getRadius() * -2).intValue(),
-                                 new Double(trackSegment.getAngleStart() * ANGLE_SCALE).intValue(),
-                                 new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE).intValue() );
+                                 new Double(trackSegment.getAngleStart() * ANGLE_SCALE_DEG).intValue(),
+                                 new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE_DEG).intValue() );
                 }
             }
         }
