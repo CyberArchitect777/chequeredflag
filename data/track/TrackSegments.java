@@ -32,7 +32,7 @@ public class TrackSegments extends Vector {
             ts = new TrackSegment();
             ts.load( fis );
             add(ts);
-        } while (ts.getSign() != 4);
+        } while (ts.getType() != 0xFF);
     }
 
     public int save( FileOutputStream fos ) throws IOException
