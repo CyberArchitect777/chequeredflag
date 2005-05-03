@@ -19,6 +19,13 @@ public class TrackSegment extends CFDataObject {
     /** Creates a new instance of TrackSegment */
           
     public TrackSegment() {
+        m_nType = 0;
+        m_nTlu = 0;
+        m_nCurvature = 0;
+        m_nFlags = 0;
+        m_nHeightChange = 0;
+        m_nFenceDistL = 0;
+        m_nFenceDistR = 0;
         m_nSign = 0;
         m_Commands = new Vector();
         m_dPosXStart = 0.0;
@@ -95,7 +102,7 @@ public class TrackSegment extends CFDataObject {
         for ( Enumeration e = m_Commands.elements(); e.hasMoreElements(); )
             nWritten += ((Command) e.nextElement()).save(fos);
         // save own properties
-        if (m_nSign != 4)
+        if (m_nType != 0xFF)
         {
             // Standard track segment
             fos.write( m_nTlu );
@@ -193,6 +200,14 @@ public class TrackSegment extends CFDataObject {
                 m_nWidthChangeLength = 0;
                 m_nWidthChangeEnd = 0;
             }
+        }
+        else
+        {
+            // No width change
+            m_nWidthEnd = m_nWidthStart;
+            // nothing to do on next segment
+            m_nWidthChangeLength = 0;
+            m_nWidthChangeEnd = 0;
         }
     }
 
