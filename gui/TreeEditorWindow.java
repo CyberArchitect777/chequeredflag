@@ -17,12 +17,14 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
     
     private DefaultMutableTreeNode rootNode;
     private Track currentTrack;
-    
+    private MainGUI mainFrame;
+        
     /** Creates new form TreeEditorWindow */
-    public TreeEditorWindow() {
+    public TreeEditorWindow(MainGUI originalFrame) {
         initComponents();
         setDefaultElement();    
         createTree();
+        mainFrame = originalFrame;        
     }
     
     public void populateTree()
@@ -66,7 +68,6 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         
         // Returns the CC Line direction from the passed segment
         
-        System.out.println(currentSegment.getType() + " " + currentSegment.getParam(0) + " " + currentSegment.getParam(1));
         if (currentSegment.getType() == 128) // 0x80 in hexidecimal 
         {
             if (currentSegment.getParam(1) == 0)
@@ -156,18 +157,91 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
     private void initComponents() {//GEN-BEGIN:initComponents
         treeViewScroll = new javax.swing.JScrollPane();
         trackDetails = new javax.swing.JTree();
+        buttonPanel = new javax.swing.JPanel();
+        addAboveButton = new javax.swing.JButton();
+        addBelowButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
 
         setTitle("Object View");
         trackDetails.setShowsRootHandles(true);
+        trackDetails.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                setSelectedPaths(evt);
+            }
+        });
+
         treeViewScroll.setViewportView(trackDetails);
 
         getContentPane().add(treeViewScroll, java.awt.BorderLayout.CENTER);
 
+        buttonPanel.setLayout(new java.awt.GridLayout(1, 3));
+
+        addAboveButton.setText("Add Above");
+        buttonPanel.add(addAboveButton);
+
+        addBelowButton.setText("Add Below");
+        buttonPanel.add(addBelowButton);
+
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editObject(evt);
+            }
+        });
+
+        buttonPanel.add(editButton);
+
+        getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
         pack();
     }//GEN-END:initComponents
+
+    private void editObject(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editObject
+        // Edit the current object selected on the tree. Called natively by Edit button
+        
+        TreePath fullPath = trackDetails.getSelectionPath();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
+        if (selectedNode.getLevel() != 0)
+        {
+            TreePath parentPath = fullPath.getParentPath();
+            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+            if (parentNode.toString() == "Track Segments")
+            {
+                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+                TrackSegments currentTrackSegments = currentTrack.getTrackSegments();
+                TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
+                TrackSegmentEditGUI segmentEditor = new TrackSegmentEditGUI(mainFrame, true);
+                segmentEditor.editTrackSegment(selectedTrackSegment);
+                segmentEditor.setVisible(true);
+            }
+        }
+        
+    }//GEN-LAST:event_editObject
+
+    private void setSelectedPaths(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_setSelectedPaths
+        // Gets the full path of the tree node upon selection by the user.
+        
+        TreePath fullPath = trackDetails.getSelectionPath();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
+        if (selectedNode.getLevel() != 0)
+        {
+            TreePath parentPath = fullPath.getParentPath();
+            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+            if (parentNode.toString() == "Track Segments")
+            {
+                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+            }
+        }
+    }//GEN-LAST:event_setSelectedPaths
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addAboveButton;
+    private javax.swing.JButton addBelowButton;
+    private javax.swing.JPanel buttonPanel;
+    private javax.swing.JButton editButton;
     private javax.swing.JTree trackDetails;
     private javax.swing.JScrollPane treeViewScroll;
     // End of variables declaration//GEN-END:variables

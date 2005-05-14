@@ -118,7 +118,7 @@ public class MainGUI extends javax.swing.JFrame
     private void windowResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_windowResizeEvent
         // Detects any change in the size of the main editor window and adjusts internal frames accordingly
         
-        // WARNING: May need to be implemented
+        // WARNING: Will need to be implemented
         
     }//GEN-LAST:event_windowResizeEvent
      

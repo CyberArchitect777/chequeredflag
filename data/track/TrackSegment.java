@@ -301,6 +301,39 @@ public class TrackSegment extends CFDataObject {
 
     public double getRadius()
     { return m_dRadius; }
+    
+    public String getDetailedFlags()
+    {
+        // Implemented by Barrie. Outputs an easier interpretion of the flags variable
+        
+        StringBuffer binaryCode = new StringBuffer();
+        int totalLeft = getFlags();
+        int currentLimit = 32768;
+        boolean stopFlag = false;
+        while (stopFlag == false)
+        {
+            System.out.println("TotalLeft: " + totalLeft + " - CurrentLimit: " + currentLimit);
+            if (totalLeft >= currentLimit)
+            {
+                binaryCode.append("1");
+                totalLeft=totalLeft-currentLimit;
+            }
+            else
+            {
+                binaryCode.append("0");
+            }
+            if (currentLimit > 1)
+            {
+                currentLimit=currentLimit/2;
+            }
+            else
+            {
+                stopFlag = true;
+            }
+        }        
+        //return "1111111111111111"; //
+        return binaryCode.toString();
+    }
 
     // instance data members
     protected int m_nType;      // segment type

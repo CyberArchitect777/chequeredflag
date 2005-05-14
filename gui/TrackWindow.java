@@ -21,7 +21,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     private Track currentTrack;
     private TreeEditorWindow treeWindow;
     private GraphicalEditorWindow mapWindow;
-    private MainGUI parentFrame;
+    private MainGUI mainFrame;
     
     /** Creates new form TrackWindow */
     /* Receives a selected track as input */
@@ -31,8 +31,8 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         initComponents();
         setContentPane(trackEditorWindow);
         currentTrack = selectedTrack;
-        parentFrame = originalFrame;
-        treeWindow = new TreeEditorWindow();
+        mainFrame = originalFrame;
+        treeWindow = new TreeEditorWindow(mainFrame);
         mapWindow = new GraphicalEditorWindow();
         mapWindow.setTrack(currentTrack);
         treeWindow.setTrack(currentTrack);
@@ -102,7 +102,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         
         // Warning: No overwrite checking code in place yet
         
-        FileDialog fileDialog = new FileDialog(parentFrame,true);
+        FileDialog fileDialog = new FileDialog(mainFrame,true);
         String fileName = fileDialog.showSaveDialog();
         if (fileName.toLowerCase().endsWith(".dat") == false)
         {
