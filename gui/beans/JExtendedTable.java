@@ -13,6 +13,9 @@ import java.io.*;
  *
  * @author  barrie
  */
+
+// Extension of JTable created to allow the use of multiple data representations in a single column. 
+
 public class JExtendedTable extends javax.swing.JTable implements Serializable
 { // Serializable had to be manually added and is a requirement for making use of beans.
     
