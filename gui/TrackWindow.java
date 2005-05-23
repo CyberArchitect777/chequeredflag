@@ -8,6 +8,7 @@ package chequeredflag.gui;
 
 import java.io.*;
 import chequeredflag.data.track.*;
+import javax.swing.*;
 
 /**
  *
@@ -21,18 +22,18 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     private Track currentTrack;
     private TreeEditorWindow treeWindow;
     private GraphicalEditorWindow mapWindow;
-    private MainGUI mainFrame;
+    private MainGUI appFrame;
     
     /** Creates new form TrackWindow */
     /* Receives a selected track as input */
-    public TrackWindow(Track selectedTrack, String fileName, MainGUI originalFrame) 
+    public TrackWindow(Track selectedTrack, String fileName, MainGUI origContainer) 
     {
         super("Track File: " + fileName);
         initComponents();
         setContentPane(trackEditorWindow);
         currentTrack = selectedTrack;
-        mainFrame = originalFrame;
-        treeWindow = new TreeEditorWindow(mainFrame);
+        appFrame = origContainer;
+        treeWindow = new TreeEditorWindow(trackEditorWindow);
         mapWindow = new GraphicalEditorWindow();
         mapWindow.setTrack(currentTrack);
         treeWindow.setTrack(currentTrack);
@@ -102,7 +103,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         
         // Warning: No overwrite checking code in place yet
         
-        FileDialog fileDialog = new FileDialog(mainFrame,true);
+        FileDialog fileDialog = new FileDialog(appFrame,true);
         String fileName = fileDialog.showSaveDialog();
         if (fileName.toLowerCase().endsWith(".dat") == false)
         {

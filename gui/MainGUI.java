@@ -144,7 +144,7 @@ public class MainGUI extends javax.swing.JFrame
         mainEditorWindow.add(newTrackWindow);
                            
     }//GEN-LAST:event_openTrackFile
-      
+   
     private void displayAbout(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayAbout
         // Displays the About dialog
         

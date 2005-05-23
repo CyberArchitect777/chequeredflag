@@ -8,6 +8,7 @@ package chequeredflag.gui;
 
 import chequeredflag.data.track.*;
 import javax.swing.tree.*;
+import javax.swing.*;
 
 /**
  *
@@ -17,14 +18,14 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
     
     private DefaultMutableTreeNode rootNode;
     private Track currentTrack;
-    private MainGUI mainFrame;
+    private JDesktopPane parentFrame;
         
     /** Creates new form TreeEditorWindow */
-    public TreeEditorWindow(MainGUI originalFrame) {
+    public TreeEditorWindow(JDesktopPane containerFrame) {
         initComponents();
         setDefaultElement();    
         createTree();
-        mainFrame = originalFrame;        
+        parentFrame = containerFrame;        
     }
     
     public void populateTree()
@@ -211,9 +212,12 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                 int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
                 TrackSegments currentTrackSegments = currentTrack.getTrackSegments();
                 TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
-                TrackSegmentEditGUI segmentEditor = new TrackSegmentEditGUI(mainFrame, true);
+                SegmentEditGUI segmentEditor = new SegmentEditGUI();
                 segmentEditor.editTrackSegment(selectedTrackSegment);
                 segmentEditor.setVisible(true);
+                segmentEditor.setTitle("Editing Track Segment " + segmentNo);
+                parentFrame.add(segmentEditor);
+                segmentEditor.toFront();
             }
         }
         
