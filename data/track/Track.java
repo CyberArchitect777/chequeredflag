@@ -8,6 +8,7 @@ package chequeredflag.data.track;
 
 import java.io.*;
 import java.nio.channels.*;
+import java.awt.*;
 
 /**
  *
@@ -270,5 +271,52 @@ public class Track {
         // To calculate the CCline, both CCline data itself and
         // track segment data is needed.
         // @@@ not implemented yet
+    }
+
+    // Returns a rectangle that contains the whole track graphics.
+    // x/y coordinates represent the minimum coordinates and heigth/width
+    // give the size of the rectangle needed to contain the track.
+    public Rectangle getBoundingRectangle()
+    {
+        double dMinX, dMinY, dMaxX, dMaxY, dX, dY;
+        TrackSegments trackSegments = getTrackSegments();
+        TrackSegment trackSegment;
+        // Initialize coordinates with first point
+        trackSegment = trackSegments.getAt( 1 );
+        dMinX = trackSegment.getPosXStart();
+        dMaxX = dMinX;
+        dMinY = trackSegment.getPosYStart();
+        dMaxY = dMinY;
+        // search for min/max values
+        for ( int i = 1; i <= trackSegments.size(); i++ )
+        {
+            trackSegment = trackSegments.getAt( i );
+            dX = trackSegment.getPosXStart();
+            if ( dX > dMaxX )
+                dMaxX = dX;
+            if ( dX < dMinX )
+                dMinX = dX;
+            dY = trackSegment.getPosYStart();
+            if ( dY > dMaxY )
+                dMaxY = dY;
+            if ( dY < dMinY )
+                dMinY = dY;
+            dX = trackSegment.getPosXEnd();
+            if ( dX > dMaxX )
+                dMaxX = dX;
+            if ( dX < dMinX )
+                dMinX = dX;
+            dY = trackSegment.getPosYEnd();
+            if ( dY > dMaxY )
+                dMaxY = dY;
+            if ( dY < dMinY )
+                dMinY = dY;
+        } // for
+        // Put data into rectangle
+        Rectangle r = new Rectangle( new Double(dMinX).intValue(),
+                                     new Double(dMinY).intValue(),
+                                     new Double(dMaxX - dMinX).intValue(),
+                                     new Double(dMaxY - dMinY).intValue() );
+        return r;
     }
 }
