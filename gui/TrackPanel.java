@@ -27,7 +27,11 @@ public class TrackPanel extends javax.swing.JPanel {
         standardTrans.translate(100, 400);
         // Negative Y scale effectively changes Y direction (ascending
         // values from botton to top)
-        standardTrans.scale( 1.5, -1.5 );
+        standardTrans.scale( 1.0, -1.0 );
+        // Scaling factor
+        m_scale = 1.5;
+        // First time drawing flag
+        m_fFirstTime = true;
     }
 
     /** This method is called from within the constructor to
@@ -52,7 +56,36 @@ public class TrackPanel extends javax.swing.JPanel {
         g2d.fillRect(0, 0, d.width, d.height );
         g2d.setColor(oldColor);
 
-        // apply zooming and moving of the track display
+        // On first drawing, adjust zooming and panning
+        if ( m_fFirstTime )
+        {
+            m_fFirstTime = false;
+
+            // set zooming and panning values so that track
+            // appears in the middle of the window.
+            Rectangle r = m_track.getBoundingRectangle();
+
+            // Choose zoom factor so that a border of at least 10 percent
+            // remains on each side of the track.
+            double dScaleX = d.getWidth() / (r.getWidth() * 1.2);
+            double dScaleY = d.getHeight() / (r.getHeight() * 1.2);
+            if ( dScaleX > dScaleY )
+                m_scale = dScaleY;
+            else
+                m_scale = dScaleX;
+
+            // Center track in window
+            standardTrans.setToIdentity();
+            // Negative Y scale effectively changes Y direction (ascending
+            // values from botton to top)
+            standardTrans.scale( 1.0, -1.0 );
+            standardTrans.translate( (d.getWidth() / 2.0) - m_scale * r.getCenterX(),
+                                     -(d.getHeight() / 2.0) - m_scale * r.getCenterY() );
+        }
+
+        // change drawing direction to have positive y values going up.
+        // Also panning could be done by the transformation, but not zooming
+        // because automatic zoom looks bad.
         AffineTransform oldTrans = g2d.getTransform();
         g2d.transform( standardTrans );
 
@@ -76,17 +109,17 @@ public class TrackPanel extends javax.swing.JPanel {
                 // Width unit is 1/1024 of TLU.
                 double dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
                 double dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
-                aXPoints[ 0 ] = new Double(trackSegment.getPosXStart() - dXDiff).intValue();
-                aYPoints[ 0 ] = new Double(trackSegment.getPosYStart() + dYDiff).intValue();
-                aXPoints[ 1 ] = new Double(trackSegment.getPosXStart() + dXDiff).intValue();
-                aYPoints[ 1 ] = new Double(trackSegment.getPosYStart() - dYDiff).intValue();
+                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiff) * m_scale).intValue();
+                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiff) * m_scale).intValue();
+                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + dXDiff) * m_scale).intValue();
+                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - dYDiff) * m_scale).intValue();
 
                 dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
                 dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
-                aXPoints[ 2 ] = new Double(trackSegment.getPosXEnd() + dXDiff).intValue();
-                aYPoints[ 2 ] = new Double(trackSegment.getPosYEnd() - dYDiff).intValue();
-                aXPoints[ 3 ] = new Double(trackSegment.getPosXEnd() - dXDiff).intValue();
-                aYPoints[ 3 ] = new Double(trackSegment.getPosYEnd() + dYDiff).intValue();
+                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + dXDiff) * m_scale).intValue();
+                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - dYDiff) * m_scale).intValue();
+                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
+                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiff) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
             }
             else
@@ -95,20 +128,20 @@ public class TrackPanel extends javax.swing.JPanel {
                 if ( trackSegment.getCurvature() > 0 )
                 {
                     // right turn
-                    g2d.drawArc( new Double(trackSegment.getPosXCenter() - trackSegment.getRadius()).intValue(),
-                                 new Double(trackSegment.getPosYCenter() - trackSegment.getRadius()).intValue(),
-                                 new Double(trackSegment.getRadius() * 2).intValue(),
-                                 new Double(trackSegment.getRadius() * 2).intValue(),
+                    g2d.drawArc( new Double((trackSegment.getPosXCenter() - trackSegment.getRadius()) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYCenter() - trackSegment.getRadius()) * m_scale).intValue(),
+                                 new Double((trackSegment.getRadius() * 2) * m_scale).intValue(),
+                                 new Double((trackSegment.getRadius() * 2) * m_scale).intValue(),
                                  new Double(180.0 + trackSegment.getAngleStart() * ANGLE_SCALE_DEG).intValue(),
                                  new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE_DEG).intValue() );
                 }
                 else
                 {
                     // left turn means negative radius!
-                    g2d.drawArc( new Double(trackSegment.getPosXCenter() + trackSegment.getRadius()).intValue(),
-                                 new Double(trackSegment.getPosYCenter() + trackSegment.getRadius()).intValue(),
-                                 new Double(trackSegment.getRadius() * -2).intValue(),
-                                 new Double(trackSegment.getRadius() * -2).intValue(),
+                    g2d.drawArc( new Double((trackSegment.getPosXCenter() + trackSegment.getRadius()) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYCenter() + trackSegment.getRadius()) * m_scale).intValue(),
+                                 new Double((trackSegment.getRadius() * -2) * m_scale).intValue(),
+                                 new Double((trackSegment.getRadius() * -2) * m_scale).intValue(),
                                  new Double(trackSegment.getAngleStart() * ANGLE_SCALE_DEG).intValue(),
                                  new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE_DEG).intValue() );
                 }
@@ -121,22 +154,38 @@ public class TrackPanel extends javax.swing.JPanel {
 
     private Track m_track;
     private AffineTransform standardTrans;
+    private double m_scale;
+    private boolean m_fFirstTime;
 
     public void setTrack(Track track) {
         m_track = track;
+        m_fFirstTime = true; // trigger calculations on first drawing
     }
 
     public void zoomIn() {
-        standardTrans.scale(1.1, 1.1);
+        m_scale = m_scale * 1.5;
         Dimension d = getSize();
         repaint(0, 0, 0, d.width, d.height );
     }
 
     public void zoomOut() {
-        standardTrans.scale(0.9, 0.9);
+        m_scale = m_scale / 1.5;
         Dimension d = getSize();
         repaint(0, 0, 0, d.width, d.height );
     }
+
+    public void panX( int nXPan ) {
+        standardTrans.translate( nXPan, 0 );
+        Dimension d = getSize();
+        repaint(0, 0, 0, d.width, d.height );
+    }
+
+    public void panY( int nYPan ) {
+        standardTrans.translate( 0, nYPan );
+        Dimension d = getSize();
+        repaint(0, 0, 0, d.width, d.height );
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
