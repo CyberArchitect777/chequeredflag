@@ -69,9 +69,9 @@ public class SegmentTableModel extends AbstractTableModel
         segmentDatabase[13][1] = getTrackFlagState(binaryCode, 8);
         segmentDatabase[14][0] = "Unknown 6 (0x0040)";
         segmentDatabase[14][1] = getTrackFlagState(binaryCode, 9);
-        segmentDatabase[15][0] = "Straight Wall which does not Follow Parallel to Left Side of Track";
+        segmentDatabase[15][0] = "Wall is not Parallel with Left Side of Track";
         segmentDatabase[15][1] = getTrackFlagState(binaryCode, 10);
-        segmentDatabase[16][0] = "Straight Wall which does not Follow Parallel to Right Side of Track";
+        segmentDatabase[16][0] = "Wall is not Parallel with Right Side of Track";
         segmentDatabase[16][1] = getTrackFlagState(binaryCode, 11);
         segmentDatabase[17][0] = "Unknown 7 (0x0008)";
         segmentDatabase[17][1] = getTrackFlagState(binaryCode, 12);
@@ -119,6 +119,37 @@ public class SegmentTableModel extends AbstractTableModel
     public Object getValueAt(int row, int column)
     {
         return segmentDatabase[row][column];
+    }
+    
+    public void setValueAt(Object aValue, int row, int column)
+    {
+        if (aValue instanceof Boolean)
+        {
+            if (((Boolean)aValue).booleanValue() == true)
+            {
+                segmentDatabase[row][column] = new Boolean(true);
+            }
+            else
+            {
+                segmentDatabase[row][column] = new Boolean(false);
+            }
+        }
+        else
+        {
+            segmentDatabase[row][column] = aValue;
+        }
+    }
+    
+    public boolean isCellEditable(int row, int column)
+    {
+        if (column==0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
     
 }

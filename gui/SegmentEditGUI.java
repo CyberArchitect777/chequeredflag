@@ -23,6 +23,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
     {
         SegmentTableModel trackData = new SegmentTableModel(trackSegment);
         segmentTable.setDefaultRenderer(String.class, new TextTableCellRenderer());
+        segmentTable.setDefaultEditor(String.class, new TextTableCellEditor());
         segmentTable.setModel(trackData);
     }
     

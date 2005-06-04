@@ -19,14 +19,15 @@ public class TextTableCellRenderer extends DefaultTableCellRenderer implements T
 {
     private JLabel cellLabel = new JLabel();
         
-    /** Creates a new instance of StringTableCellRenderer */
+    /** Creates a new instance of TextTableCellRenderer */
     public TextTableCellRenderer() 
     {
+        cellLabel = new JLabel();
     }
     
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
-        cellLabel = new JLabel((String)value);
+        cellLabel.setText((String)value);
         cellLabel.setHorizontalAlignment(SwingConstants.CENTER);
         cellLabel.setOpaque(true);
         Font labelFont = cellLabel.getFont();

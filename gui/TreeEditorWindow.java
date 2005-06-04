@@ -206,21 +206,35 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         {
             TreePath parentPath = fullPath.getParentPath();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-            if (parentNode.toString() == "Track Segments")
+            if ((parentNode.toString() == "Track Segments") || (parentNode.toString() == "Pit Segments"))
             {
                 int spaceIndex = ((selectedNode.toString()).indexOf(" "));
                 int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
-                TrackSegments currentTrackSegments = currentTrack.getTrackSegments();
+                TrackSegments currentTrackSegments = new TrackSegments();
+                if (parentNode.toString() == "Track Segments")
+                {
+                    currentTrackSegments = currentTrack.getTrackSegments();
+                }
+                else
+                {
+                    currentTrackSegments = currentTrack.getPitlaneSegments();   
+                }
                 TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
                 SegmentEditGUI segmentEditor = new SegmentEditGUI();
                 segmentEditor.editTrackSegment(selectedTrackSegment);
                 segmentEditor.setVisible(true);
-                segmentEditor.setTitle("Editing Track Segment " + segmentNo);
+                if (parentNode.toString() == "Track Segments")
+                {
+                    segmentEditor.setTitle("Editing Track Segment " + segmentNo);
+                }
+                else
+                {
+                    segmentEditor.setTitle("Editing Pit Segment " + segmentNo);
+                }
                 parentFrame.add(segmentEditor);
                 segmentEditor.toFront();
             }
-        }
-        
+        }    
     }//GEN-LAST:event_editObject
 
     private void setSelectedPaths(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_setSelectedPaths
