@@ -98,12 +98,6 @@ public class TrackPanel extends javax.swing.JPanel {
             if ( trackSegment.getCurvature() == 0 )
             {
                 // Straight
-/*
-                g2d.drawLine( new Double(trackSegment.getPosXStart()).intValue(),
-                              new Double(trackSegment.getPosYStart()).intValue(),
-                              new Double(trackSegment.getPosXEnd()).intValue(),
-                              new Double(trackSegment.getPosYEnd()).intValue() );
-*/
                 int aXPoints[] = new int[ 4 ];
                 int aYPoints[] = new int[ 4 ];
                 // Width unit is 1/1024 of TLU.
@@ -128,28 +122,93 @@ public class TrackPanel extends javax.swing.JPanel {
                 if ( trackSegment.getCurvature() > 0 )
                 {
                     // right turn
-                    g2d.drawArc( new Double((trackSegment.getPosXCenter() - trackSegment.getRadius()) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYCenter() - trackSegment.getRadius()) * m_scale).intValue(),
-                                 new Double((trackSegment.getRadius() * 2) * m_scale).intValue(),
-                                 new Double((trackSegment.getRadius() * 2) * m_scale).intValue(),
-                                 new Double(180.0 + trackSegment.getAngleStart() * ANGLE_SCALE_DEG).intValue(),
-                                 new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE_DEG).intValue() );
+                    // outer line
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                    // inner line
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
                 }
                 else
                 {
-                    // left turn means negative radius!
-                    g2d.drawArc( new Double((trackSegment.getPosXCenter() + trackSegment.getRadius()) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYCenter() + trackSegment.getRadius()) * m_scale).intValue(),
-                                 new Double((trackSegment.getRadius() * -2) * m_scale).intValue(),
-                                 new Double((trackSegment.getRadius() * -2) * m_scale).intValue(),
-                                 new Double(trackSegment.getAngleStart() * ANGLE_SCALE_DEG).intValue(),
-                                 new Double((trackSegment.getAngleEnd() - trackSegment.getAngleStart()) * ANGLE_SCALE_DEG).intValue() );
+                    // left turn: give start/end angle in opposite order
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                    // inner line
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
                 }
             }
         }
 
         // reset transformations
         g2d.setTransform( oldTrans );
+    }
+
+    /**
+      Draw an arc with center (x,y), starting angle dStAngle, end angle dEndAngle, start radius dStRadius
+      and end radius dEndRadius.
+      Used to draw all curved lines.
+      To be able to draw 'circles' with varying radius, a large number of short straights is drawn.
+      Zooming/Panning appears outside of this method.
+    */
+
+    private void drawArc( Graphics2D g2d, int x, int y, double dStAngle, double dEndAngle,
+                     double dStRadius, double dEndRadius)
+    {
+        double r, a, r0;
+        int px, py;
+
+        // radius change per angle unit (radiens)
+        a = (dEndRadius - dStRadius)/(dEndAngle - dStAngle);
+        // calculate reference radius
+        r0 = dStRadius - a * dStAngle;
+        do
+        {
+            // calculate new radius
+            r=r0+a*dStAngle;
+            
+            px = x + new Double( r*Math.cos(dStAngle)).intValue();
+            py = y - new Double( r*Math.sin(dStAngle)).intValue();
+
+            // Draw very short line @@@
+            g2d.drawLine(px, py, px + 1, py + 1 );
+
+            if (r > 10)
+                dStAngle += 1/r;
+            else if (r < -10)
+                dStAngle -= 1/r;
+            else
+            {
+                dStAngle += 0.1;
+            }
+        }
+        while(dStAngle < dEndAngle);
+
+        // draw a last short line to complete the arc
+        px = x + new Double( r*Math.cos(dEndAngle) ).intValue();
+        py = y - new Double( r*Math.sin(dEndAngle) ).intValue();
+        g2d.drawLine( px, py, px + 1, py + 1 );
     }
 
     private Track m_track;
