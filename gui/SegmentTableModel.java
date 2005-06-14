@@ -5,17 +5,15 @@
  */
 
 package chequeredflag.gui;
-import javax.swing.table.*;
 import chequeredflag.data.track.*;
 
 /**
  *
  * @author barrie
  */
-public class SegmentTableModel extends AbstractTableModel
+public class SegmentTableModel extends StandardTableModel
 {
     
-    private Object[][] segmentDatabase;
     private TrackSegment currentSegment;
     
     /** Creates a new instance of SegmentTableModel */
@@ -23,9 +21,10 @@ public class SegmentTableModel extends AbstractTableModel
     /** F1GP/WC track segments */
     public SegmentTableModel(TrackSegment selectedSegment) 
     {
+        // Sets the size of the table for the editing of this item
         // Will need to be updated as more information is added
         
-        segmentDatabase = new Object[21][2];
+        tableDimension(21,2);
         
         currentSegment = selectedSegment;
         populateTable();        
@@ -37,50 +36,49 @@ public class SegmentTableModel extends AbstractTableModel
         // Populate the table with track segment editing information
         
         String binaryCode = currentSegment.getDetailedFlags();
-        System.out.println("Code received: " + binaryCode);
-        
-        segmentDatabase[0][0] = "Segment Length";
-        segmentDatabase[0][1] = new String(new Integer(currentSegment.getTlu()).toString());
-        segmentDatabase[1][0] = "Curvature";
-        segmentDatabase[1][1] = new String(new Integer(currentSegment.getCurvature()).toString());
-        segmentDatabase[2][0] = "Height Difference";
-        segmentDatabase[2][1] = new String(new Integer(currentSegment.getHeightChange()).toString());
-        segmentDatabase[3][0] = "Left Run-Off Area";
-        segmentDatabase[3][1] = new String(new Integer(currentSegment.getFenceDistL()).toString());
-        segmentDatabase[4][0] = "Right Run-Off Area";
-        segmentDatabase[4][1] = new String(new Integer(currentSegment.getFenceDistR()).toString());
-        segmentDatabase[5][0] = "Unknown 1 (0x8000)";
-        segmentDatabase[5][1] = getTrackFlagState(binaryCode, 0);
-        segmentDatabase[6][0] = "Unknown 2 (0x4000)";
-        segmentDatabase[6][1] = getTrackFlagState(binaryCode, 1);
-        segmentDatabase[7][0] = "No Left Wall";
-        segmentDatabase[7][1] = getTrackFlagState(binaryCode, 2);
-        segmentDatabase[8][0] = "No Right Wall";
-        segmentDatabase[8][1] = getTrackFlagState(binaryCode, 3);
-        segmentDatabase[9][0] = "Left Kerb";
-        segmentDatabase[9][1] = getTrackFlagState(binaryCode, 4);
-        segmentDatabase[10][0] = "Right Kerb";
-        segmentDatabase[10][1] = getTrackFlagState(binaryCode, 5);
-        segmentDatabase[11][0] = "Unknown 3 (0x0200)";
-        segmentDatabase[11][1] = getTrackFlagState(binaryCode, 6);
-        segmentDatabase[12][0] = "Unknown 4 (0x0100)";
-        segmentDatabase[12][1] = getTrackFlagState(binaryCode, 7);
-        segmentDatabase[13][0] = "Unknown 5 (0x0080)";
-        segmentDatabase[13][1] = getTrackFlagState(binaryCode, 8);
-        segmentDatabase[14][0] = "Unknown 6 (0x0040)";
-        segmentDatabase[14][1] = getTrackFlagState(binaryCode, 9);
-        segmentDatabase[15][0] = "Left Non-Parallel Wall";
-        segmentDatabase[15][1] = getTrackFlagState(binaryCode, 10);
-        segmentDatabase[16][0] = "Right Non-Parallel Wall";
-        segmentDatabase[16][1] = getTrackFlagState(binaryCode, 11);
-        segmentDatabase[17][0] = "Unknown 7 (0x0008)";
-        segmentDatabase[17][1] = getTrackFlagState(binaryCode, 12);
-        segmentDatabase[18][0] = "Kerb Type";
-        segmentDatabase[18][1] = getTrackFlagState(binaryCode, 13);
-        segmentDatabase[19][0] = "Left Pit Wall";
-        segmentDatabase[19][1] = getTrackFlagState(binaryCode, 14);
-        segmentDatabase[20][0] = "Right Pit Wall";
-        segmentDatabase[20][1] = getTrackFlagState(binaryCode, 15);
+                
+        setValueAt("Segment Length",0,0);
+        setValueAt(new String(new Integer(currentSegment.getTlu()).toString()),0,1);
+        setValueAt("Curvature",1,0);
+        setValueAt(new String(new Integer(currentSegment.getCurvature()).toString()),1,1);
+        setValueAt("Height Difference",2,0);
+        setValueAt(new String(new Integer(currentSegment.getHeightChange()).toString()),2,1);
+        setValueAt("Left Run-Off Area",3,0);
+        setValueAt(new String(new Integer(currentSegment.getFenceDistL()).toString()),3,1);
+        setValueAt("Right Run-Off Area",4,0);
+        setValueAt(new String(new Integer(currentSegment.getFenceDistR()).toString()),4,1);
+        setValueAt("Unknown 1 (0x8000)",5,0);
+        setValueAt(getTrackFlagState(binaryCode, 0),5,1);
+        setValueAt("Unknown 2 (0x4000)",6,0);
+        setValueAt(getTrackFlagState(binaryCode, 1),6,1);
+        setValueAt("No Left Wall",7,0);
+        setValueAt(getTrackFlagState(binaryCode, 2),7,1);
+        setValueAt("No Right Wall",8,0);
+        setValueAt(getTrackFlagState(binaryCode, 3),8,1);
+        setValueAt("Left Kerb",9,0);
+        setValueAt(getTrackFlagState(binaryCode, 4),9,1);
+        setValueAt("Right Kerb",10,0);
+        setValueAt(getTrackFlagState(binaryCode, 5),10,1);
+        setValueAt("Unknown 3 (0x0200)",11,0);
+        setValueAt(getTrackFlagState(binaryCode, 6),11,1);
+        setValueAt("Unknown 4 (0x0100)",12,0);
+        setValueAt(getTrackFlagState(binaryCode, 7),12,1);
+        setValueAt("Unknown 5 (0x0080)",13,0);
+        setValueAt(getTrackFlagState(binaryCode, 8),13,1);
+        setValueAt("Unknown 6 (0x0040)",14,0);
+        setValueAt(getTrackFlagState(binaryCode, 9),14,1);
+        setValueAt("Left Non-Parallel Wall",15,0);
+        setValueAt(getTrackFlagState(binaryCode, 10),15,1);
+        setValueAt("Right Non-Parallel Wall",16,0);
+        setValueAt(getTrackFlagState(binaryCode, 11),16,1);
+        setValueAt("Unknown 7 (0x0008)",17,0);
+        setValueAt(getTrackFlagState(binaryCode, 12),17,1);
+        setValueAt("Kerb Type",18,0);
+        setValueAt(getTrackFlagState(binaryCode, 13),18,1);
+        setValueAt("Left Pit Wall",19,0);
+        setValueAt(getTrackFlagState(binaryCode, 14),19,1);
+        setValueAt("Right Pit Wall",20,0);
+        setValueAt(getTrackFlagState(binaryCode, 15),20,1);
         
     }
     
@@ -99,57 +97,5 @@ public class SegmentTableModel extends AbstractTableModel
         {
             return new Boolean(false);
         }       
-    }
-    
-    public int getRowCount()
-    {
-        return segmentDatabase.length;        
-    }
-    
-    public int getColumnCount()
-    {
-        return segmentDatabase[0].length;
-    }
-    
-    public Class getColumnClass(int columnIndex)
-    {
-        return segmentDatabase[0][columnIndex].getClass();
-    }
-    
-    public Object getValueAt(int row, int column)
-    {
-        return segmentDatabase[row][column];
-    }
-    
-    public void setValueAt(Object aValue, int row, int column)
-    {
-        if (aValue instanceof Boolean)
-        {
-            if (((Boolean)aValue).booleanValue() == true)
-            {
-                segmentDatabase[row][column] = new Boolean(true);
-            }
-            else
-            {
-                segmentDatabase[row][column] = new Boolean(false);
-            }
-        }
-        else
-        {
-            segmentDatabase[row][column] = aValue;
-        }
-    }
-    
-    public boolean isCellEditable(int row, int column)
-    {
-        if (column==0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    
+    }    
 }

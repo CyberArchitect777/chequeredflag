@@ -7,6 +7,8 @@
 package chequeredflag.gui;
 
 import chequeredflag.data.track.*;
+import java.util.*;
+import javax.swing.*;
 
 /**
  *
@@ -27,6 +29,14 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         segmentTable.setModel(trackData);
     }
     
+    public void editBestLineSegment(CCLineSegment lineSegment)
+    {
+        BestLineTableModel lineData = new BestLineTableModel(lineSegment);
+        segmentTable.setDefaultRenderer(String.class, new TextTableCellRenderer());
+        segmentTable.setDefaultEditor(String.class, new TextTableCellEditor());
+        segmentTable.setModel(lineData);
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -39,6 +49,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         updateButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
+        setResizable(true);
         segmentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

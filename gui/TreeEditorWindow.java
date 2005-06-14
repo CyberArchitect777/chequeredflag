@@ -206,12 +206,12 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         {
             TreePath parentPath = fullPath.getParentPath();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-            if ((parentNode.toString() == "Track Segments") || (parentNode.toString() == "Pit Segments"))
+            int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+            int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+            if (((parentNode.toString()).equals("Track Segments")) || ((parentNode.toString()).equals("Pit Segments")))
             {
-                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
-                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
                 TrackSegments currentTrackSegments = new TrackSegments();
-                if (parentNode.toString() == "Track Segments")
+                if ((parentNode.toString()).equals("Track Segments"))
                 {
                     currentTrackSegments = currentTrack.getTrackSegments();
                 }
@@ -223,7 +223,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                 SegmentEditGUI segmentEditor = new SegmentEditGUI();
                 segmentEditor.editTrackSegment(selectedTrackSegment);
                 segmentEditor.setVisible(true);
-                if (parentNode.toString() == "Track Segments")
+                if ((parentNode.toString()).equals("Track Segments"))
                 {
                     segmentEditor.setTitle("Editing Track Segment " + segmentNo);
                 }
@@ -233,6 +233,20 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                 }
                 parentFrame.add(segmentEditor);
                 segmentEditor.toFront();
+            }
+            else
+            {
+                if ((parentNode.toString()).equals("Best Line Segments"))
+                {
+                    CCLine currentLines = currentTrack.getCCLine();
+                    CCLineSegment selectedBestLine = currentLines.getAt(segmentNo);
+                    SegmentEditGUI segmentEditor = new SegmentEditGUI();
+                    segmentEditor.editBestLineSegment(selectedBestLine);
+                    segmentEditor.setVisible(true);
+                    segmentEditor.setTitle("Editing Best Line Segment " + segmentNo);
+                    parentFrame.add(segmentEditor);
+                    segmentEditor.toFront();
+                }
             }
         }    
     }//GEN-LAST:event_editObject
