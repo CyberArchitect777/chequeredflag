@@ -24,6 +24,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
     public void editTrackSegment(TrackSegment trackSegment)
     {
         SegmentTableModel trackData = new SegmentTableModel(trackSegment);
+        segmentTable.setRowHeight(20);
         segmentTable.setDefaultRenderer(String.class, new TextTableCellRenderer());
         segmentTable.setDefaultEditor(String.class, new TextTableCellEditor());
         segmentTable.setModel(trackData);
@@ -32,8 +33,11 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
     public void editBestLineSegment(CCLineSegment lineSegment)
     {
         BestLineTableModel lineData = new BestLineTableModel(lineSegment);
+        segmentTable.setRowHeight(20);
         segmentTable.setDefaultRenderer(String.class, new TextTableCellRenderer());
+        segmentTable.setDefaultRenderer(JComboBox.class, new SelectionTableCellRenderer());
         segmentTable.setDefaultEditor(String.class, new TextTableCellEditor());
+        segmentTable.setDefaultEditor(JComboBox.class, new SelectionTableCellEditor());
         segmentTable.setModel(lineData);
     }
     

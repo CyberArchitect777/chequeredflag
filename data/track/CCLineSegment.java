@@ -20,7 +20,8 @@ public class CCLineSegment extends CFDataObject {
         m_nType = nType;
         m_nTlu = 0;
         // create always full length of parameter array (3)
-        m_nParam = new int[ 3 ];
+        // BARRIE: Changed 3 to 4 to account for dimensioning error
+        m_nParam = new int[ 4 ];
     }
 
     public void load( FileInputStream fis)

@@ -5,7 +5,9 @@
  */
 
 package chequeredflag.gui;
+
 import javax.swing.table.*;
+import javax.swing.JComboBox;
 
 /**
  *
@@ -61,7 +63,15 @@ public class StandardTableModel extends AbstractTableModel
         }
         else
         {
-            tableData[row][column] = aValue;
+            if (aValue instanceof JComboBox)
+            {
+                JComboBox comboList = (JComboBox)aValue;
+                tableData[row][column] = comboList;
+            }
+            else
+            {
+                tableData[row][column] = (String)aValue;
+            }
         }
     }
     
