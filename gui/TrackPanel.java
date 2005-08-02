@@ -161,6 +161,80 @@ public class TrackPanel extends javax.swing.JPanel {
             }
         }
 
+        // draw all pit lane segments
+        oldColor = g2d.getColor();
+        g2d.setColor(Color.blue);
+        trackSegments = m_track.getPitlaneSegments();
+        for ( int i = 1; i <= trackSegments.size(); i++ )
+        {
+            trackSegment = trackSegments.getAt( i );
+            if ( trackSegment.getCurvature() == 0 )
+            {
+                // Straight
+                int aXPoints[] = new int[ 4 ];
+                int aYPoints[] = new int[ 4 ];
+                // Width unit is 1/1024 of TLU.
+                double dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                double dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiff) * m_scale).intValue();
+                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiff) * m_scale).intValue();
+                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + dXDiff) * m_scale).intValue();
+                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - dYDiff) * m_scale).intValue();
+
+                dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + dXDiff) * m_scale).intValue();
+                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - dYDiff) * m_scale).intValue();
+                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
+                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiff) * m_scale).intValue();
+                g2d.drawPolygon( aXPoints, aYPoints, 4 );
+            }
+            else
+            {
+                // Curve
+                if ( trackSegment.getCurvature() > 0 )
+                {
+                    // right turn
+                    // outer line
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                    // inner line
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                }
+                else
+                {
+                    // left turn: give start/end angle in opposite order
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                    // inner line
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
+                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                }
+            }
+        }
+        g2d.setColor(oldColor);
+
         // reset transformations
         g2d.setTransform( oldTrans );
     }
@@ -241,6 +315,19 @@ public class TrackPanel extends javax.swing.JPanel {
 
     public void panY( int nYPan ) {
         standardTrans.translate( 0, nYPan );
+        Dimension d = getSize();
+        repaint(0, 0, 0, d.width, d.height );
+    }
+
+    public void moveTo(int x, int y) {
+        // Set coordinate to be the point in the bottom left corner.
+        // Calculate new translation matrix.
+        standardTrans.setToIdentity();
+        // Negative Y scale effectively changes Y direction (ascending
+        // values from botton to top)
+        standardTrans.scale( 1.0, -1.0 );
+        standardTrans.translate( x, y);
+        // repaint with new settings
         Dimension d = getSize();
         repaint(0, 0, 0, d.width, d.height );
     }
