@@ -259,9 +259,18 @@ public class Track {
 
     public void calculateTrackLayout()
     {
+        // Layout of the track segments.
         m_TrackSegments.calculateTrackLayout(
             m_DataHeader.getStartWidth(),
-            m_DataHeader.getStartAngle()
+            m_DataHeader.getStartAngle(),
+            0.0, 0.0 // start coordinates
+            );
+
+        // Layout of the pit lane.
+        // List of track segments is used to find
+        // position and direction of pit entry.
+        m_PitlaneSegments.calculatePitlaneLayout(
+            m_TrackSegments, m_DataHeader.getPitSide()
             );
     };
 
