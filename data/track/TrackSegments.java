@@ -56,11 +56,8 @@ public class TrackSegments extends Vector {
     /**
       Calculate all coordinates and angles of segments
     */
-    public void calculateTrackLayout(int nStartWidth, int nStartAngle) {
-        double dPosX, dPosY;
+    public void calculateTrackLayout(int nStartWidth, int nStartAngle, double dPosX, double dPosY) {
         int nWidthLength, nWidthEnd;
-        dPosX = 0.0;
-        dPosY = 0.0;
         nWidthLength = 0;
         nWidthEnd = 0;
         for ( Enumeration e = elements(); e.hasMoreElements(); )
@@ -82,6 +79,66 @@ public class TrackSegments extends Vector {
             nWidthLength = ts.getWidthChangeLength();
             nWidthEnd = ts.getWidthChangeEnd();
         }
+    }
+
+    /**
+      Find position of pit lane entry in trackSegments list.
+      Then, calculate other position data based on that.
+      fPitSide is true if pits are on the left side of the track,
+      and false if on right side.
+    */
+    public void calculatePitlaneLayout(TrackSegments trackSegments, boolean fPitSide)
+    {
+        // Find track segment that contains pit lane entry.
+        TrackSegment tsPitlaneEntry = trackSegments.findPitlaneEntry();
+        if ( tsPitlaneEntry == null )
+            return;
+        // Pit lane width in width scales (defined by F1GP)
+        int nPITWIDTH=1344;
+        double dPitStartX, dPitStartY;
+        if ( fPitSide )
+        {
+            /*pits on the left*/
+	    dPitStartX = tsPitlaneEntry.getPosXStart()
+                         - Math.cos(tsPitlaneEntry.getAngleStart())
+                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+	    dPitStartY = tsPitlaneEntry.getPosYStart()
+                         - Math.sin(tsPitlaneEntry.getAngleStart())
+                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+        }
+	else
+	{
+            /*pits on the right*/
+            dPitStartX = tsPitlaneEntry.getPosXStart()
+                         + Math.cos(tsPitlaneEntry.getAngleStart())
+                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+            dPitStartY = tsPitlaneEntry.getPosYStart()
+                         + Math.sin(tsPitlaneEntry.getAngleStart())
+                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+	}
+        // Calculate pit lane
+        calculateTrackLayout(nPITWIDTH,
+                             tsPitlaneEntry.getAngleStart(),
+                             dPitStartX,
+                             dPitStartY);
+    }
+
+    /**
+      Find track segments that contains the pit lane entry, if any.
+      Returns found track segment, else null.
+    */
+    public TrackSegment findPitlaneEntry()
+    {
+        for ( Enumeration e = elements(); e.hasMoreElements(); )
+        {
+            // get the next element
+            TrackSegment ts = (TrackSegment) e.nextElement();
+            // check if it contains pit lane entry
+            if ( ts.findCommand(0x86) != null )
+                // found
+                return ts;
+        }
+        return null;
     }
 
     /** gets the track segment at position i in the vector (1-based) */
