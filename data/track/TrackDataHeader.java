@@ -114,4 +114,11 @@ public class TrackDataHeader extends CFDataObject {
     public int getStartAngle() {
         return m_nStartAngle;
     }
+
+    public boolean getPitSide() {
+        if ( m_nPitSide > 0  )
+            return true;
+        else
+            return false;
+    }
 }
