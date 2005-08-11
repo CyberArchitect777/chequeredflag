@@ -101,20 +101,20 @@ public class TrackSegments extends Vector {
             /*pits on the left*/
 	    dPitStartX = tsPitlaneEntry.getPosXStart()
                          - Math.cos(tsPitlaneEntry.getAngleStart())
-                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+                           * ((double)((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2)) / 1024.0);
 	    dPitStartY = tsPitlaneEntry.getPosYStart()
                          - Math.sin(tsPitlaneEntry.getAngleStart())
-                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+                           * ((double)((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2)) / 1024.0);
         }
 	else
 	{
             /*pits on the right*/
             dPitStartX = tsPitlaneEntry.getPosXStart()
                          + Math.cos(tsPitlaneEntry.getAngleStart())
-                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+                           * ((double)((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2)) / 1024.0);
             dPitStartY = tsPitlaneEntry.getPosYStart()
                          + Math.sin(tsPitlaneEntry.getAngleStart())
-                           * ((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2) * Track.s_dWIDTHSCALE);
+                           * ((double)((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2)) / 1024.0);
 	}
         // Calculate pit lane
         calculateTrackLayout(nPITWIDTH,
