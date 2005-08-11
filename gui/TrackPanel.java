@@ -128,16 +128,16 @@ public class TrackPanel extends javax.swing.JPanel {
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
                 else
                 {
@@ -147,16 +147,16 @@ public class TrackPanel extends javax.swing.JPanel {
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
             }
         }
@@ -201,16 +201,16 @@ public class TrackPanel extends javax.swing.JPanel {
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
                 else
                 {
@@ -220,16 +220,16 @@ public class TrackPanel extends javax.swing.JPanel {
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() + trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() + trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
                             Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() - trackSegment.getWidthStart() / 1024 ) * m_scale,
-                            ( trackSegment.getRadius() - trackSegment.getWidthEnd() / 1024 ) * m_scale );
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
+                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
             }
         }
