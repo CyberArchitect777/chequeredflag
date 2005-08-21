@@ -92,12 +92,24 @@ public class TrackPanel extends javax.swing.JPanel {
         // draw all track segments
         TrackSegments trackSegments = m_track.getTrackSegments();
         TrackSegment trackSegment;
+        boolean fLeftFence, fRightFence, fLeftFenceBridged, fRightFenceBridged;
+        boolean fLeftKerb, fRightKerb;
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
+
+            // Check if fences and/or kerbs are present
+            fLeftFenceBridged = (trackSegment.getFlags() & 0x20) != 0;
+            fLeftFence = fLeftFenceBridged || ((trackSegment.getFlags() & 0x2000) == 0);
+            fRightFenceBridged = (trackSegment.getFlags() & 0x10) != 0;
+            fRightFence = fRightFenceBridged || ((trackSegment.getFlags() & 0x1000) == 0);
+            fLeftKerb = (trackSegment.getFlags() & 0x800) != 0;
+            fRightKerb = (trackSegment.getFlags() & 0x400) != 0;
+            
             if ( trackSegment.getCurvature() == 0 )
             {
                 // Straight
+                // Draw track segment itself.
                 int aXPoints[] = new int[ 4 ];
                 int aYPoints[] = new int[ 4 ];
                 // Width unit is 1/1024 of TLU.
@@ -115,6 +127,29 @@ public class TrackPanel extends javax.swing.JPanel {
                 aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
                 aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiff) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
+
+                // Draw fence
+                double dXDiffFence, dYDiffFence;
+                if ( fLeftFence )
+                {
+                    // Fence distance is measured in 1/64s of the track width, so to get
+                    // to the point where the fence is, multiply the X/YDiff by (1 + 1/64 FenceDist).
+                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);
+                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);;
+                    g2d.drawLine(new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
+                }
+                if ( fRightFence )
+                {
+                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);
+                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);;
+                    g2d.drawLine(new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
+                }
             }
             else
             {
@@ -168,6 +203,15 @@ public class TrackPanel extends javax.swing.JPanel {
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
+
+            // Check if fences and/or kerbs are present
+            fLeftFenceBridged = (trackSegment.getFlags() & 0x20) != 0;
+            fLeftFence = (trackSegment.getFlags() & 0x3) != 0;
+            fRightFenceBridged = (trackSegment.getFlags() & 0x10) != 0;
+            fRightFence = (trackSegment.getFlags() & 0x3) != 0;
+            fLeftKerb = (trackSegment.getFlags() & 0x800) != 0;
+            fRightKerb = (trackSegment.getFlags() & 0x400) != 0;
+
             if ( trackSegment.getCurvature() == 0 )
             {
                 // Straight
@@ -188,6 +232,29 @@ public class TrackPanel extends javax.swing.JPanel {
                 aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
                 aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiff) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
+
+                // Draw fence
+                double dXDiffFence, dYDiffFence;
+                if ( fLeftFence )
+                {
+                    // Fence distance is measured in 1/64s of the track width, so to get
+                    // to the point where the fence is, multiply the X/YDiff by (1 + 1/64 FenceDist).
+                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);
+                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);;
+                    g2d.drawLine(new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
+                }
+                if ( fRightFence )
+                {
+                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);
+                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);;
+                    g2d.drawLine(new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
+                                 new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
+                }
             }
             else
             {
