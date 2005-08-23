@@ -92,20 +92,27 @@ public class TrackPanel extends javax.swing.JPanel {
         // draw all track segments
         TrackSegments trackSegments = m_track.getTrackSegments();
         TrackSegment trackSegment;
-        boolean fLeftFence, fRightFence, fLeftFenceBridged, fRightFenceBridged;
         boolean fLeftKerb, fRightKerb;
+        m_fLeftFenceBridgedPrev = false;
+        m_fRightFenceBridgedPrev = false;
+        // Array for storing coordinates for display of "bridged" fence.
+        // index 0: starting point of left bridged fence
+        // index 1: end point of left bridged fence (up to current segment)
+        // index 2/3: similar for right bridged fence.
+        m_aXBridgePoints = new int[ 4 ];
+        m_aYBridgePoints = new int[ 4 ];
+        // Get initial fence distance from track header
+        m_nLeftFenceDistPrev = m_track.getTrackDataHeader().getFenceDistL();
+        m_nRightFenceDistPrev = m_track.getTrackDataHeader().getFenceDistL();
+
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
 
-            // Check if fences and/or kerbs are present
-            fLeftFenceBridged = (trackSegment.getFlags() & 0x20) != 0;
-            fLeftFence = fLeftFenceBridged || ((trackSegment.getFlags() & 0x2000) == 0);
-            fRightFenceBridged = (trackSegment.getFlags() & 0x10) != 0;
-            fRightFence = fRightFenceBridged || ((trackSegment.getFlags() & 0x1000) == 0);
+            // Check if kerbs are present.
             fLeftKerb = (trackSegment.getFlags() & 0x800) != 0;
             fRightKerb = (trackSegment.getFlags() & 0x400) != 0;
-            
+
             if ( trackSegment.getCurvature() == 0 )
             {
                 // Straight
@@ -127,30 +134,7 @@ public class TrackPanel extends javax.swing.JPanel {
                 aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
                 aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiff) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
-
-                // Draw fence
-                double dXDiffFence, dYDiffFence;
-                if ( fLeftFence )
-                {
-                    // Fence distance is measured in 1/64s of the track width, so to get
-                    // to the point where the fence is, multiply the X/YDiff by (1 + 1/64 FenceDist).
-                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);
-                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);;
-                    g2d.drawLine(new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
-                }
-                if ( fRightFence )
-                {
-                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);
-                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);;
-                    g2d.drawLine(new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
-                }
-            }
+            } // Straight
             else
             {
                 // Curve
@@ -193,10 +177,20 @@ public class TrackPanel extends javax.swing.JPanel {
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
-            }
+            } // curve
+
+            // Draw fence
+            paintFence(trackSegment, g2d);
         }
 
         // draw all pit lane segments
+        // reset fence data.
+        m_fLeftFenceBridgedPrev = false;
+        m_fRightFenceBridgedPrev = false;
+        // Pit lane uses same fence distance as track???
+        m_nLeftFenceDistPrev = m_track.getTrackDataHeader().getFenceDistL();
+        m_nRightFenceDistPrev = m_track.getTrackDataHeader().getFenceDistL();
+
         oldColor = g2d.getColor();
         g2d.setColor(Color.blue);
         trackSegments = m_track.getPitlaneSegments();
@@ -204,11 +198,7 @@ public class TrackPanel extends javax.swing.JPanel {
         {
             trackSegment = trackSegments.getAt( i );
 
-            // Check if fences and/or kerbs are present
-            fLeftFenceBridged = (trackSegment.getFlags() & 0x20) != 0;
-            fLeftFence = (trackSegment.getFlags() & 0x3) != 0;
-            fRightFenceBridged = (trackSegment.getFlags() & 0x10) != 0;
-            fRightFence = (trackSegment.getFlags() & 0x3) != 0;
+            // Check if kerbs are present
             fLeftKerb = (trackSegment.getFlags() & 0x800) != 0;
             fRightKerb = (trackSegment.getFlags() & 0x400) != 0;
 
@@ -232,29 +222,6 @@ public class TrackPanel extends javax.swing.JPanel {
                 aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
                 aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiff) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
-
-                // Draw fence
-                double dXDiffFence, dYDiffFence;
-                if ( fLeftFence )
-                {
-                    // Fence distance is measured in 1/64s of the track width, so to get
-                    // to the point where the fence is, multiply the X/YDiff by (1 + 1/64 FenceDist).
-                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);
-                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistL() / 64.0);;
-                    g2d.drawLine(new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
-                }
-                if ( fRightFence )
-                {
-                    dXDiffFence = dXDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);
-                    dYDiffFence = dYDiff * ( 1.0 + (double)trackSegment.getFenceDistR() / 64.0);;
-                    g2d.drawLine(new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
-                                 new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
-                }
             }
             else
             {
@@ -299,6 +266,9 @@ public class TrackPanel extends javax.swing.JPanel {
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
             }
+
+            // Paint fence
+            paintFence( trackSegment, g2d );
         }
         g2d.setColor(oldColor);
 
@@ -398,6 +368,207 @@ public class TrackPanel extends javax.swing.JPanel {
         Dimension d = getSize();
         repaint(0, 0, 0, d.width, d.height );
     }
+
+    protected void paintFence(final TrackSegment trackSegment, Graphics2D g2d) {
+        boolean fLeftFence, fRightFence, fLeftFenceBridged, fRightFenceBridged;
+        double dXDiffFence, dYDiffFence;
+        double dXDiff, dYDiff;
+        int nFenceStartX, nFenceStartY;
+
+        // Check if fences are present
+        fLeftFenceBridged = (trackSegment.getFlags() & 0x20) != 0;
+        fLeftFence = !fLeftFenceBridged && ((trackSegment.getFlags() & 0x2000) == 0);
+        fRightFenceBridged = (trackSegment.getFlags() & 0x10) != 0;
+        fRightFence = !fRightFenceBridged && ((trackSegment.getFlags() & 0x1000) == 0);
+
+        // calculate x/y differences from track width based on which the fence
+        // distance will be calculated. @@@ different track width at start and end of segment possible!
+        dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+
+        // calculate fence distance from middle of the road.
+        double dFenceDistStart, dFenceDistEnd;
+
+        // set drawing colour for fences
+        Color nonFenceColor;
+        nonFenceColor = g2d.getColor();
+        g2d.setColor(Color.cyan);
+
+        if ( fLeftFence )
+        {
+            // Any bridged fence left for drawing?
+            if ( m_fLeftFenceBridgedPrev )
+            {
+                // Bridging ends here
+                g2d.drawLine( m_aXBridgePoints[ 0 ],
+                              m_aYBridgePoints[ 0 ],
+                              m_aXBridgePoints[ 1 ],
+                              m_aYBridgePoints[ 1 ]);
+                // clear bridge flag
+                m_fLeftFenceBridgedPrev = false;
+            }
+
+            if ( trackSegment.getCurvature() == 0 )
+            {
+                // Straight track segment
+                // Fence distance is measured in 1/32s of the track width, so to get
+                // to the point where the fence is, multiply the X/YDiff by (1 + 1/32 FenceDist).
+                dXDiffFence = dXDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
+                dYDiffFence = dYDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
+                nFenceStartX = new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue();
+                nFenceStartY = new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue();
+                dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);
+                dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);;
+                g2d.drawLine(nFenceStartX,
+                             nFenceStartY,
+                             new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
+                             new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
+            }
+            else
+            {
+                // curve
+                dFenceDistStart = ( (double)trackSegment.getWidthStart() / 1024.0 ) * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
+                dFenceDistEnd   = ( (double)trackSegment.getWidthEnd() / 1024.0 ) * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);
+                if ( trackSegment.getCurvature() > 0 )
+                {
+                    // right turn
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() + dFenceDistStart ) * m_scale,
+                            ( trackSegment.getRadius() + dFenceDistEnd ) * m_scale );
+                }
+                else
+                {
+                    // left turn: give start/end angle in opposite order.
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            // Note: negative radius, this add fence dist!
+                            ( trackSegment.getRadius() + dFenceDistEnd ) * m_scale,
+                            ( trackSegment.getRadius() + dFenceDistStart ) * m_scale );
+                }
+            }
+        };
+
+        if ( fRightFence )
+        {
+            // Any bridged fence left for drawing?
+            if ( m_fRightFenceBridgedPrev )
+            {
+                g2d.drawLine( m_aXBridgePoints[ 2 ],
+                              m_aYBridgePoints[ 2 ],
+                              m_aXBridgePoints[ 3 ],
+                              m_aYBridgePoints[ 3 ]);
+                // clear bridge flag
+                m_fRightFenceBridgedPrev = false;
+            }
+
+            if ( trackSegment.getCurvature() == 0 )
+            {
+                dXDiffFence = dXDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
+                dYDiffFence = dYDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
+                nFenceStartX = new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue();
+                nFenceStartY = new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue();
+                dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);
+                dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);;
+                g2d.drawLine(nFenceStartX,
+                             nFenceStartY,
+                             new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
+                             new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
+            } // straight segment
+            else
+            {
+                // curve
+                dFenceDistStart = ( (double)trackSegment.getWidthStart() / 1024.0 ) * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
+                dFenceDistEnd   = ( (double)trackSegment.getWidthEnd() / 1024.0 ) * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);
+                if ( trackSegment.getCurvature() > 0 )
+                {
+                    // right turn
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() - dFenceDistStart ) * m_scale,
+                            ( trackSegment.getRadius() - dFenceDistEnd ) * m_scale );
+                }
+                else
+                {
+                    // left turn: give start/end angle in opposite order.
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            // Note: negative radius, thus subtract fence dist!
+                            ( trackSegment.getRadius() - dFenceDistEnd ) * m_scale,
+                            ( trackSegment.getRadius() - dFenceDistStart ) * m_scale );
+                }
+            }
+        }; 
+        g2d.setColor( nonFenceColor );
+
+        // Check bridging and calculate coordinates for later drawing.
+        if ( fLeftFenceBridged )
+        {
+            if ( !m_fLeftFenceBridgedPrev )
+            {
+                // calculate starting point of bridged fence and store in array
+                dXDiffFence = dXDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
+                dYDiffFence = dYDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
+                m_aXBridgePoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue();
+                m_aYBridgePoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue();
+                // set flag that starting point was found
+                m_fLeftFenceBridgedPrev = true;
+            }
+            // Always store end point into array. Will be overwritten when next segment
+            // is also "bridged"
+            dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);
+            dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);;
+            m_aXBridgePoints[ 1 ] = new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue();
+            m_aYBridgePoints[ 1 ] = new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue();
+        };
+        if ( fRightFenceBridged )
+        {
+            if ( !m_fRightFenceBridgedPrev )
+            {
+                // calculate starting point of bridged fence and store in array
+                dXDiffFence = dXDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
+                dYDiffFence = dYDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
+                m_aXBridgePoints[ 2 ] = new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue();
+                m_aYBridgePoints[ 2 ] = new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue();
+                // set flag that starting point was found
+                m_fRightFenceBridgedPrev = true;
+            }
+            // Always store end point into array. Will be overwritten when next segment
+            // is also "bridged"
+            dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);
+            dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);;
+            m_aXBridgePoints[ 3 ] = new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue();
+            m_aYBridgePoints[ 3 ] = new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue();
+        };
+
+        // store fence distance for next segment
+        m_nLeftFenceDistPrev = trackSegment.getFenceDistL();
+        m_nRightFenceDistPrev = trackSegment.getFenceDistR();
+    } // paintFence
+
+    private int m_nLeftFenceDistPrev;
+
+    private int m_nRightFenceDistPrev;
+
+    private int [] m_aXBridgePoints;
+
+    private int [] m_aYBridgePoints;
+
+    private boolean m_fLeftFenceBridgedPrev;
+
+    private boolean m_fRightFenceBridgedPrev;
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
