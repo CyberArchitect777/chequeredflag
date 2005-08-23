@@ -121,4 +121,12 @@ public class TrackDataHeader extends CFDataObject {
         else
             return false;
     }
+
+    public int getFenceDistL() {
+        return m_nFenceDistL;
+    }
+
+    public int getFenceDistR() {
+        return m_nFenceDistR;
+    }
 }
