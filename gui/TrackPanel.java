@@ -92,7 +92,6 @@ public class TrackPanel extends javax.swing.JPanel {
         // draw all track segments
         TrackSegments trackSegments = m_track.getTrackSegments();
         TrackSegment trackSegment;
-        boolean fLeftKerb, fRightKerb;
         m_fLeftFenceBridgedPrev = false;
         m_fRightFenceBridgedPrev = false;
         // Array for storing coordinates for display of "bridged" fence.
@@ -108,10 +107,6 @@ public class TrackPanel extends javax.swing.JPanel {
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
-
-            // Check if kerbs are present.
-            fLeftKerb = (trackSegment.getFlags() & 0x800) != 0;
-            fRightKerb = (trackSegment.getFlags() & 0x400) != 0;
 
             if ( trackSegment.getCurvature() == 0 )
             {
@@ -179,6 +174,9 @@ public class TrackPanel extends javax.swing.JPanel {
                 }
             } // curve
 
+            // Paint kerbs
+            paintKerbs(trackSegment, g2d);
+
             // Draw fence
             paintFence(trackSegment, g2d);
         }
@@ -197,10 +195,6 @@ public class TrackPanel extends javax.swing.JPanel {
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
-
-            // Check if kerbs are present
-            fLeftKerb = (trackSegment.getFlags() & 0x800) != 0;
-            fRightKerb = (trackSegment.getFlags() & 0x400) != 0;
 
             if ( trackSegment.getCurvature() == 0 )
             {
@@ -266,6 +260,9 @@ public class TrackPanel extends javax.swing.JPanel {
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
             }
+
+            // Paint kerbs
+            paintKerbs( trackSegment, g2d );
 
             // Paint fence
             paintFence( trackSegment, g2d );
@@ -557,6 +554,147 @@ public class TrackPanel extends javax.swing.JPanel {
         m_nLeftFenceDistPrev = trackSegment.getFenceDistL();
         m_nRightFenceDistPrev = trackSegment.getFenceDistR();
     } // paintFence
+
+    // When kerbs are present, a green line is painted just outside the track itself.
+    // Distance between track and green line is 1/4 of half track width (i.e. the
+    // distance between track middle and border).
+    protected void paintKerbs(final TrackSegment trackSegment, Graphics2D g2d)
+    {
+        // set drawing colour for kerbs
+        Color colorOld;
+        colorOld = g2d.getColor();
+        g2d.setColor(Color.green);
+
+        // Width unit is 1/1024 of TLU.
+        double dXDiffStart = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        double dYDiffStart = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        double dXDiffEnd   = Math.cos( trackSegment.getAngleEnd()   * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+        double dYDiffEnd   = Math.sin( trackSegment.getAngleEnd()   * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+
+        if ((trackSegment.getFlags() & 0x800) != 0 )
+        {
+            // Left kerbs are present
+            if ( trackSegment.getCurvature() == 0 )
+            {
+                // straight
+                int aXPoints[] = new int[ 4 ];
+                int aYPoints[] = new int[ 4 ];
+                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiffStart) * m_scale).intValue();
+                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiffStart) * m_scale).intValue();
+                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() - ( dXDiffStart * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() + ( dYDiffStart * 1.25 ) ) * m_scale).intValue();
+
+                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() - ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() + ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiffEnd) * m_scale).intValue();
+                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiffEnd) * m_scale).intValue();
+                g2d.drawPolygon( aXPoints, aYPoints, 4 );
+            }
+            else
+            {
+                // curved segment
+                if ( trackSegment.getCurvature() > 0 )
+                {
+                    // right turn
+                    // kerbs are on outer side
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale,
+                            ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale );
+                }
+                else
+                {
+                    // left turn: give start/end angle in opposite order
+                    // kerbs are on inner side
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            // Note: in this case, radius is negative
+                            ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale,
+                            ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale );
+                }
+                // short straight pieces to connect to track edge.
+                g2d.drawLine( new Double( ( trackSegment.getPosXStart() - dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() + dYDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXStart() - 1.25 * dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() + 1.25 * dYDiffStart ) * m_scale ).intValue() );
+                g2d.drawLine( new Double( ( trackSegment.getPosXEnd() - dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() + dYDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXEnd() - 1.25 * dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() + 1.25 * dYDiffEnd) * m_scale ).intValue() );
+            }
+        }
+
+        if ((trackSegment.getFlags() & 0x400) != 0 )
+        {
+            // Right kerbs are present
+            if ( trackSegment.getCurvature() == 0 )
+            {
+                // straight
+                // straight
+                int aXPoints[] = new int[ 4 ];
+                int aYPoints[] = new int[ 4 ];
+                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() + dXDiffStart) * m_scale).intValue();
+                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() - dYDiffStart) * m_scale).intValue();
+                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + ( dXDiffStart * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - ( dYDiffStart * 1.25 ) ) * m_scale).intValue();
+
+                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() + dXDiffEnd) * m_scale).intValue();
+                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() - dYDiffEnd) * m_scale).intValue();
+                g2d.drawPolygon( aXPoints, aYPoints, 4 );
+            }
+            else
+            {
+                // curved segment
+                if ( trackSegment.getCurvature() > 0 )
+                {
+                    // right turn
+                    // kerbs are on inner side
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale,
+                            ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale );
+                    // short straight pieces to connect to track edge.
+                    // @@@ missing
+                }
+                else
+                {
+                    // left turn: give start/end angle in opposite order
+                    // kerbs are on inner side
+                    drawArc(g2d,
+                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
+                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
+                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            // Note: in this case, radius is negative
+                            ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale,
+                            ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale );
+                }
+                // short straight pieces to connect to track edge.
+                g2d.drawLine( new Double( ( trackSegment.getPosXStart() + dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() - dYDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXStart() + 1.25 * dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() - 1.25 * dYDiffStart ) * m_scale ).intValue() );
+                g2d.drawLine( new Double( ( trackSegment.getPosXEnd() + dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() - dYDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXEnd() + 1.25 * dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() - 1.25 * dYDiffEnd) * m_scale ).intValue() );
+            }
+        }
+
+        // reset to old drawing color
+        g2d.setColor( colorOld );
+    } // paintKerbs
 
     private int m_nLeftFenceDistPrev;
 
