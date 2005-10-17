@@ -177,7 +177,7 @@ public class TrackPanel extends javax.swing.JPanel {
             // Paint kerbs
             paintKerbs(trackSegment, g2d);
 
-            // Draw fence
+            // Paint fence
             paintFence(trackSegment, g2d);
         }
 
@@ -269,6 +269,9 @@ public class TrackPanel extends javax.swing.JPanel {
         }
         g2d.setColor(oldColor);
 
+        // display the computer car line
+        paintCCLine( m_track.getCCLine(), g2d );
+
         // reset transformations
         g2d.setTransform( oldTrans );
     }
@@ -286,6 +289,11 @@ public class TrackPanel extends javax.swing.JPanel {
     {
         double r, a, r0;
         int px, py;
+
+        // EndAngle has to be within 2 * PI of StAngle, else a full circle
+        // will be drawn.
+        while ( dEndAngle - dStAngle > Math.PI * 2 )
+            dEndAngle -= Math.PI * 2;
 
         // radius change per angle unit (radiens)
         a = (dEndRadius - dStRadius)/(dEndAngle - dStAngle);
@@ -707,6 +715,66 @@ public class TrackPanel extends javax.swing.JPanel {
     private boolean m_fLeftFenceBridgedPrev;
 
     private boolean m_fRightFenceBridgedPrev;
+
+    // Display the computer car line.
+    protected void paintCCLine(CCLine ccLine, Graphics2D g2d) {
+        CCLineSegment ccLineSegment;
+        Color oldColor = g2d.getColor();
+        // Use red color for CCline
+        g2d.setColor( Color.RED );
+        for ( int i = 1; i <= ccLine.size(); i++ )
+        {
+            ccLineSegment = ccLine.getAt( i );
+            // straight or curved?
+            if ( ccLineSegment.getRadius() == 0.0 )
+            {
+                // straight
+                g2d.drawLine( new Double( ( ccLineSegment.getPosXStart() ) * m_scale ).intValue(),
+                              new Double( ( ccLineSegment.getPosYStart() ) * m_scale ).intValue(),
+                              new Double( ( ccLineSegment.getPosXEnd() ) * m_scale ).intValue(),
+                              new Double( ( ccLineSegment.getPosYEnd() ) * m_scale ).intValue() );                
+            }
+            else
+            {
+                // if this segment carries a shift value, connect start point with
+                // real beginning of the circle.
+                if ( ccLineSegment.getShift() > 0 )
+                {
+                    int nXStart, nYStart, nXCircle, nYCircle;
+                    nXStart = new Double( ( ccLineSegment.getPosXStart() ) * m_scale ).intValue();
+                    nYStart = new Double( ( ccLineSegment.getPosYStart() ) * m_scale ).intValue();
+                    nXCircle = new Double( ccLineSegment.getPosXCenter() * m_scale + ( Math.cos( Math.PI - ccLineSegment.getAngleStart() ) * ccLineSegment.getRadius() * m_scale ) ).intValue();
+                    nYCircle = new Double( ccLineSegment.getPosYCenter() * m_scale + ( Math.sin( Math.PI - ccLineSegment.getAngleStart() ) * ccLineSegment.getRadius() * m_scale ) ).intValue();
+                    g2d.drawLine( nXStart, nYStart, nXCircle, nYCircle );
+                }
+
+                if ( ccLineSegment.getRadius() > 0.0 )
+                {
+                    // right turn
+                    drawArc(g2d,
+                            new Double( ( ccLineSegment.getPosXCenter() ) * m_scale ).intValue(),
+                            new Double( ( ccLineSegment.getPosYCenter() ) * m_scale ).intValue(),
+                            // @@@ should be Math.PI - ... -> temp to be consistent with track segments
+                            Math.PI + ccLineSegment.getAngleStart(),
+                            Math.PI + ccLineSegment.getAngleEnd(),
+                            ccLineSegment.getRadius() * m_scale,
+                            ccLineSegment.getRadius() * m_scale );
+                }
+                else
+                {
+                    // left turn
+                    drawArc(g2d,
+                            new Double( ( ccLineSegment.getPosXCenter() ) * m_scale ).intValue(),
+                            new Double( ( ccLineSegment.getPosYCenter() ) * m_scale ).intValue(),
+                            Math.PI + ccLineSegment.getAngleEnd(),
+                            Math.PI + ccLineSegment.getAngleStart(),
+                            ccLineSegment.getRadius() * m_scale,
+                            ccLineSegment.getRadius() * m_scale );
+                }
+            } // curved segment
+        }
+        g2d.setColor( oldColor );
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
