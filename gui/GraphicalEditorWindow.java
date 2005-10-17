@@ -40,6 +40,11 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
         zoomMenu = new javax.swing.JMenu();
         zoomInItem = new javax.swing.JMenuItem();
         zoomOutItem = new javax.swing.JMenuItem();
+        panMenu = new javax.swing.JMenu();
+        panLeftItem = new javax.swing.JMenuItem();
+        panRightItem = new javax.swing.JMenuItem();
+        panUpItem = new javax.swing.JMenuItem();
+        panDownItem = new javax.swing.JMenuItem();
 
         setTitle("Track Map");
         zoomMenu.setText("Zoom");
@@ -63,10 +68,65 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 
         mapMenuBar.add(zoomMenu);
 
+        panMenu.setText("Pan");
+        panLeftItem.setText("Pan left");
+        panLeftItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panLeft(evt);
+            }
+        });
+
+        panMenu.add(panLeftItem);
+
+        panRightItem.setText("Pan right");
+        panRightItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panRight(evt);
+            }
+        });
+
+        panMenu.add(panRightItem);
+
+        panUpItem.setText("Pan up");
+        panUpItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panUp(evt);
+            }
+        });
+
+        panMenu.add(panUpItem);
+
+        panDownItem.setText("Pan down");
+        panDownItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panDown(evt);
+            }
+        });
+
+        panMenu.add(panDownItem);
+
+        mapMenuBar.add(panMenu);
+
         setJMenuBar(mapMenuBar);
 
         pack();
     }//GEN-END:initComponents
+
+private void panDown(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panDown
+    m_trackPanel.panY( -100 );
+}//GEN-LAST:event_panDown
+
+private void panUp(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panUp
+    m_trackPanel.panY( 100 );
+}//GEN-LAST:event_panUp
+
+private void panRight(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panRight
+    m_trackPanel.panX( 100 );
+}//GEN-LAST:event_panRight
+
+private void panLeft(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panLeft
+    m_trackPanel.panX( -100 );
+}//GEN-LAST:event_panLeft
 
     private void zoomOut(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOut
         // Make use of the mapZoomOut function
@@ -99,6 +159,11 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar mapMenuBar;
+    private javax.swing.JMenuItem panDownItem;
+    private javax.swing.JMenuItem panLeftItem;
+    private javax.swing.JMenu panMenu;
+    private javax.swing.JMenuItem panRightItem;
+    private javax.swing.JMenuItem panUpItem;
     private javax.swing.JMenuItem zoomInItem;
     private javax.swing.JMenu zoomMenu;
     private javax.swing.JMenuItem zoomOutItem;
