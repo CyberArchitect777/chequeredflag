@@ -338,14 +338,31 @@ public class TrackPanel extends javax.swing.JPanel {
     }
 
     public void zoomIn() {
-        m_scale = m_scale * 1.5;
         Dimension d = getSize();
+        // change scaling factor
+        m_scale = m_scale * 2.0;
+        double dTransX, dTransY;
+        dTransX = standardTrans.getTranslateX() * 2 - d.width / 2;
+        dTransY = standardTrans.getTranslateY() * 2 - d.height / 2;
+        standardTrans.setToIdentity();
+        // Negative Y scale effectively changes Y direction (ascending
+        // values from botton to top)
+        standardTrans.scale( 1.0, -1.0 );
+        standardTrans.translate( dTransX, -dTransY );
         repaint(0, 0, 0, d.width, d.height );
     }
 
     public void zoomOut() {
-        m_scale = m_scale / 1.5;
         Dimension d = getSize();
+        m_scale = m_scale / 2.0;
+        double dTransX, dTransY;
+        dTransX = standardTrans.getTranslateX() / 2 + d.width / 4;
+        dTransY = standardTrans.getTranslateY() / 2 + d.height / 4;
+        standardTrans.setToIdentity();
+        // Negative Y scale effectively changes Y direction (ascending
+        // values from botton to top)
+        standardTrans.scale( 1.0, -1.0 );
+        standardTrans.translate( dTransX, -dTransY );
         repaint(0, 0, 0, d.width, d.height );
     }
 
