@@ -287,8 +287,8 @@ public class TrackPanel extends javax.swing.JPanel {
     private void drawArc( Graphics2D g2d, int x, int y, double dStAngle, double dEndAngle,
                      double dStRadius, double dEndRadius)
     {
-        double r, a, r0;
-        int px, py;
+        double r, a;
+        int nPosXStart, nPosYStart, nPosX, nPosY;
 
         // EndAngle has to be within 2 * PI of StAngle, else a full circle
         // will be drawn.
@@ -297,34 +297,46 @@ public class TrackPanel extends javax.swing.JPanel {
 
         // radius change per angle unit (radiens)
         a = (dEndRadius - dStRadius)/(dEndAngle - dStAngle);
-        // calculate reference radius
-        r0 = dStRadius - a * dStAngle;
-        do
+
+        // Draw a number of straight lines along the circle.
+        // Each line should have a length of about 10 pixels.
+        // First, find out which angle increment gives a length of 10 pixels.
+        double dAngleIncrement;
+        if ( Math.abs(dStRadius) > 50 )
+            // calcculate increment to get lines about 10 pixels long
+            dAngleIncrement = Math.abs( 2 * Math.asin( 5.0 / dStRadius ) );
+        else
+            // small circle: divide full circle into 32 sectors
+            dAngleIncrement = 2 * Math.PI / 32;
+
+        // calculate starting point
+        nPosXStart = x + new Double( dStRadius * Math.cos(dStAngle)).intValue();
+        nPosYStart = y - new Double( dStRadius * Math.sin(dStAngle)).intValue();
+
+        // draw a number of short lines
+        double dAngle = dStAngle + dAngleIncrement;
+        while ( dAngle < dEndAngle )
         {
-            // calculate new radius
-            r=r0+a*dStAngle;
+            // calculate radius for current angle
+            r = dStRadius + (dAngle - dStAngle) * a;
+
+            // calculate point on circle for this angle
+            nPosX = x + new Double( r * Math.cos(dAngle)).intValue();
+            nPosY = y - new Double( r * Math.sin(dAngle)).intValue();
             
-            px = x + new Double( r*Math.cos(dStAngle)).intValue();
-            py = y - new Double( r*Math.sin(dStAngle)).intValue();
+            // draw line to this point
+            g2d.drawLine( nPosXStart, nPosYStart, nPosX, nPosY );
 
-            // Draw very short line @@@
-            g2d.drawLine(px, py, px + 1, py + 1 );
-
-            if (r > 10)
-                dStAngle += 1/r;
-            else if (r < -10)
-                dStAngle -= 1/r;
-            else
-            {
-                dStAngle += 0.1;
-            }
+            // proceed to next increment.
+            dAngle = dAngle + dAngleIncrement;
+            nPosXStart = nPosX;
+            nPosYStart = nPosY;
         }
-        while(dStAngle < dEndAngle);
 
-        // draw a last short line to complete the arc
-        px = x + new Double( r*Math.cos(dEndAngle) ).intValue();
-        py = y - new Double( r*Math.sin(dEndAngle) ).intValue();
-        g2d.drawLine( px, py, px + 1, py + 1 );
+        // draw a last short line to the end point of rhe arc
+        nPosX = x + new Double( dEndRadius * Math.cos(dEndAngle)).intValue();
+        nPosY = y - new Double( dEndRadius * Math.sin(dEndAngle)).intValue();
+        g2d.drawLine( nPosXStart, nPosYStart, nPosX, nPosY );
     }
 
     private Track m_track;
