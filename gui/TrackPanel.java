@@ -8,7 +8,35 @@ package chequeredflag.gui;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.event.*;
 import chequeredflag.data.track.*;
+
+class TPMouseWheelListener implements MouseWheelListener {
+
+    public TPMouseWheelListener( TrackPanel tp )
+    {
+        m_trackPanel = tp;
+    }
+
+    public void mouseWheelMoved(MouseWheelEvent e)
+    {
+        double dFactor;
+        int nUnitsToScroll = e.getUnitsToScroll();
+        if ( nUnitsToScroll > 0 )
+        {
+            // zoom in
+            dFactor = 1.1;
+        }
+        else
+        {
+            // zoom out
+            dFactor = 0.9;
+        }
+        m_trackPanel.zoom( dFactor );
+    }
+
+    protected TrackPanel m_trackPanel;
+};
 
 /**
  *
@@ -32,6 +60,9 @@ public class TrackPanel extends javax.swing.JPanel {
         m_scale = 1.5;
         // First time drawing flag
         m_fFirstTime = true;
+        // Create mouse wheel listener
+        m_mwl = new TPMouseWheelListener( this );
+        addMouseWheelListener( m_mwl );
     }
 
     /** This method is called from within the constructor to
@@ -350,26 +381,25 @@ public class TrackPanel extends javax.swing.JPanel {
     }
 
     public void zoomIn() {
-        Dimension d = getSize();
-        // change scaling factor
-        m_scale = m_scale * 2.0;
-        double dTransX, dTransY;
-        dTransX = standardTrans.getTranslateX() * 2 - d.width / 2;
-        dTransY = standardTrans.getTranslateY() * 2 - d.height / 2;
-        standardTrans.setToIdentity();
-        // Negative Y scale effectively changes Y direction (ascending
-        // values from botton to top)
-        standardTrans.scale( 1.0, -1.0 );
-        standardTrans.translate( dTransX, -dTransY );
-        repaint(0, 0, 0, d.width, d.height );
+        zoom( 1.5 );
     }
 
     public void zoomOut() {
+        zoom( 2.0 / 3.0 );
+    }
+
+    protected void zoom(double dFactor)
+    {
         Dimension d = getSize();
-        m_scale = m_scale / 2.0;
         double dTransX, dTransY;
-        dTransX = standardTrans.getTranslateX() / 2 + d.width / 4;
-        dTransY = standardTrans.getTranslateY() / 2 + d.height / 4;
+        dTransX = standardTrans.getTranslateX();
+        dTransY = standardTrans.getTranslateY();
+
+        m_scale = m_scale * dFactor;
+
+        dTransX = dTransX * dFactor + (1 - dFactor) * d.width / 2;
+        dTransY = dTransY * dFactor + (1 - dFactor) * d.height / 2;
+
         standardTrans.setToIdentity();
         // Negative Y scale effectively changes Y direction (ascending
         // values from botton to top)
@@ -744,6 +774,8 @@ public class TrackPanel extends javax.swing.JPanel {
     private boolean m_fLeftFenceBridgedPrev;
 
     private boolean m_fRightFenceBridgedPrev;
+
+    private TPMouseWheelListener m_mwl;
 
     // Display the computer car line.
     protected void paintCCLine(CCLine ccLine, Graphics2D g2d) {
