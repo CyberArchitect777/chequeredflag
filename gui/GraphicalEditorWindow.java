@@ -113,11 +113,11 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
     }//GEN-END:initComponents
 
 private void panDown(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panDown
-    m_trackPanel.panY( -100 );
+    m_trackPanel.panY( 100 );
 }//GEN-LAST:event_panDown
 
 private void panUp(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panUp
-    m_trackPanel.panY( 100 );
+    m_trackPanel.panY( -100 );
 }//GEN-LAST:event_panUp
 
 private void panRight(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panRight
