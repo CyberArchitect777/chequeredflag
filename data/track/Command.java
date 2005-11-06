@@ -33,41 +33,41 @@ public class Command extends CFDataObject {
             {
             case 0x83:  // disable drawing of background picture
             case 0x84:  // enable drawing of background picture
-            case 0x86:  // pit start
-            case 0x87:  // pit end
-            case 0x96:  // Unk
-            case 0x97:  // Unk
-            case 0x9B:  // Unk
-            case 0x9C:  // Unk
-            case 0x9D:  // Unk
-            case 0x9E:  // Unk
-            case 0x9F:  // Unk
-            case 0xA0:  // Unk
+            case 0x86:  // pit start. SDI: connect pitlane start
+            case 0x87:  // pit end. SDI: connect pitlane end
+            case 0x96:  // Unk. SDI: pitlane start
+            case 0x97:  // Unk. SDI: pitlane end
+            case 0x9B:  // Unk. SDI: some pitlane marker 1
+            case 0x9C:  // Unk. SDI: some pitlane marker 2
+            case 0x9D:  // Unk. SDI: some pitlane marker 3
+            case 0x9E:  // Unk. SDI: some pitlane marker 4
+            case 0x9F:  // Unk. SDI: pitlane fences start
+            case 0xA0:  // Unk. SDI: pitlane fences end
             case 0xA1:  // pit lane entry, join right pit lane fence
             case 0xA2:  // pit lane entry, join left pit lane fence
             case 0xA3:  // pit lane exit, join right pit lane fence
             case 0xA4:  // pit lane exit, join left pit lane fence
-            case 0xA5:  // Unk
-            case 0xA8:  // marshal with a flag
+            case 0xA5:  // Unk. SDI: change the sign of first 2 sector args
+            case 0xA8:  // marshal with a flag. SDI: the chequered flag?
                 // no further parameters
                 break;
 
             case 0x80:  // object placement
             case 0x81:  // display distance front
             case 0x82:  // display distance back
-            case 0x88:  // Unk
-            case 0x89:  // Unk
-            case 0x8C:  // Unk
-            case 0x8D:  // Unk
-            case 0x90:  // Unk
-            case 0x91:  // Unk
-            case 0x92:  // Unk
-            case 0x93:  // Unk
-            case 0x94:  // curve polygon subdivision (1=many polygon, 8=few polygon)
-            case 0x95:  // may be same as 94 (?)
-            case 0x98:  // left fence height change
-            case 0x99:  // right fence height change
-            case 0xA9:  // Unk
+            case 0x88:  // Unk. SDI: pit parking zone marking 1, arg=length (same as cmd 0x8a/0x8b[8, arg, -, -, 0x102])
+            case 0x89:  // Unk. SDI: pit parking zone marking 2, arg=length (same as cmd 0x8a/0x8b[8, arg, -, -, 0x102])
+            case 0x8C:  // Unk. SDI: changes something left, arg=length
+            case 0x8D:  // Unk. SDI: changes something right, arg=length
+            case 0x90:  // Unk. SDI: ccline correction: change low order byte of ccline at curseg - arg
+            case 0x91:  // Unk. SDI: ccline correction: change high order byte of ccline at curseg - arg
+            case 0x92:  // Unk. SDI: marks something (similar to 0xa8), arg=length
+            case 0x93:  // Unk. SDI: marks something (similar to 0xa8), arg=length
+            case 0x94:  // curve polygon subdivision (1=many polygon, 8=few polygon). SDI: CC coaching left
+            case 0x95:  // may be same as 94 (?). SDI: CC coaching right
+            case 0x98:  // left fence height change. SDI: arg=1...8
+            case 0x99:  // right fence height change. SDI: arg=1...8
+            case 0xA9:  // Unk. SDI: sets something for pitlane segment, else 0x3c (always 0x3c for normal track segments)
                 // one 2-byte int parameter
                 m_nParam[ 1 ] = fis.read() + fis.read() * 256;
                 break;
@@ -75,23 +75,23 @@ public class Command extends CFDataObject {
             case 0x85: // track width change
             case 0x8E: // left kerbs begin/length
             case 0x8F: // right kerbs begin/length
-            case 0x9A: // Unk
-            case 0xA6: // Unk
-            case 0xA7: // Unk
-            case 0xAB: // Unk
+            case 0x9A: // Unk. SDI: custom fence height, arg1=index 1...8:left 9...16:right, arg2=height
+            case 0xA6: // Unk. SDI: sets some flags in the segment
+            case 0xA7: // Unk. SDI: sets some flags in the segment
+            case 0xAB: // Unk. SDI: Unused? (will hang if arg1 equal to 42)
                 // 2 Parameters
                 m_nParam[ 1 ] = fis.read() + fis.read() * 256;
                 m_nParam[ 2 ] = fis.read() + fis.read() * 256;
                 break;
 
-            case 0xAA: // Unk
+            case 0xAA: // Unk. SDI: arg1=length for connect pitlane start (backwards), arg2=length for connect pitlane end, arg3=pitlane speed
                 // 3 Parameters
                 m_nParam[ 1 ] = fis.read() + fis.read() * 256;
                 m_nParam[ 2 ] = fis.read() + fis.read() * 256;
                 m_nParam[ 3 ] = fis.read() + fis.read() * 256;
                 break;
 
-            case 0xAC: // palette change
+            case 0xAC: // palette change. SDI: arg1=palette index 0...255, arg2=red? arg3=green? arg4=blue? (0...63?)
                 // 4 Parameters
                 m_nParam[ 1 ] = fis.read() + fis.read() * 256;
                 m_nParam[ 2 ] = fis.read() + fis.read() * 256;
@@ -99,8 +99,8 @@ public class Command extends CFDataObject {
                 m_nParam[ 4 ] = fis.read() + fis.read() * 256;
                 break;
 
-            case 0x8A: // track markings
-            case 0x8B: // starting grid markings
+            case 0x8A: // track markings. SDI: arg2=length
+            case 0x8B: // starting grid markings. SDI: arg2=length
                 // 5 Parameters
                 m_nParam[ 1 ] = fis.read() + fis.read() * 256;
                 m_nParam[ 2 ] = fis.read() + fis.read() * 256;
@@ -126,62 +126,62 @@ public class Command extends CFDataObject {
         // Rest depends on type
         switch (m_nType)
         {
-        case 0x83:  // disable drawing of background picture
-        case 0x84:  // enable drawing of background picture
-        case 0x86:  // pit start
-        case 0x87:  // pit end
-        case 0x96:  // Unk
-        case 0x97:  // Unk
-        case 0x9B:  // Unk
-        case 0x9C:  // Unk
-        case 0x9D:  // Unk
-        case 0x9E:  // Unk
-        case 0x9F:  // Unk
-        case 0xA0:  // Unk
-        case 0xA1:  // pit lane entry, join right pit lane fence
-        case 0xA2:  // pit lane entry, join left pit lane fence
-        case 0xA3:  // pit lane exit, join right pit lane fence
-        case 0xA4:  // pit lane exit, join left pit lane fence
-        case 0xA5:  // Unk
-        case 0xA8:  // marshal with a flag
+        case 0x83:
+        case 0x84:
+        case 0x86:
+        case 0x87:
+        case 0x96:
+        case 0x97:
+        case 0x9B:
+        case 0x9C:
+        case 0x9D:
+        case 0x9E:
+        case 0x9F:
+        case 0xA0:
+        case 0xA1:
+        case 0xA2:
+        case 0xA3:
+        case 0xA4:
+        case 0xA5:
+        case 0xA8:
             // no further parameters
             break;
 
-        case 0x80:  // object placement
-        case 0x81:  // display distance front
-        case 0x82:  // display distance back
-        case 0x88:  // Unk
-        case 0x89:  // Unk
-        case 0x8C:  // Unk
-        case 0x8D:  // Unk
-        case 0x90:  // Unk
-        case 0x91:  // Unk
-        case 0x92:  // Unk
-        case 0x93:  // Unk
-        case 0x94:  // curve polygon subdivision (1=many polygon, 8=few polygon)
-        case 0x95:  // may be same as 94 (?)
-        case 0x98:  // left fence height change
-        case 0x99:  // right fence height change
-        case 0xA9:  // Unk
+        case 0x80:
+        case 0x81:
+        case 0x82:
+        case 0x88:
+        case 0x89:
+        case 0x8C:
+        case 0x8D:
+        case 0x90:
+        case 0x91:
+        case 0x92:
+        case 0x93:
+        case 0x94:
+        case 0x95:
+        case 0x98:
+        case 0x99:
+        case 0xA9:
             // one 2-byte int parameter
             write( fos, m_nParam[ 1 ] );
             nWritten += 2;
             break;
 
-        case 0x85: // track width change
-        case 0x8E: // left kerbs begin/length
-        case 0x8F: // right kerbs begin/length
-        case 0x9A: // Unk
-        case 0xA6: // Unk
-        case 0xA7: // Unk
-        case 0xAB: // Unk
+        case 0x85:
+        case 0x8E:
+        case 0x8F:
+        case 0x9A:
+        case 0xA6:
+        case 0xA7:
+        case 0xAB:
             // 2 Parameters
             write( fos, m_nParam[ 1 ] );
             write( fos, m_nParam[ 2 ] );
             nWritten += 4;
             break;
 
-        case 0xAA: // Unk
+        case 0xAA:
             // 3 Parameters
             write( fos, m_nParam[ 1 ] );
             write( fos, m_nParam[ 2 ] );
@@ -189,7 +189,7 @@ public class Command extends CFDataObject {
             nWritten += 6;
             break;
 
-        case 0xAC: // palette change
+        case 0xAC:
             // 4 Parameters
             write( fos, m_nParam[ 1 ] );
             write( fos, m_nParam[ 2 ] );
@@ -198,8 +198,8 @@ public class Command extends CFDataObject {
             nWritten += 8;
             break;
 
-        case 0x8A: // track markings
-        case 0x8B: // starting grid markings
+        case 0x8A:
+        case 0x8B:
             // 5 Parameters
             write( fos, m_nParam[ 1 ] );
             write( fos, m_nParam[ 2 ] );
