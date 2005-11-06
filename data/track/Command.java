@@ -48,7 +48,7 @@ public class Command extends CFDataObject {
             case 0xA3:  // pit lane exit, join right pit lane fence
             case 0xA4:  // pit lane exit, join left pit lane fence
             case 0xA5:  // Unk. SDI: change the sign of first 2 sector args
-            case 0xA8:  // marshal with a flag. SDI: the chequered flag?
+            case 0xA8:  // marshal with a flag. SDI: segment at which to show the chequered flag, usually before s/f is visible
                 // no further parameters
                 break;
 
@@ -67,7 +67,7 @@ public class Command extends CFDataObject {
             case 0x95:  // may be same as 94 (?). SDI: CC coaching right
             case 0x98:  // left fence height change. SDI: arg=1...8
             case 0x99:  // right fence height change. SDI: arg=1...8
-            case 0xA9:  // Unk. SDI: sets something for pitlane segment, else 0x3c (always 0x3c for normal track segments)
+            case 0xA9:  // Unk. SDI: sets view distance for pitlane, else 60. Related to 0x81/0x82/0x90/0x91
                 // one 2-byte int parameter
                 m_nParam[ 1 ] = fis.read() + fis.read() * 256;
                 break;

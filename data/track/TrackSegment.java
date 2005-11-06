@@ -70,8 +70,8 @@ public class TrackSegment extends CFDataObject {
             {
                 // normal track segment
                 m_nTlu          = nTlu;
-                m_nCurvature    = loadInt( fis );
-                m_nHeightChange = loadInt( fis );
+                m_nCurvature    = loadInt( fis );	// SDI: start angle Z
+                m_nHeightChange = loadInt( fis );	// SDI: start angle X
                 m_nFlags        = loadInt( fis );
                 m_nFenceDistR   = fis.read();
                 m_nFenceDistL   = fis.read();
