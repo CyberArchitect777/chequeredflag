@@ -59,8 +59,8 @@ public class Command extends CFDataObject {
             case 0x89:  // Unk. SDI: pit parking zone marking 2, arg=length (same as cmd 0x8a/0x8b[8, arg, -, -, 0x102])
             case 0x8C:  // Unk. SDI: changes something left, arg=length
             case 0x8D:  // Unk. SDI: changes something right, arg=length
-            case 0x90:  // Unk. SDI: ccline correction: change low order byte of ccline at curseg - arg
-            case 0x91:  // Unk. SDI: ccline correction: change high order byte of ccline at curseg - arg
+            case 0x90:  // Unk. SDI: similar to 0x80 but going backwards arg segments
+            case 0x91:  // Unk. SDI: similar to 0x81 but going forwards arg segments
             case 0x92:  // Unk. SDI: marks something (similar to 0xa8), arg=length
             case 0x93:  // Unk. SDI: marks something (similar to 0xa8), arg=length
             case 0x94:  // curve polygon subdivision (1=many polygon, 8=few polygon). SDI: CC coaching left
