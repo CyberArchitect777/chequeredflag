@@ -8,6 +8,8 @@ package chequeredflag;
 
 import chequeredflag.gui.*;
 
+import javax.swing.*;
+
 /**
  *
  * @author barrie
@@ -20,7 +22,12 @@ public class Main
     /** Creates a new instance of Main */
     public Main() 
     {
-           mainScreen = new MainGUI();
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		mainScreen = new MainGUI();
     }
     
     /**

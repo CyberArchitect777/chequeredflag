@@ -210,7 +210,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
             if (((parentNode.toString()).equals("Track Segments")) || ((parentNode.toString()).equals("Pit Segments")))
             {
-                TrackSegments currentTrackSegments = new TrackSegments();
+                TrackSegments currentTrackSegments;
                 if ((parentNode.toString()).equals("Track Segments"))
                 {
                     currentTrackSegments = currentTrack.getTrackSegments();
