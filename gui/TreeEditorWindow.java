@@ -77,7 +77,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             }
             else
             {
-                if (currentSegment.getParam(1) > 32768)
+                if (currentSegment.getParam(1) >= 32768)
                 {
                     return "Turn Left";
                 }
@@ -95,7 +95,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             }
             else
             {
-                if (currentSegment.getParam(0) > 32768)
+                if (currentSegment.getParam(0) >= 32768)
                 {
                     return "Turn Left";
                 }
