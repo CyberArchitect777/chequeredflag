@@ -69,7 +69,7 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
         mapMenuBar.add(zoomMenu);
 
         panMenu.setText("Pan");
-        panLeftItem.setText("Pan left");
+        panLeftItem.setLabel("Pan Left");
         panLeftItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 panLeft(evt);
@@ -78,7 +78,7 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 
         panMenu.add(panLeftItem);
 
-        panRightItem.setText("Pan right");
+        panRightItem.setText("Pan Right");
         panRightItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 panRight(evt);
@@ -87,7 +87,7 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 
         panMenu.add(panRightItem);
 
-        panUpItem.setText("Pan up");
+        panUpItem.setText("Pan Up");
         panUpItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 panUp(evt);
@@ -96,7 +96,8 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 
         panMenu.add(panUpItem);
 
-        panDownItem.setText("Pan down");
+        panDownItem.setActionCommand("Pan Down");
+        panDownItem.setLabel("Pan Down");
         panDownItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 panDown(evt);

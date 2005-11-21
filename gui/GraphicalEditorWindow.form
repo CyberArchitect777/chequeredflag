@@ -34,7 +34,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="panLeftItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Pan left"/>
+                <Property name="label" type="java.lang.String" value="Pan Left"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="panLeft"/>
@@ -42,7 +42,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="panRightItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Pan right"/>
+                <Property name="text" type="java.lang.String" value="Pan Right"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="panRight"/>
@@ -50,7 +50,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="panUpItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Pan up"/>
+                <Property name="text" type="java.lang.String" value="Pan Up"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="panUp"/>
@@ -58,7 +58,8 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="panDownItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Pan down"/>
+                <Property name="actionCommand" type="java.lang.String" value="Pan Down"/>
+                <Property name="label" type="java.lang.String" value="Pan Down"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="panDown"/>
