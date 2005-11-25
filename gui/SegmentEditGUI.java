@@ -30,6 +30,17 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         segmentTable.setModel(trackData);
     }
     
+    public void editDataHeaders(TrackDataHeader trackHeaders)
+    {
+        HeaderTableModel headerData = new HeaderTableModel(trackHeaders);
+        segmentTable.setRowHeight(20);
+        segmentTable.setDefaultRenderer(String.class, new TextTableCellRenderer());
+        segmentTable.setDefaultRenderer(JComboBox.class, new SelectionTableCellRenderer());
+        segmentTable.setDefaultEditor(String.class, new TextTableCellEditor());
+        segmentTable.setDefaultEditor(JComboBox.class, new SelectionTableCellEditor());
+        segmentTable.setModel(headerData);
+    }
+    
     public void editBestLineSegment(CCLineSegment lineSegment)
     {
         BestLineTableModel lineData = new BestLineTableModel(lineSegment);
@@ -72,6 +83,12 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         buttonPanel.setLayout(new java.awt.GridLayout(1, 2));
 
         updateButton.setText("Update Segment");
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
+            }
+        });
+
         buttonPanel.add(updateButton);
 
         cancelButton.setText("Cancel Changes");
@@ -87,6 +104,25 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
 
         pack();
     }//GEN-END:initComponents
+
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        // Updates the track data with all changes that have been made
+        
+        if (segmentTable.getModel() instanceof HeaderTableModel)
+        {
+            HeaderTableModel currentTable = (HeaderTableModel)segmentTable.getModel();
+            currentTable.updateTrackData();
+            try
+            {
+                this.setClosed(true);
+            }
+            catch (Exception errorReport)
+            {
+                // This is a normal result of the closing of an internal window. Nothing should be done.
+            }
+        }
+        
+    }//GEN-LAST:event_updateButtonActionPerformed
 
     private void cancelAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelAction
         // Cancels all changes that have been made and closes the window

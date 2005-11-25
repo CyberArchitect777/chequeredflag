@@ -97,6 +97,41 @@ public class BestLineTableModel extends StandardTableModel
         typeList.addItem(new String("Wider Radius"));
         typeList.addItem(new String("Displacement"));
         //typeList.addItem(new String("Combined"));
+        
+        switch (currentLineSegment.getType())
+        {
+            case 0: typeList.setSelectedIndex(0); break;
+            case 25: typeList.setSelectedIndex(1); break;
+            case 50: typeList.setSelectedIndex(2); break;
+            case 75: typeList.setSelectedIndex(3);
+        }
+        
+        if (currentLineSegment.getType() == 0)
+        {
+            typeList.setSelectedIndex(0);
+        }
+        else
+        {
+            if (currentLineSegment.getType() == 64) // 0x40
+            {
+                typeList.setSelectedIndex(1);
+            }
+            else
+            {
+                if (currentLineSegment.getType() == 128) // 0x80
+                {
+                    typeList.setSelectedIndex(2);
+                }
+                //else
+                //{
+                    //if (currentLineSegment.getType() == 160) // 0xa0
+                    //{
+                    //   typeList.setSelectedIndex(3);
+                    //}
+                //}
+            }
+        }
+        
         getInfoForType(typeList.getSelectedIndex());
         typeList.addActionListener(new java.awt.event.ActionListener()
         {
