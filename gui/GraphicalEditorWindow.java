@@ -127,6 +127,13 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 					m_trackPanel.pan(PAN_AMOUNT, PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD3, 0, null);
+
+		// centering panning action (not in menu)
+		initAction(new AbstractAction("Pan Center") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.panCenter();
+				}
+			}, KeyEvent.VK_NUMPAD5, 0, null);
 	}
 
 	/**

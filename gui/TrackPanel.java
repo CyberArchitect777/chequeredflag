@@ -444,6 +444,10 @@ public class TrackPanel extends javax.swing.JPanel {
 		repaint();
 	}
 
+	public void panCenter() {
+		moveTo(getWidth() / 2, -getHeight() / 2);
+	}
+
     public void moveTo(int x, int y) {
         // Set coordinate to be the point in the bottom left corner.
         // Calculate new translation matrix.
