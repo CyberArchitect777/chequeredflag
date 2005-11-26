@@ -6,17 +6,23 @@
 
 package chequeredflag.gui;
 
-import chequeredflag.data.track.*;
+import chequeredflag.data.track.Track;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  *
  * @author  barrie
  */
 public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
-    
-    /** Creates new form graphicalEditorWindow */
+	private static final int PAN_AMOUNT = 100;
+
+	/** Creates new form graphicalEditorWindow */
     public GraphicalEditorWindow() {
         initComponents();
+		initActions();
         m_trackPanel = new TrackPanel();
         getContentPane().add(m_trackPanel,  java.awt.BorderLayout.CENTER);
     }
@@ -47,117 +53,104 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
         panDownItem = new javax.swing.JMenuItem();
 
         setTitle("Track Map");
-        zoomMenu.setText("Zoom");
-        zoomInItem.setText("Zoom In");
-        zoomInItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zoomIn(evt);
-            }
-        });
-
-        zoomMenu.add(zoomInItem);
-
-        zoomOutItem.setText("Zoom Out");
-        zoomOutItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zoomOut(evt);
-            }
-        });
-
-        zoomMenu.add(zoomOutItem);
-
-        mapMenuBar.add(zoomMenu);
-
-        panMenu.setText("Pan");
-        panLeftItem.setLabel("Pan Left");
-        panLeftItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                panLeft(evt);
-            }
-        });
-
-        panMenu.add(panLeftItem);
-
-        panRightItem.setText("Pan Right");
-        panRightItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                panRight(evt);
-            }
-        });
-
-        panMenu.add(panRightItem);
-
-        panUpItem.setText("Pan Up");
-        panUpItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                panUp(evt);
-            }
-        });
-
-        panMenu.add(panUpItem);
-
-        panDownItem.setActionCommand("Pan Down");
-        panDownItem.setLabel("Pan Down");
-        panDownItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                panDown(evt);
-            }
-        });
-
-        panMenu.add(panDownItem);
-
-        mapMenuBar.add(panMenu);
-
+		zoomMenu.setText("Zoom");
+		panMenu.setText("Pan");
+		mapMenuBar.add(zoomMenu);
+		mapMenuBar.add(panMenu);
         setJMenuBar(mapMenuBar);
 
         pack();
     }//GEN-END:initComponents
 
-private void panDown(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panDown
-    m_trackPanel.panY( 100 );
-}//GEN-LAST:event_panDown
+	private void initActions() {
+		initAction(new AbstractAction("Zoom In") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.zoomIn();
+				}
+			}, KeyEvent.VK_ADD, 0, zoomInItem);
+		zoomMenu.add(zoomInItem);
 
-private void panUp(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panUp
-    m_trackPanel.panY( -100 );
-}//GEN-LAST:event_panUp
+		initAction(new AbstractAction("Zoom Out") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.zoomOut();
+				}
+			}, KeyEvent.VK_SUBTRACT, 0, zoomOutItem);
+		zoomMenu.add(zoomOutItem);
 
-private void panRight(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panRight
-    m_trackPanel.panX( 100 );
-}//GEN-LAST:event_panRight
 
-private void panLeft(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panLeft
-    m_trackPanel.panX( -100 );
-}//GEN-LAST:event_panLeft
+		initAction(new AbstractAction("Pan Left") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.panX(-PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD4, 0, panLeftItem);
+		panMenu.add(panLeftItem);
 
-    private void zoomOut(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOut
-        // Make use of the mapZoomOut function
-        
-        mapZoomOut();
-        
-    }//GEN-LAST:event_zoomOut
+		initAction(new AbstractAction("Pan Right") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.panX(PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD6, 0, panRightItem);
+		panMenu.add(panRightItem);
 
-    private void zoomIn(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomIn
-        // Make use of the mapZoomIn function
-        
-        mapZoomIn();
-        
-    }//GEN-LAST:event_zoomIn
-    
-    private void mapZoomIn()
-    {
-        // Method to zoom in from a track map. May be used from several locations (menu, toolbar, etc)
-    
-        m_trackPanel.zoomIn(); 
-    }
-    
-    private void mapZoomOut()
-    {
-        // Method to zoom out from a track map. May be used from several locations (menu, toolbar, etc)
-        
-        m_trackPanel.zoomOut();
-    }
-    
-    
+		initAction(new AbstractAction("Pan Up") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.panY(-PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD8, 0, panUpItem);
+		panMenu.add(panUpItem);
+
+		initAction(new AbstractAction("Pan Down") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.panY(PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD2, 0, panDownItem);
+		panMenu.add(panDownItem);
+
+		// diagonal panning actions (not in menu)
+		initAction(new AbstractAction("Pan Down/Left") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.pan(-PAN_AMOUNT, PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD1, 0, null);
+		initAction(new AbstractAction("Pan Up/Left") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.pan(-PAN_AMOUNT, -PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD7, 0, null);
+		initAction(new AbstractAction("Pan Up/Right") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.pan(PAN_AMOUNT, -PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD9, 0, null);
+		initAction(new AbstractAction("Pan Down/Right") {
+				public void actionPerformed(final ActionEvent e) {
+					m_trackPanel.pan(PAN_AMOUNT, PAN_AMOUNT);
+				}
+			}, KeyEvent.VK_NUMPAD3, 0, null);
+	}
+
+	/**
+	 * Binds an action to a key stroke and optionally to a menu.
+	 * @param action
+	 * @param keyCode
+	 * @param modifiers
+	 * @param menuItem may be null
+	 */
+	private void initAction(final Action action, final int keyCode, final int modifiers, final JMenuItem menuItem) {
+		final KeyStroke keyStroke = keyCode != 0 ? KeyStroke.getKeyStroke(keyCode, modifiers) : null;
+		if (menuItem != null) {
+			menuItem.setAction(action);
+			if (keyStroke != null)
+				menuItem.setAccelerator(keyStroke);
+		} else {
+			// manually set action and accelerator if not in menu
+			getActionMap().put(action.getValue(Action.NAME), action);
+			if (keyStroke != null)
+				getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+						keyStroke, action.getValue(Action.NAME));
+		}
+	}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar mapMenuBar;
     private javax.swing.JMenuItem panDownItem;

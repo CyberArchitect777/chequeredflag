@@ -8,6 +8,7 @@ package chequeredflag.gui;
 
 import chequeredflag.data.track.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -22,15 +23,18 @@ public class TrackPanel extends javax.swing.JPanel {
     static double ANGLE_SCALE_RAD = 2 * Math.PI / 65536;
 
 	private class TPMouseListener extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
-		private Point panPoint;
+		private Point dragPoint;
 
 		public void mouseDragged(MouseEvent e) {
-			if (panPoint != null) {
-				if (e.isShiftDown()) {
-					pan(e.getX() - panPoint.x, e.getY() - panPoint.y);
-					panPoint = e.getPoint();
+			if (dragPoint != null) {
+				if ((e.getModifiers() & (MouseEvent.SHIFT_MASK | MouseEvent.CTRL_MASK)) != 0) {
+					if (e.isShiftDown())
+						pan(e.getX() - dragPoint.x, e.getY() - dragPoint.y);
+					else
+						zoom(1.0 + (e.getY() - dragPoint.y + e.getX() - dragPoint.x) / 100.0);
+					dragPoint = e.getPoint();
 				} else
-					panPoint = null;
+					dragPoint = null;
 			}
 		}
 
@@ -38,13 +42,14 @@ public class TrackPanel extends javax.swing.JPanel {
 		}
 
 		public void mousePressed(MouseEvent e) {
-			if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown())
-				panPoint = e.getPoint();
+			if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 &&
+					(e.getModifiers() & (MouseEvent.SHIFT_MASK | MouseEvent.CTRL_MASK)) != 0)
+				dragPoint = e.getPoint();
 		}
 
 		public void mouseReleased(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1)
-				panPoint = null;
+				dragPoint = null;
 		}
 
 		public void mouseWheelMoved(MouseWheelEvent e) {
@@ -75,10 +80,10 @@ public class TrackPanel extends javax.swing.JPanel {
         // First time drawing flag
         m_fFirstTime = true;
         // Create mouse listener
-        m_ml = new TPMouseListener();
-        addMouseWheelListener(m_ml);
-		addMouseListener(m_ml);
-		addMouseMotionListener(m_ml);
+        final TPMouseListener ml = new TPMouseListener();
+        addMouseWheelListener(ml);
+		addMouseListener(ml);
+		addMouseMotionListener(ml);
     }
 
     /** This method is called from within the constructor to
@@ -421,7 +426,7 @@ public class TrackPanel extends javax.swing.JPanel {
         // values from botton to top)
         standardTrans.scale( 1.0, -1.0 );
         standardTrans.translate( dTransX, -dTransY );
-        repaint(0, 0, 0, d.width, d.height );
+        repaint();
     }
 
     public void panX( int nXPan ) {
@@ -448,8 +453,7 @@ public class TrackPanel extends javax.swing.JPanel {
         standardTrans.scale( 1.0, -1.0 );
         standardTrans.translate( x, y);
         // repaint with new settings
-        Dimension d = getSize();
-        repaint(0, 0, 0, d.width, d.height );
+        repaint();
     }
 
     protected void paintFence(final TrackSegment trackSegment, Graphics2D g2d) {
@@ -793,8 +797,6 @@ public class TrackPanel extends javax.swing.JPanel {
     private boolean m_fLeftFenceBridgedPrev;
 
     private boolean m_fRightFenceBridgedPrev;
-
-    private TPMouseListener m_ml;
 
     // Display the computer car line.
     protected void paintCCLine(CCLine ccLine, Graphics2D g2d) {
