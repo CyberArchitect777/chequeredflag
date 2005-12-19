@@ -17,23 +17,48 @@ public class TrackDataHeader extends CFDataObject {
 
     /** Creates a new instance of TrackDataHeader */
     public TrackDataHeader() {
+        m_anKerbTopColor = new int[4];      // maximum number of 4 colors supported
+        m_anKerbBottomColor = new int[4];
     }
 
     public void load( FileInputStream fis )
     {
         try {
-            m_nStartAngle       = fis.read() + fis.read() * 256;
-            m_nStartHeight      = fis.read() + fis.read() * 256;
-            m_nStartY           = fis.read() + fis.read() * 256;
-            m_nStartZ           = fis.read() + fis.read() * 256;
-            m_nStartX           = fis.read() + fis.read() * 256;
-            m_nStartWidth       = fis.read() + fis.read() * 256;
-            m_nPoleWidth        = fis.read() + fis.read() * 256;
+            m_nStartAngle       = loadInt( fis );
+            m_nStartHeight      = loadInt( fis );
+            m_nStartY           = loadInt( fis );
+            m_nStartZ           = loadInt( fis );
+            m_nStartX           = loadInt( fis );
+            m_nStartWidth       = loadInt( fis );
+            m_nPoleWidth        = loadInt( fis );
             m_nPitSide          = fis.read();
             m_nTrSurround       = fis.read();
             m_nFenceDistR       = fis.read();
             m_nFenceDistL       = fis.read();
-            m_nKerbCNum         = fis.read() + fis.read() * 256;
+            m_nKerbCNum         = loadInt( fis );
+            if ( m_nKerbCNum > 0 )
+            {
+                int nValue;
+                for ( int i = 0; i < m_nKerbCNum; i++ )
+                {
+                    nValue = loadInt( fis );
+                    if ( nValue == 8 )
+                    {
+                        // White part of kerb gets different bottom colors, depending
+                        // on situation in game (special handling). No bottom color specified.
+                        m_anKerbTopColor[ i ] = 8;
+                        m_anKerbBottomColor[ i ] = -1;
+                    }
+                    else
+                    {
+                        // Not white: stote top colour and load bottom color from file
+                        m_anKerbTopColor[ i ] = nValue;
+                        m_anKerbBottomColor[ i ] = loadInt( fis );
+                    }
+                }
+            }
+
+            /*
             m_nUnk1             = fis.read() + fis.read() * 256;
             m_nKerbTopColor     = fis.read() + fis.read() * 256;
             m_nUnk2             = fis.read() + fis.read() * 256;
@@ -49,6 +74,7 @@ public class TrackDataHeader extends CFDataObject {
                 m_nKerbTopColor2    = m_nKerbTopColor;
                 m_nKerbBottomColor2 = m_nKerbBottomColor;
             };
+            */
 
             // other values calculated from those read from file
             m_dWidth = m_nStartWidth * 2 * Track.s_dWIDTHSCALE;
@@ -75,6 +101,22 @@ public class TrackDataHeader extends CFDataObject {
         fos.write( m_nFenceDistL );
         // double-byte values, again
         write( fos, m_nKerbCNum );
+        // 20 Bytes written so far
+        int nResult = 20;
+        for ( int i = 0; i < m_nKerbCNum; i++ )
+        {
+            // Always write top color
+            write( fos, m_anKerbTopColor[ i ] );
+            nResult += 2;
+            if ( m_anKerbTopColor[ i ] != 8 )
+            {
+                // not standard white: also write bottom color
+                write( fos, m_anKerbBottomColor[ i ] );
+                nResult += 2;
+            }
+        }
+
+/*
         write( fos, m_nUnk1 );
         write( fos, m_nKerbTopColor );
         write( fos, m_nUnk2 );
@@ -88,6 +130,7 @@ public class TrackDataHeader extends CFDataObject {
             write( fos, m_nKerbBottomColor2 );
             nResult += 4; // 4 more bytes written
         }
+*/
         return nResult;
     }
     
@@ -100,40 +143,49 @@ public class TrackDataHeader extends CFDataObject {
     protected int m_nTrSurround;
     protected int m_nFenceDistR, m_nFenceDistL;
     protected int m_nKerbCNum;
-    protected int m_nUnk1, m_nUnk2;
-    protected int m_nKerbTopColor, m_nKerbBottomColor;
-    protected int m_nKerbTopColor2, m_nKerbBottomColor2;
+    protected int m_nUnk1, m_nUnk2; // @@@ to be replaced by m_anKerbTop/BottomColor
+    protected int m_nKerbTopColor, m_nKerbBottomColor;  // @@@ to be replaced by m_anKerbTop/BottomColor
+    protected int m_nKerbTopColor2, m_nKerbBottomColor2; // @@@ to be replaced by m_anKerbTop/BottomColor
+    protected int m_anKerbTopColor[];
+    protected int m_anKerbBottomColor[];
 
     // calculated values
     protected double m_dWidth;
     
-    public void setUnknown1(int unknownValue1)
+    // Unknown1 in fact is the first kerb color (8 = white)
+    public void setUnknown1(int nColorIndex)
     {
-        // Sets the value of variable Unknown1
-        
-        m_nUnk1 = unknownValue1;        
+        // Only for compatibility, will be removed soon (19.12.2005)
+        m_anKerbTopColor[ 0 ] = nColorIndex;
+        if ( nColorIndex == 8 )
+            m_anKerbBottomColor[ 0 ] = -1; // invalid
+        else
+            // copy value to bottom color, too
+            m_anKerbBottomColor[ 0 ] = nColorIndex;
     }
     
-    public void setUnknown2(int unknownValue2)
+    // Unknown2 is the second kerb color (8 = white in all original tracks)
+    public void setUnknown2(int nColorIndex)
     {
-        // Sets the value of variable Unknown2
-        
-        m_nUnk2 = unknownValue2;        
+        // Only for compatibility, will be removed soon (19.12.2005)
+        m_anKerbTopColor[ 2 ] = nColorIndex;
+        if ( nColorIndex == 8 )
+            m_anKerbBottomColor[ 2 ] = -1; // invalid
+        else
+            // copy value to bottom color, too
+            m_anKerbBottomColor[ 2 ] = nColorIndex;
     }
     
     public int getUnknown1()
     {
-        // Returns the value of variable Unknown1
-        
-        return m_nUnk1;
+        // Only for compatibility, now uses color arrays.
+        return m_anKerbTopColor[ 0 ];
     }
     
     public int getUnknown2()
     {
-        
-        // Return the value of variable Unknown2
-        
-        return m_nUnk2;
+        // Only for compatibility, now uses color arrays.
+        return m_anKerbTopColor[ 2 ];
     }
     
     public void setTotalKerbColours(int totalKerbColours)
@@ -150,61 +202,30 @@ public class TrackDataHeader extends CFDataObject {
         return m_nKerbCNum;
     }
     
-    public void setKerbColor(boolean upperSide, boolean firstKerb, int colourValue)
+    public void setKerbColor(boolean upperSide, boolean firstKerb, int colorValue)
     {
-        // Sets the colour of the selected kerb element
-        
-        if (upperSide == true)
-        {
-            if (firstKerb == true)
-            {
-                m_nKerbTopColor = colourValue;
-            }
-            else
-            {
-                m_nKerbTopColor2 = colourValue;
-            }
-        }
+        // to be removed. Now uses the new color arrays
+        int nIndex;
+        nIndex = 1;
+        if ( !firstKerb )
+            nIndex += 2;
+        if ( upperSide )
+            m_anKerbTopColor[ nIndex ] = colorValue;
         else
-        {
-            if (firstKerb == true)
-            {
-                m_nKerbBottomColor = colourValue;
-            }
-            else
-            {
-                m_nKerbBottomColor2 = colourValue;
-            }
-        }
-        
+            m_anKerbBottomColor[ nIndex ] = colorValue;
     }
     
     public int getKerbColor(boolean upperSide, boolean firstKerb)
     {
-        // Return the colour of the selected kerb element
-        
-        if (upperSide == true)
-        {
-            if (firstKerb == true)
-            {
-                return m_nKerbTopColor;
-            }
-            else
-            {
-                return m_nKerbTopColor2;
-            }
-        }
+        // to be removed. Now uses the new color arrays
+        int nIndex;
+        nIndex = 1;
+        if ( !firstKerb )
+            nIndex += 2;
+        if ( upperSide )
+            return m_anKerbTopColor[ nIndex ];
         else
-        {
-            if (firstKerb == true)
-            {
-                return m_nKerbBottomColor;
-            }
-            else
-            {
-                return m_nKerbBottomColor2;
-            }
-        }
+            return m_anKerbBottomColor[ nIndex ];
     }
     
     public int getTrSurround()
