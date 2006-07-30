@@ -105,6 +105,18 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         pack();
     }//GEN-END:initComponents
 
+    public void closeEditorWindow()
+    {
+        try
+        {
+            this.setClosed(true);
+        }
+        catch (Exception errorReport)
+        {
+            // This is a normal result of the closing of an internal window. Nothing should be done.
+        }
+    }
+    
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
         // Updates the track data with all changes that have been made
         
@@ -112,16 +124,25 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         {
             HeaderTableModel currentTable = (HeaderTableModel)segmentTable.getModel();
             currentTable.updateTrackData();
-            try
+            closeEditorWindow();
+            /*try
             {
                 this.setClosed(true);
             }
             catch (Exception errorReport)
             {
                 // This is a normal result of the closing of an internal window. Nothing should be done.
+            }*/
+        }        
+        else
+        {
+            if (segmentTable.getModel() instanceof SegmentTableModel)
+            {
+                SegmentTableModel currentTable = (SegmentTableModel)segmentTable.getModel();
+                currentTable.updateTrackData();
+                closeEditorWindow();
             }
         }
-        
     }//GEN-LAST:event_updateButtonActionPerformed
 
     private void cancelAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelAction

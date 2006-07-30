@@ -302,6 +302,27 @@ public class TrackSegment extends CFDataObject {
     public double getRadius()
     { return m_dRadius; }
     
+    public void setDetailedFlags(String binaryCode)
+    {
+        // Implemented by Barrie. Takes an easier binary interpretion of flag values
+        // and converts them to the native format used by the game before storing them.
+        
+        int currentTotal = 0;
+        int currentBinaryValue = 32768;
+        for (int x=0;x<16;x++)
+        {
+            char uniqueCode = binaryCode.charAt(x);
+            if (uniqueCode == '1')
+            {
+                currentTotal = currentTotal + currentBinaryValue;
+            }
+            currentBinaryValue = currentBinaryValue / 2;            
+        }
+        
+        setFlags(currentTotal);
+        
+    }
+    
     public String getDetailedFlags()
     {
         // Implemented by Barrie. Outputs an easier interpretion of the flags variable

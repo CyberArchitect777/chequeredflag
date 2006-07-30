@@ -30,6 +30,33 @@ public class SegmentTableModel extends StandardTableModel
         populateTable();        
     }
     
+    public void updateTrackData()
+    {
+        // Updates the track data held in memory with the information currently displayed in the table
+        
+        currentSegment.setTlu(new Integer((String)getValueAt(0,1)).intValue());
+        currentSegment.setCurvature(new Integer((String)getValueAt(1,1)).intValue());
+        currentSegment.setHeightChange(new Integer((String)getValueAt(2,1)).intValue());
+        currentSegment.setFenceDistL(new Integer((String)getValueAt(3,1)).intValue());
+        currentSegment.setFenceDistR(new Integer((String)getValueAt(4,1)).intValue());
+        StringBuffer newBinaryCode = new StringBuffer();
+        for (int x=0;x<16;x++)
+        {
+            boolean currentCode = ((Boolean)getValueAt(5+x,1)).booleanValue();
+            if (currentCode == true)
+            {
+                newBinaryCode.append("1");
+            }
+            else
+            {
+                newBinaryCode.append("0");
+            }
+        }
+        
+        currentSegment.setDetailedFlags(newBinaryCode.toString());        
+        
+    }
+    
     public void populateTable()
     {
         
