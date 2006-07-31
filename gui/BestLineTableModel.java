@@ -96,40 +96,14 @@ public class BestLineTableModel extends StandardTableModel
         typeList.addItem(new String("Normal"));
         typeList.addItem(new String("Wider Radius"));
         typeList.addItem(new String("Displacement"));
-        //typeList.addItem(new String("Combined"));
+        //typeList.addItem(new String("Combined")); // Possible, but unused in original game.
         
         switch (currentLineSegment.getType())
         {
             case 0: typeList.setSelectedIndex(0); break;
-            case 25: typeList.setSelectedIndex(1); break;
-            case 50: typeList.setSelectedIndex(2); break;
-            case 75: typeList.setSelectedIndex(3);
-        }
-        
-        if (currentLineSegment.getType() == 0)
-        {
-            typeList.setSelectedIndex(0);
-        }
-        else
-        {
-            if (currentLineSegment.getType() == 64) // 0x40
-            {
-                typeList.setSelectedIndex(1);
-            }
-            else
-            {
-                if (currentLineSegment.getType() == 128) // 0x80
-                {
-                    typeList.setSelectedIndex(2);
-                }
-                //else
-                //{
-                    //if (currentLineSegment.getType() == 160) // 0xa0
-                    //{
-                    //   typeList.setSelectedIndex(3);
-                    //}
-                //}
-            }
+            case 64: typeList.setSelectedIndex(1); break; // 0x40
+            case 128: typeList.setSelectedIndex(2); break; // 0x80
+            //case 160: typeList.setSelectedIndex(3); // 0xa0. Possible, but unused in original game.
         }
         
         getInfoForType(typeList.getSelectedIndex());
