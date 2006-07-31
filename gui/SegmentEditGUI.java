@@ -142,6 +142,15 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
                 currentTable.updateTrackData();
                 closeEditorWindow();
             }
+            else
+            {
+                if (segmentTable.getModel() instanceof BestLineTableModel)
+                {
+                    BestLineTableModel currentTable = (BestLineTableModel)segmentTable.getModel();
+                    currentTable.updateTrackData();
+                    closeEditorWindow();
+                }
+            }
         }
     }//GEN-LAST:event_updateButtonActionPerformed
 

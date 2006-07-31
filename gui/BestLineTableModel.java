@@ -34,6 +34,50 @@ public class BestLineTableModel extends StandardTableModel
         populateTable(); 
     }
     
+    public void updateTrackData()
+    {
+        // Updates the track data held in memory with the information currently displayed in the table
+        
+        JComboBox currentList = (JComboBox)getValueAt(0,1);
+        System.out.println("Selected Index" + currentList.getSelectedIndex());
+        switch (currentList.getSelectedIndex())
+        {
+            case 0: currentLineSegment.setType(0); break;
+            case 1: currentLineSegment.setType(64); break;
+            case 2: currentLineSegment.setType(128); break;
+        }
+        
+        currentLineSegment.setTlu(new Integer((String)getValueAt(1,1)).intValue());
+                
+        if (currentList.getSelectedIndex() == 0 || currentList.getSelectedIndex() == 1)
+        {
+            currentLineSegment.setParam(0, new Integer((String)getValueAt(2,1)).intValue());
+            if (currentList.getSelectedIndex() == 0)
+            {
+                currentLineSegment.setParam(1, new Integer((String)getValueAt(3,1)).intValue());
+            }
+            else
+            {
+                currentLineSegment.setParam(1, new Integer((String)getValueAt(3,1)).intValue());
+                currentLineSegment.setParam(2, new Integer((String)getValueAt(4,1)).intValue());
+            }
+        }
+        else
+        {
+            currentLineSegment.setParam(0, new Integer((String)getValueAt(2,1)).intValue());
+            currentLineSegment.setParam(1, new Integer((String)getValueAt(3,1)).intValue());
+            if (currentList.getSelectedIndex() == 2)
+            {
+                currentLineSegment.setParam(2, new Integer((String)getValueAt(4,1)).intValue());
+            }
+            else
+            {
+                currentLineSegment.setParam(2, new Integer((String)getValueAt(4,1)).intValue());
+                currentLineSegment.setParam(3, new Integer((String)getValueAt(5,1)).intValue());
+            }
+        }        
+    }
+    
     public void getInfoForType(int segmentType)
     {
         switch (segmentType)
@@ -69,20 +113,20 @@ public class BestLineTableModel extends StandardTableModel
         else
         {
             setValueAt("Best Line Displacement",2,0);
-            setValueAt(new String(new Integer(currentLineSegment.getParam(1)).toString()),2,1);
+            setValueAt(new String(new Integer(currentLineSegment.getParam(0)).toString()),2,1);
             setValueAt("Best Line Correction",3,0);
-            setValueAt(new String(new Integer(currentLineSegment.getParam(0)).toString()),3,1);
+            setValueAt(new String(new Integer(currentLineSegment.getParam(1)).toString()),3,1);
             if (segmentType == 2)
             {
                 setValueAt("Best Line Radius",4,0);
-                setValueAt(new String(new Integer(currentLineSegment.getParam(0)).toString()),4,1);
+                setValueAt(new String(new Integer(currentLineSegment.getParam(2)).toString()),4,1);
             }
             else
             {
                 setValueAt("Best Line High Radius",4,0);
-                setValueAt(new String(new Integer(currentLineSegment.getParam(1)).toString()),4,1);
+                setValueAt(new String(new Integer(currentLineSegment.getParam(2)).toString()),4,1);
                 setValueAt("Best Line Low Radius",5,0);
-                setValueAt(new String(new Integer(currentLineSegment.getParam(2)).toString()),5,1);
+                setValueAt(new String(new Integer(currentLineSegment.getParam(3)).toString()),5,1);
             }
         }
         this.fireTableDataChanged();
@@ -97,6 +141,8 @@ public class BestLineTableModel extends StandardTableModel
         typeList.addItem(new String("Wider Radius"));
         typeList.addItem(new String("Displacement"));
         //typeList.addItem(new String("Combined")); // Possible, but unused in original game.
+        
+        System.out.println("Type - " + currentLineSegment.getType());
         
         switch (currentLineSegment.getType())
         {

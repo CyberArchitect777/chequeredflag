@@ -73,13 +73,13 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         
         if (currentSegment.getType() == 128) // 0x80 in hexidecimal 
         {
-            if (currentSegment.getParam(1) == 0)
+            if (currentSegment.getParam(2) == 0)
             {
                 return "Straight";
             }
             else
             {
-                if (currentSegment.getParam(1) >= 32768)
+                if (currentSegment.getParam(2) < 0)
                 {
                     return "Turn Left";
                 }
@@ -91,13 +91,13 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         }
         else
         {
-            if (currentSegment.getParam(0) == 0)
+            if (currentSegment.getParam(1) == 0)
             {
                 return "Straight";
             }
             else
             {
-                if (currentSegment.getParam(0) >= 32768)
+                if (currentSegment.getParam(1) < 0)
                 {
                     return "Turn Left";
                 }
