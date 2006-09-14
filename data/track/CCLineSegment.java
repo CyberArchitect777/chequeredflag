@@ -22,6 +22,20 @@ public class CCLineSegment extends CFDataObject {
         // create always full length of parameter array (3)
         // BARRIE: Changed 3 to 4 to account for dimensioning error
         m_nParam = new int[ 4 ];
+
+        // initialise calculated members
+        m_bValid = true;
+        m_dAngleStart = 0.0;
+        m_dAngleEnd = 0.0;
+        m_dLength = 0.0;
+        m_dPosXCenter = 0.0;
+        m_dPosYCenter = 0.0;
+        m_dPosXStart = 0.0;
+        m_dPosYStart = 0.0;
+        m_dPosXEnd = 0.0;
+        m_dPosYEnd = 0.0;
+        m_dRadius = 0.0;
+        m_segShift = null;
     }
 
     public void load( FileInputStream fis)
@@ -164,6 +178,140 @@ public class CCLineSegment extends CFDataObject {
         m_dAngleEnd = dAngleEnd;
     }
 
+    public double getLength() {
+        return m_dLength;
+    }
+
+    public void setLength( double dLength ) {
+        m_dLength = dLength;
+    }
+
+    public double getS() {
+        return m_dS;
+    }
+
+    public void setS( double dS ) {
+        m_dS = dS;
+    }
+
+    /** Returns true if segment is straight, else false.
+        Decision is made upon params read from disk so it
+        will always work, even when radius is not calculated
+        yet.
+    */
+    public boolean isStraight() {
+        switch ( m_nType )
+        {
+        case 0x00:
+            // normal segment: radius in second param
+            return m_nParam[ 1 ] == 0;
+
+        case 0x80:
+            // first segment in ccline: radius is in third param
+            return m_nParam[ 2 ] == 0;
+
+        case 0x40:
+            // segment with 32 bit radius stored in second and third param.
+            // Note: type 0x40 segment should never be straight because
+            // 32bit radius makes no sense in this case.
+            return (m_nParam[ 1 ] == 0 ) && ( m_nParam[ 2 ] == 0);
+        }
+        // When this point is reached, type of CCline segment is unknown...
+        return true; // can't tell, but return something...
+    }
+
+    /** Returns true if segment turns to the right, else false.
+    */
+    public boolean turnsRight() {
+        switch ( m_nType )
+        {
+        case 0x00:
+            // normal segment: radius in second param
+        case 0x40:
+            // segment with 32 bit radius stored in second and third param.
+            // most significant word stored in second param, so this
+            // decides if turning left or right just as in normal segment
+            if ( m_nParam[ 1 ] > 0 )
+                return true;
+            else
+                return false;
+
+        case 0x80:
+            // first segment in ccline: radius is in third param
+            if ( m_nParam[ 2 ] > 0 )
+                return true;
+            else
+                return false;
+        }
+        // When this point is reached, type of CCline segment is unknown...
+        return true; // can't tell, but return something...
+    }
+
+    /** Returns true if segment turns to the left, else false
+    */
+
+    public boolean turnsLeft() {
+        if ( isStraight() )
+            return false;
+        return !turnsRight();
+    }
+
+    /** Segment can be shifted by a (small) straight segment.
+        This is used to move a curved CCline segment by a fraction of
+        a TLU along the driving direction.
+    */
+    public void setShiftSegment( CCLineSegment seg) {
+        m_segShift = seg;
+    }
+
+    public CCLineSegment getShiftSegment() {
+        return m_segShift;
+    }
+
+    /** Segment can be invalidated to be excluded from display in the track map.
+    */
+    public boolean isValid() {
+        return m_bValid;
+    }
+
+    public void setValid( boolean bValid ) {
+        m_bValid = bValid;
+    }
+
+    /** Calculate the radius from raw params, depending on segment type.
+        Scale radius to tlu units and store internally.
+        Returns radius.
+    */
+    // factor for converting radius units to tlu
+    final static double s_dRADIUS_SCALE = 1 / 128.0;
+
+    public double calculateRadius() {
+        double dRadius;
+        if ( ( getType() & 0x40 ) != 0 )
+        {
+            // 32Bit radius: lower 16 bits is UNSIGNED!
+            int nLower = getParam( 2 );
+            if ( nLower < 0 )
+                // make it an unsigned 16 bit value
+                nLower = nLower & 0x0FFFF;
+            dRadius = getParam( 1 ) << 16 + nLower;
+        }
+        else if ( ( getType() & 0x80 ) != 0 )
+        {
+            // Type 0x80 segment (first in list) carries radius in param 2
+            dRadius = getParam( 2 );
+        }
+        else
+        {
+            // normal type 0 segment
+            dRadius = getParam( 1 );
+        }
+        // scale to tlu and store into segment.
+        dRadius = dRadius * s_dRADIUS_SCALE;
+        setRadius( dRadius );
+        return dRadius;
+    }
+
     // instance data members
     protected int m_nType, m_nTlu;
     protected int m_nParam[];
@@ -174,4 +322,7 @@ public class CCLineSegment extends CFDataObject {
     private double m_dPosXEnd, m_dPosYEnd;
     private double m_dPosXCenter, m_dPosYCenter;
     private double m_dAngleStart, m_dAngleEnd;
+    private double m_dLength, m_dS; // not exactly sure if we need this (KS 12 Sep 06)
+    private CCLineSegment m_segShift;
+    private boolean m_bValid;
 }
