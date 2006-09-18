@@ -192,16 +192,16 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
@@ -211,16 +211,16 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
@@ -279,16 +279,16 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
@@ -298,16 +298,16 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                     // inner line
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
                             ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
                 }
@@ -526,8 +526,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() + dFenceDistStart ) * m_scale,
                             ( trackSegment.getRadius() + dFenceDistEnd ) * m_scale );
                 }
@@ -537,8 +537,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             // Note: negative radius, this add fence dist!
                             ( trackSegment.getRadius() + dFenceDistEnd ) * m_scale,
                             ( trackSegment.getRadius() + dFenceDistStart ) * m_scale );
@@ -583,8 +583,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() - dFenceDistStart ) * m_scale,
                             ( trackSegment.getRadius() - dFenceDistEnd ) * m_scale );
                 }
@@ -594,8 +594,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             // Note: negative radius, thus subtract fence dist!
                             ( trackSegment.getRadius() - dFenceDistEnd ) * m_scale,
                             ( trackSegment.getRadius() - dFenceDistStart ) * m_scale );
@@ -694,8 +694,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale,
                             ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale );
                 }
@@ -706,8 +706,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             // Note: in this case, radius is negative
                             ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale,
                             ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale );
@@ -754,8 +754,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
                             ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale,
                             ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale );
                     // short straight pieces to connect to track edge.
@@ -768,8 +768,8 @@ public class TrackPanel extends javax.swing.JPanel {
                     drawArc(g2d,
                             new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
                             new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI + trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI + trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
+                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
                             // Note: in this case, radius is negative
                             ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthEnd()) / 1024.0 ))) * m_scale,
                             ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale );
@@ -812,7 +812,7 @@ public class TrackPanel extends javax.swing.JPanel {
         {
             ccLineSegment = ccLine.getAt( i );
             // straight or curved?
-            if ( ccLineSegment.getRadius() == 0.0 )
+            if ( ccLineSegment.isStraight() )
             {
                 // straight
                 g2d.drawLine( new Double( ( ccLineSegment.getPosXStart() ) * m_scale ).intValue(),
@@ -822,38 +822,39 @@ public class TrackPanel extends javax.swing.JPanel {
             }
             else
             {
-                // if this segment carries a shift value, connect start point with
-                // real beginning of the circle.
+                // if this segment carries a shift value, draw shift segment as connection line.
                 if ( ccLineSegment.getShift() > 0 )
                 {
-                    int nXStart, nYStart, nXCircle, nYCircle;
-                    nXStart = new Double( ( ccLineSegment.getPosXStart() ) * m_scale ).intValue();
-                    nYStart = new Double( ( ccLineSegment.getPosYStart() ) * m_scale ).intValue();
-                    nXCircle = new Double( ccLineSegment.getPosXCenter() * m_scale + ( Math.cos( Math.PI - ccLineSegment.getAngleStart() ) * ccLineSegment.getRadius() * m_scale ) ).intValue();
-                    nYCircle = new Double( ccLineSegment.getPosYCenter() * m_scale + ( Math.sin( Math.PI - ccLineSegment.getAngleStart() ) * ccLineSegment.getRadius() * m_scale ) ).intValue();
-                    g2d.drawLine( nXStart, nYStart, nXCircle, nYCircle );
+                    CCLineSegment segShift = ccLineSegment.getShiftSegment();
+                    // use different color for shift segment so shifting is visible
+                    // in track display.
+                    g2d.setColor( Color.GREEN );
+                    g2d.drawLine( new Double( segShift.getPosXStart() * m_scale ).intValue(),
+                                  new Double( segShift.getPosYStart() * m_scale ).intValue(),
+                                  new Double( segShift.getPosXEnd() * m_scale ).intValue(),
+                                  new Double( segShift.getPosYEnd() * m_scale ).intValue() );
+                    g2d.setColor( Color.RED );
                 }
 
-                if ( ccLineSegment.getRadius() > 0.0 )
+                if ( ccLineSegment.turnsRight() )
                 {
                     // right turn
                     drawArc(g2d,
                             new Double( ( ccLineSegment.getPosXCenter() ) * m_scale ).intValue(),
                             new Double( ( ccLineSegment.getPosYCenter() ) * m_scale ).intValue(),
-                            // @@@ should be Math.PI - ... -> temp to be consistent with track segments
-                            Math.PI + ccLineSegment.getAngleStart(),
-                            Math.PI + ccLineSegment.getAngleEnd(),
+                            Math.PI - ccLineSegment.getAngleStart(),
+                            Math.PI - ccLineSegment.getAngleEnd(),
                             ccLineSegment.getRadius() * m_scale,
                             ccLineSegment.getRadius() * m_scale );
                 }
                 else
                 {
-                    // left turn
+                    // left turn: change order of angles
                     drawArc(g2d,
                             new Double( ( ccLineSegment.getPosXCenter() ) * m_scale ).intValue(),
                             new Double( ( ccLineSegment.getPosYCenter() ) * m_scale ).intValue(),
-                            Math.PI + ccLineSegment.getAngleEnd(),
-                            Math.PI + ccLineSegment.getAngleStart(),
+                            Math.PI - ccLineSegment.getAngleEnd(),
+                            Math.PI - ccLineSegment.getAngleStart(),
                             ccLineSegment.getRadius() * m_scale,
                             ccLineSegment.getRadius() * m_scale );
                 }
