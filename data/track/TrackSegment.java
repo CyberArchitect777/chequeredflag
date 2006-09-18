@@ -132,14 +132,14 @@ public class TrackSegment extends CFDataObject {
         m_nWidthStart = nWidthStart;
 
         // resulting direction
-        m_nAngleEnd = m_nAngleStart + m_nTlu * m_nCurvature;
+        m_nAngleEnd = m_nAngleStart - m_nTlu * m_nCurvature;
 
         // end coordinates
         dAngle = m_nAngleStart * ANGLE_SCALE;
         if ( m_nCurvature == 0 )
         {
             // Straight
-            m_dPosXEnd = m_dPosXStart + (double) m_nTlu * Math.sin( dAngle );
+            m_dPosXEnd = m_dPosXStart - (double) m_nTlu * Math.sin( dAngle );
             m_dPosYEnd = m_dPosYStart + (double) m_nTlu * Math.cos( dAngle );
         }
         else
@@ -147,11 +147,11 @@ public class TrackSegment extends CFDataObject {
             // Curve: first calculate center of circle
             m_dRadius = 1 / (m_nCurvature * ANGLE_SCALE);
             m_dPosXCenter = m_dPosXStart + m_dRadius * Math.cos( dAngle );
-            m_dPosYCenter = m_dPosYStart - m_dRadius * Math.sin( dAngle );
+            m_dPosYCenter = m_dPosYStart + m_dRadius * Math.sin( dAngle );
             // from center, calculate end point
             dAngle = m_nAngleEnd * ANGLE_SCALE;
             m_dPosXEnd = m_dPosXCenter - m_dRadius * Math.cos( dAngle );
-            m_dPosYEnd = m_dPosYCenter + m_dRadius * Math.sin( dAngle );
+            m_dPosYEnd = m_dPosYCenter - m_dRadius * Math.sin( dAngle );
         }
 
         // examine commands for track width change
