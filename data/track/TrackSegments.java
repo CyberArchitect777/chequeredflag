@@ -19,6 +19,13 @@ public class TrackSegments extends Vector {
 
     /** Creates a new instance of TrackSegments */
     public TrackSegments() {
+        // initialise segment array
+        m_segs = new Seg[ 2000 ]; // In-game limit is 1420 Segs.
+                                  // Provide some more to allow track modifications
+                                  // that exceed the limit temporarily.
+        // Also initialise the segments.
+        for ( int i = 0; i < m_segs.length; i++ )
+            m_segs[ i ] = new Seg();
     }
 
     public void load( FileInputStream fis )
@@ -56,10 +63,16 @@ public class TrackSegments extends Vector {
     /**
       Calculate all coordinates and angles of segments
     */
-    public void calculateTrackLayout(int nStartWidth, int nStartAngle, double dPosX, double dPosY) {
-        int nWidthLength, nWidthEnd;
+    public void calculateTrackLayout(int nStartWidth, int nStartAngle, int nPosX, int nPosY) {
+        int nWidthLength, nWidthEnd, nSegNumber;
+        double dANGLE_SCALE;
         nWidthLength = 0;
         nWidthEnd = 0;
+        nSegNumber = 0; // for m_segs array access
+        dANGLE_SCALE = Math.PI * 2.0 / 65535.0;
+        double dPosX, dPosY;
+        dPosX = nPosX;
+        dPosY = nPosY;
         for ( Enumeration e = elements(); e.hasMoreElements(); )
         {
             // get the next element
@@ -117,10 +130,13 @@ public class TrackSegments extends Vector {
                            * ((double)((tsPitlaneEntry.getWidthStart() - nPITWIDTH/2)) / 1024.0);
 	}
         // Calculate pit lane
+        // convert position to int
+        int nPitStartX = new Double( dPitStartX ).intValue();
+        int nPitStartY = new Double( dPitStartY ).intValue();
         calculateTrackLayout(nPITWIDTH,
                              tsPitlaneEntry.getAngleStart(),
-                             dPitStartX,
-                             dPitStartY);
+                             nPitStartX,
+                             nPitStartY);
     }
 
     /**
@@ -150,4 +166,6 @@ public class TrackSegments extends Vector {
             return (TrackSegment) elementAt( i - 1 );
     }
     
+    // data members
+    Seg m_segs[]; // track segments as used by in-game calculations
 }
