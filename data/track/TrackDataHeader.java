@@ -26,9 +26,9 @@ public class TrackDataHeader extends CFDataObject {
         try {
             m_nStartAngle       = loadInt( fis );
             m_nStartHeight      = loadInt( fis );
-            m_nStartY           = loadInt( fis );
-            m_nStartZ           = loadInt( fis );
             m_nStartX           = loadInt( fis );
+            m_nStartZ           = loadInt( fis );
+            m_nStartY           = loadInt( fis );
             m_nStartWidth       = loadInt( fis );
             m_nPoleWidth        = loadInt( fis );
             m_nPitSide          = fis.read();
@@ -51,30 +51,12 @@ public class TrackDataHeader extends CFDataObject {
                     }
                     else
                     {
-                        // Not white: stote top colour and load bottom color from file
+                        // Not white: store top colour and load bottom color from file
                         m_anKerbTopColor[ i ] = nValue;
                         m_anKerbBottomColor[ i ] = loadInt( fis );
                     }
                 }
             }
-
-            /*
-            m_nUnk1             = fis.read() + fis.read() * 256;
-            m_nKerbTopColor     = fis.read() + fis.read() * 256;
-            m_nUnk2             = fis.read() + fis.read() * 256;
-            m_nKerbBottomColor  = fis.read() + fis.read() * 256;
-            if ( m_nKerbCNum == 4 )
-            {
-                // read two more colours
-                m_nKerbTopColor2    = fis.read() + fis.read() * 256;
-                m_nKerbBottomColor2 = fis.read() + fis.read() * 256;
-            }
-            else
-            {
-                m_nKerbTopColor2    = m_nKerbTopColor;
-                m_nKerbBottomColor2 = m_nKerbBottomColor;
-            };
-            */
 
             // other values calculated from those read from file
             m_dWidth = m_nStartWidth * 2 * Track.s_dWIDTHSCALE;
@@ -89,9 +71,9 @@ public class TrackDataHeader extends CFDataObject {
         // double-byte values
         write( fos, m_nStartAngle );
         write( fos, m_nStartHeight );
-        write( fos, m_nStartY );
-        write( fos, m_nStartZ );
         write( fos, m_nStartX );
+        write( fos, m_nStartZ );
+        write( fos, m_nStartY );
         write( fos, m_nStartWidth );
         write( fos, m_nPoleWidth );
         // single-byte values
