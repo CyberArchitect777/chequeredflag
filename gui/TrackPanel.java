@@ -167,15 +167,15 @@ public class TrackPanel extends javax.swing.JPanel {
                 int aXPoints[] = new int[ 4 ];
                 int aYPoints[] = new int[ 4 ];
                 // Width unit is 1/1024 of TLU.
-                double dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
-                double dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                double dXDiff = Math.cos( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                double dYDiff = Math.sin( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
                 aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiff) * m_scale).intValue();
                 aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiff) * m_scale).intValue();
                 aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + dXDiff) * m_scale).intValue();
                 aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - dYDiff) * m_scale).intValue();
 
-                dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
-                dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                dXDiff = Math.cos( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                dYDiff = Math.sin( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
                 aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + dXDiff) * m_scale).intValue();
                 aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - dYDiff) * m_scale).intValue();
                 aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
@@ -185,44 +185,46 @@ public class TrackPanel extends javax.swing.JPanel {
             else
             {
                 // Curve
+                double dOuterRadiusStart = ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale;
+                double dInnerRadiusStart = ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale;
+                double dOuterRadiusEnd   = ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale;
+                double dInnerRadiusEnd   = ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale;
+                double dStAngle  = Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD;
+                double dEndAngle = Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD;
+                int    nCenterX  = new Double( trackSegment.getPosXCenter() * m_scale ).intValue();
+                int    nCenterY  = new Double( trackSegment.getPosYCenter() * m_scale ).intValue();
                 if ( trackSegment.getCurvature() > 0 )
                 {
                     // right turn
                     // outer line
-                    drawArc(g2d,
-                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
-                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
-                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
+                    drawArc(g2d, nCenterX, nCenterY,
+                            dStAngle, dEndAngle,
+                            dOuterRadiusStart, dOuterRadiusEnd);
                     // inner line
-                    drawArc(g2d,
-                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
-                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
-                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
+                    drawArc(g2d, nCenterX, nCenterY,
+                            dStAngle, dEndAngle,
+                            dInnerRadiusStart, dInnerRadiusEnd);
+                    // separation line at start of segment
+                    g2d.drawLine( nCenterX + new Double( dOuterRadiusStart * Math.cos( dStAngle )).intValue(),
+                                  nCenterY - new Double( dOuterRadiusStart * Math.sin( dStAngle )).intValue(),
+                                  nCenterX + new Double( dInnerRadiusStart * Math.cos( dStAngle )).intValue(),
+                                  nCenterY - new Double( dInnerRadiusStart * Math.sin( dStAngle )).intValue());
                 }
                 else
                 {
                     // left turn: give start/end angle in opposite order
-                    drawArc(g2d,
-                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
-                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
-                            ( trackSegment.getRadius() + ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
+                    drawArc(g2d, nCenterX, nCenterY,
+                            dEndAngle, dStAngle,
+                            dOuterRadiusStart, dOuterRadiusEnd );
                     // inner line
-                    drawArc(g2d,
-                            new Double( trackSegment.getPosXCenter() * m_scale ).intValue(),
-                            new Double( trackSegment.getPosYCenter() * m_scale ).intValue(),
-                            Math.PI - trackSegment.getAngleEnd() * ANGLE_SCALE_RAD,
-                            Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD,
-                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthStart()) / 1024.0 ) * m_scale,
-                            ( trackSegment.getRadius() - ((double)trackSegment.getWidthEnd()) / 1024.0 ) * m_scale );
+                    drawArc(g2d, nCenterX, nCenterY,
+                            dEndAngle, dStAngle,
+                            dInnerRadiusStart, dInnerRadiusEnd );
+                    // separation line at start of segment
+                    g2d.drawLine( nCenterX + new Double( dOuterRadiusStart * Math.cos( dStAngle )).intValue(),
+                                  nCenterY - new Double( dOuterRadiusStart * Math.sin( dStAngle )).intValue(),
+                                  nCenterX + new Double( dInnerRadiusStart * Math.cos( dStAngle )).intValue(),
+                                  nCenterY - new Double( dInnerRadiusStart * Math.sin( dStAngle )).intValue());
                 }
             } // curve
 
@@ -254,15 +256,15 @@ public class TrackPanel extends javax.swing.JPanel {
                 int aXPoints[] = new int[ 4 ];
                 int aYPoints[] = new int[ 4 ];
                 // Width unit is 1/1024 of TLU.
-                double dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
-                double dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                double dXDiff = Math.cos( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+                double dYDiff = Math.sin( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
                 aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiff) * m_scale).intValue();
                 aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiff) * m_scale).intValue();
                 aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + dXDiff) * m_scale).intValue();
                 aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - dYDiff) * m_scale).intValue();
 
-                dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
-                dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                dXDiff = Math.cos( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+                dYDiff = Math.sin( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
                 aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + dXDiff) * m_scale).intValue();
                 aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - dYDiff) * m_scale).intValue();
                 aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiff) * m_scale).intValue();
@@ -474,8 +476,8 @@ public class TrackPanel extends javax.swing.JPanel {
 
         // calculate x/y differences from track width based on which the fence
         // distance will be calculated. @@@ different track width at start and end of segment possible!
-        dXDiff = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
-        dYDiff = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        dXDiff = Math.cos( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        dYDiff = Math.sin( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
 
         // calculate fence distance from middle of the road.
         double dFenceDistStart, dFenceDistEnd;
@@ -612,8 +614,8 @@ public class TrackPanel extends javax.swing.JPanel {
                 // calculate starting point of bridged fence and store in array
                 dXDiffFence = dXDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
                 dYDiffFence = dYDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
-                m_aXBridgePoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue();
-                m_aYBridgePoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue();
+                m_aXBridgePoints[ 0 ] = new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue();
+                m_aYBridgePoints[ 0 ] = new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue();
                 // set flag that starting point was found
                 m_fLeftFenceBridgedPrev = true;
             }
@@ -621,8 +623,8 @@ public class TrackPanel extends javax.swing.JPanel {
             // is also "bridged"
             dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);
             dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);;
-            m_aXBridgePoints[ 1 ] = new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue();
-            m_aYBridgePoints[ 1 ] = new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue();
+            m_aXBridgePoints[ 1 ] = new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue();
+            m_aYBridgePoints[ 1 ] = new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue();
         };
         if ( fRightFenceBridged )
         {
@@ -631,8 +633,8 @@ public class TrackPanel extends javax.swing.JPanel {
                 // calculate starting point of bridged fence and store in array
                 dXDiffFence = dXDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
                 dYDiffFence = dYDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
-                m_aXBridgePoints[ 2 ] = new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue();
-                m_aYBridgePoints[ 2 ] = new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue();
+                m_aXBridgePoints[ 2 ] = new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue();
+                m_aYBridgePoints[ 2 ] = new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue();
                 // set flag that starting point was found
                 m_fRightFenceBridgedPrev = true;
             }
@@ -640,8 +642,8 @@ public class TrackPanel extends javax.swing.JPanel {
             // is also "bridged"
             dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);
             dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);;
-            m_aXBridgePoints[ 3 ] = new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue();
-            m_aYBridgePoints[ 3 ] = new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue();
+            m_aXBridgePoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue();
+            m_aYBridgePoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue();
         };
 
         // store fence distance for next segment
@@ -660,10 +662,10 @@ public class TrackPanel extends javax.swing.JPanel {
         g2d.setColor(Color.green);
 
         // Width unit is 1/1024 of TLU.
-        double dXDiffStart = Math.cos( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
-        double dYDiffStart = Math.sin( trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
-        double dXDiffEnd   = Math.cos( trackSegment.getAngleEnd()   * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
-        double dYDiffEnd   = Math.sin( trackSegment.getAngleEnd()   * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+        double dXDiffStart = Math.cos( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        double dYDiffStart = Math.sin( Math.PI - trackSegment.getAngleStart() * ANGLE_SCALE_RAD ) * trackSegment.getWidthStart() / 1024.0;
+        double dXDiffEnd   = Math.cos( Math.PI - trackSegment.getAngleEnd()   * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
+        double dYDiffEnd   = Math.sin( Math.PI - trackSegment.getAngleEnd()   * ANGLE_SCALE_RAD ) * trackSegment.getWidthEnd() / 1024.0;
 
         if ((trackSegment.getFlags() & 0x800) != 0 )
         {
@@ -713,14 +715,14 @@ public class TrackPanel extends javax.swing.JPanel {
                             ( trackSegment.getRadius() + ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale );
                 }
                 // short straight pieces to connect to track edge.
-                g2d.drawLine( new Double( ( trackSegment.getPosXStart() - dXDiffStart ) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYStart() + dYDiffStart ) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosXStart() - 1.25 * dXDiffStart ) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYStart() + 1.25 * dYDiffStart ) * m_scale ).intValue() );
-                g2d.drawLine( new Double( ( trackSegment.getPosXEnd() - dXDiffEnd) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYEnd() + dYDiffEnd) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosXEnd() - 1.25 * dXDiffEnd) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYEnd() + 1.25 * dYDiffEnd) * m_scale ).intValue() );
+                g2d.drawLine( new Double( ( trackSegment.getPosXStart() + dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() - dYDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXStart() + 1.25 * dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() - 1.25 * dYDiffStart ) * m_scale ).intValue() );
+                g2d.drawLine( new Double( ( trackSegment.getPosXEnd() + dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() - dYDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXEnd() + 1.25 * dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() - 1.25 * dYDiffEnd) * m_scale ).intValue() );
             }
         }
 
@@ -775,14 +777,14 @@ public class TrackPanel extends javax.swing.JPanel {
                             ( trackSegment.getRadius() - ( 1.25 * (((double)trackSegment.getWidthStart()) / 1024.0 ))) * m_scale );
                 }
                 // short straight pieces to connect to track edge.
-                g2d.drawLine( new Double( ( trackSegment.getPosXStart() + dXDiffStart ) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYStart() - dYDiffStart ) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosXStart() + 1.25 * dXDiffStart ) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYStart() - 1.25 * dYDiffStart ) * m_scale ).intValue() );
-                g2d.drawLine( new Double( ( trackSegment.getPosXEnd() + dXDiffEnd) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYEnd() - dYDiffEnd) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosXEnd() + 1.25 * dXDiffEnd) * m_scale ).intValue(),
-                              new Double( ( trackSegment.getPosYEnd() - 1.25 * dYDiffEnd) * m_scale ).intValue() );
+                g2d.drawLine( new Double( ( trackSegment.getPosXStart() - dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() + dYDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXStart() - 1.25 * dXDiffStart ) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYStart() + 1.25 * dYDiffStart ) * m_scale ).intValue() );
+                g2d.drawLine( new Double( ( trackSegment.getPosXEnd() - dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() + dYDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosXEnd() - 1.25 * dXDiffEnd) * m_scale ).intValue(),
+                              new Double( ( trackSegment.getPosYEnd() + 1.25 * dYDiffEnd) * m_scale ).intValue() );
             }
         }
 
