@@ -163,7 +163,8 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         buttonPanel = new javax.swing.JPanel();
         addAboveButton = new javax.swing.JButton();
         addBelowButton = new javax.swing.JButton();
-        editButton = new javax.swing.JButton();
+        editSegmentButton = new javax.swing.JButton();
+        editCommandsButton = new javax.swing.JButton();
 
         setTitle("Object View");
         trackDetails.setShowsRootHandles(true);
@@ -177,7 +178,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
 
         getContentPane().add(treeViewScroll, java.awt.BorderLayout.CENTER);
 
-        buttonPanel.setLayout(new java.awt.GridLayout(1, 3));
+        buttonPanel.setLayout(new java.awt.GridLayout(2, 2));
 
         addAboveButton.setText("Add Above");
         buttonPanel.add(addAboveButton);
@@ -185,19 +186,93 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         addBelowButton.setText("Add Below");
         buttonPanel.add(addBelowButton);
 
-        editButton.setText("Edit");
-        editButton.addActionListener(new java.awt.event.ActionListener() {
+        editSegmentButton.setText("Edit Segment");
+        editSegmentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editObject(evt);
             }
         });
 
-        buttonPanel.add(editButton);
+        buttonPanel.add(editSegmentButton);
+
+        editCommandsButton.setText("Edit Commands");
+        editCommandsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editCommandsButtonActionPerformed(evt);
+            }
+        });
+
+        buttonPanel.add(editCommandsButton);
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
         pack();
     }//GEN-END:initComponents
+
+    private void editCommandsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCommandsButtonActionPerformed
+        // Edit the current set of commands for the segment selected on the tree. Called by the 'Edit Commands' button
+        
+        boolean objectNotEditable = false;
+        
+        TreePath fullPath = trackDetails.getSelectionPath();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
+        
+        if (selectedNode.getLevel() > 1)
+        {
+                TreePath parentPath = fullPath.getParentPath();
+                DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+                if (((parentNode.toString()).equals("Track Segments")) || ((parentNode.toString()).equals("Pit Segments")))
+                {
+                    TrackSegments currentTrackSegments = new TrackSegments();
+                    if ((parentNode.toString()).equals("Track Segments"))
+                    {
+                        currentTrackSegments = currentTrack.getTrackSegments();
+                    }
+                    else
+                    {
+                        currentTrackSegments = currentTrack.getPitlaneSegments();   
+                    }
+                    TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
+                    CommandEditGUI commandEditor = new CommandEditGUI(selectedTrackSegment, parentFrame);
+                    commandEditor.loadAllCommands();
+                    commandEditor.setVisible(true);
+                    if ((parentNode.toString()).equals("Track Segments"))
+                    {
+                        commandEditor.setTitle("Editing Commands for Track Segment " + segmentNo);
+                    }
+                    else
+                    {
+                        commandEditor.setTitle("Editing Commands for Pit Segment " + segmentNo);
+                    }
+                    parentFrame.add(commandEditor);
+                    commandEditor.toFront();
+                    try
+                    {
+                        commandEditor.setSelected(true);
+                    }
+                    catch (Exception exceptionError)
+                    {
+                        exceptionError.printStackTrace();
+                    }
+                }
+                else
+                {
+                    objectNotEditable = true;
+                }        
+        }
+        else
+        {
+            objectNotEditable = true;
+        }
+        
+        if (objectNotEditable == true)
+        {
+            JOptionPane.showMessageDialog(this, "Command editing is only available for track or pit track segments", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_editCommandsButtonActionPerformed
 
     private void editObject(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editObject
         // Edit the current object selected on the tree. Called natively by Edit button
@@ -214,6 +289,14 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             headersEditor.setTitle("Editing Track Data Headers");
             parentFrame.add(headersEditor);
             headersEditor.toFront();
+            try
+            {
+                headersEditor.setSelected(true);
+            }
+            catch (Exception exceptionError)
+            {
+                exceptionError.printStackTrace();
+            }
         }
         else
         {
@@ -248,6 +331,14 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                     }
                     parentFrame.add(segmentEditor);
                     segmentEditor.toFront();
+                    try
+                    {
+                        segmentEditor.setSelected(true);
+                    }
+                    catch (Exception exceptionError)
+                    {
+                        exceptionError.printStackTrace();
+                    }
                 }
                 else
                 {
@@ -261,6 +352,14 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                         segmentEditor.setTitle("Editing Best Line Segment " + segmentNo);
                         parentFrame.add(segmentEditor);
                         segmentEditor.toFront();
+                        try
+                        {
+                            segmentEditor.setSelected(true);
+                        }
+                        catch (Exception exceptionError)
+                        {
+                            exceptionError.printStackTrace();
+                        }
                     }
                 }
             }
@@ -289,7 +388,8 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
     private javax.swing.JButton addAboveButton;
     private javax.swing.JButton addBelowButton;
     private javax.swing.JPanel buttonPanel;
-    private javax.swing.JButton editButton;
+    private javax.swing.JButton editCommandsButton;
+    private javax.swing.JButton editSegmentButton;
     private javax.swing.JTree trackDetails;
     private javax.swing.JScrollPane treeViewScroll;
     // End of variables declaration//GEN-END:variables

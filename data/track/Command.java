@@ -24,6 +24,22 @@ public class Command extends CFDataObject {
         // store first parameter
         m_nParam[ 0 ] = nParam0;
     }
+    
+    public Command(int nType, int nParam0, int nParam1, int nParam2, int nParam3, int nParam4, int nParam5)
+    {
+        // Written by b-za. Allows the creation of a command with a full set of parameters
+        
+        m_nType = nType;
+        
+        m_nParam = new int[6];
+        
+        m_nParam[0] = nParam0;
+        m_nParam[1] = nParam1;
+        m_nParam[2] = nParam2;
+        m_nParam[3] = nParam3;
+        m_nParam[4] = nParam4;
+        m_nParam[5] = nParam5;        
+    }
 
     public void load( FileInputStream fis )
     {
@@ -221,6 +237,15 @@ public class Command extends CFDataObject {
             return m_nParam[ nParam ];
         else
             return 0;
+    }
+    
+    public void setParam(int nParam, int paramValue)
+    {
+        // Written by Barrie. Allows the setting of command parameters
+        // to match the functionally of the retrieval process. 
+        
+        m_nParam[nParam] = paramValue;
+        
     }
 
     public int getType() {

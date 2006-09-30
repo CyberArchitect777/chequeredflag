@@ -261,6 +261,14 @@ public class TrackSegment extends CFDataObject {
     // can only be read
     public Vector getCommands()
     { return m_Commands; }
+    
+    public void setCommands(Vector newCommands)
+    {
+        // Written by Barrie. New routine to allow the integration of new track commands.
+        
+        m_Commands = newCommands;
+        
+    }
 
     // all calculated members can only be read! Their value changes
     // when "calculateLayout" is called.

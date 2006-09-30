@@ -52,6 +52,17 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         segmentTable.setModel(lineData);
     }
     
+    public void editCmdParams(Command currentCommand, String[] paramText)
+    {
+        CmdParamTableModel commandData = new CmdParamTableModel(currentCommand, paramText);
+        segmentTable.setRowHeight(20);
+        segmentTable.setDefaultRenderer(String.class, new TextTableCellRenderer());
+        //segmentTable.setDefaultRenderer(JComboBox.class, new SelectionTableCellRenderer());
+        segmentTable.setDefaultEditor(String.class, new TextTableCellEditor());
+        //segmentTable.setDefaultEditor(JComboBox.class, new SelectionTableCellEditor());
+        segmentTable.setModel(commandData);        
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -65,6 +76,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         cancelButton = new javax.swing.JButton();
 
         setResizable(true);
+        setPreferredSize(new java.awt.Dimension(463, 440));
         segmentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -149,6 +161,15 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
                     BestLineTableModel currentTable = (BestLineTableModel)segmentTable.getModel();
                     currentTable.updateTrackData();
                     closeEditorWindow();
+                }
+                else
+                {
+                    if (segmentTable.getModel() instanceof CmdParamTableModel)
+                    {
+                        CmdParamTableModel currentTable = (CmdParamTableModel)segmentTable.getModel();
+                        currentTable.updateTrackData();
+                        closeEditorWindow();
+                    }
                 }
             }
         }

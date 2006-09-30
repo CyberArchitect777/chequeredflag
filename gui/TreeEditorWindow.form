@@ -37,8 +37,8 @@
       </Constraints>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-        <Property name="columns" type="int" value="3"/>
-        <Property name="rows" type="int" value="1"/>
+        <Property name="columns" type="int" value="2"/>
+        <Property name="rows" type="int" value="2"/>
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JButton" name="addAboveButton">
@@ -51,12 +51,20 @@
             <Property name="text" type="java.lang.String" value="Add Below"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="editButton">
+        <Component class="javax.swing.JButton" name="editSegmentButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="text" type="java.lang.String" value="Edit Segment"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editObject"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="editCommandsButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Edit Commands"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCommandsButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
