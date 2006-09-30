@@ -169,6 +169,14 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
                 cmdParamEditor.setTitle("Editing Parameters of Command " + convertIntToHex(selectedCommand.getType()));
                 parentFrame.add(cmdParamEditor);
                 cmdParamEditor.toFront();
+                try
+                {
+                    cmdParamEditor.setSelected(true);
+                }
+                catch (Exception exceptionError)
+                {
+                    exceptionError.printStackTrace();
+                }
             }
         }
         
