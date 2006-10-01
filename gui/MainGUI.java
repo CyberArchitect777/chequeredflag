@@ -102,7 +102,7 @@ public class MainGUI extends javax.swing.JFrame
         aboutItem.setText("About");
         aboutItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                displayAbout(evt);
+                aboutItemActionPerformed(evt);
             }
         });
 
@@ -114,6 +114,24 @@ public class MainGUI extends javax.swing.JFrame
 
         pack();
     }//GEN-END:initComponents
+
+    private void aboutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutItemActionPerformed
+        // Displays the About dialog
+        
+        AboutGUI aboutWindow = new AboutGUI();
+        aboutWindow.setVisible(true);
+        aboutWindow.setTitle("About Chequered Flag");
+        mainEditorWindow.add(aboutWindow);
+        aboutWindow.toFront();
+        try
+        {
+            aboutWindow.setSelected(true);
+        }
+        catch (Exception exceptionError)
+        {
+            exceptionError.printStackTrace();
+        }
+    }//GEN-LAST:event_aboutItemActionPerformed
 
     private void windowResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_windowResizeEvent
         // Detects any change in the size of the main editor window and adjusts internal frames accordingly
@@ -145,13 +163,6 @@ public class MainGUI extends javax.swing.JFrame
                            
     }//GEN-LAST:event_openTrackFile
    
-    private void displayAbout(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayAbout
-        // Displays the About dialog
-        
-        AboutGUI aboutDialog = new AboutGUI();
-                
-    }//GEN-LAST:event_displayAbout
-
     private void exitProgram(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitProgram
         // Immediately exits the program with no further steps
         

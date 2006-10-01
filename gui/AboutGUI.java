@@ -1,7 +1,7 @@
 /*
  * AboutGUI.java
  *
- * Created on 27 February 2005, 21:18
+ * Created on 01 October 2006, 00:50
  */
 
 package chequeredflag.gui;
@@ -10,17 +10,12 @@ package chequeredflag.gui;
  *
  * @author  barrie
  */
-public class AboutGUI extends javax.swing.JFrame {
+public class AboutGUI extends javax.swing.JInternalFrame {
     
     /** Creates new form AboutGUI */
-    public AboutGUI() {
-        
-        // Setting main frame information
-        
-        super("About Chequered Flag");
+    public AboutGUI() 
+    {
         initComponents();
-        setVisible(true);
-        setSize(400,300);
     }
     
     /** This method is called from within the constructor to
@@ -36,9 +31,8 @@ public class AboutGUI extends javax.swing.JFrame {
         versionText = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
 
-        getContentPane().setLayout(new java.awt.GridLayout(6, 0));
+        getContentPane().setLayout(new java.awt.GridLayout(6, 1));
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         titleText.setFont(new java.awt.Font("Dialog", 1, 36));
         titleText.setForeground(new java.awt.Color(255, 51, 51));
         titleText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -57,17 +51,17 @@ public class AboutGUI extends javax.swing.JFrame {
         getContentPane().add(f1gpText);
 
         byText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        byText.setText("Programming by Klaus Six and Barrie Millar");
+        byText.setText("Development by Klaus Six, Barrie Millar and Rene Smit");
         getContentPane().add(byText);
 
         versionText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        versionText.setText("Version 0.0.1");
+        versionText.setText("Version 0.1.0");
         getContentPane().add(versionText);
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeForm(evt);
+                okButtonActionPerformed(evt);
             }
         });
 
@@ -76,24 +70,20 @@ public class AboutGUI extends javax.swing.JFrame {
         pack();
     }//GEN-END:initComponents
 
-    private void closeForm(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeForm
-        // Closes the about dialog
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        // Closes the about form
         
-        this.dispose();
-        setVisible(false);
-               
-    }//GEN-LAST:event_closeForm
+        try
+        {
+            this.setClosed(true);
+        }
+        catch (Exception errorReport)
+        {
+            // This is a normal result of the closing of an internal window. Nothing should be done.
+        }
+        
+    }//GEN-LAST:event_okButtonActionPerformed
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AboutGUI().setVisible(true);
-            }
-        });
-    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel byText;

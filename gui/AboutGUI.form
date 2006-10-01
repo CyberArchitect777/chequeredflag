@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.0" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
-  <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
-  </Properties>
+<Form version="1.0" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-    <Property name="columns" type="int" value="0"/>
+    <Property name="columns" type="int" value="1"/>
     <Property name="rows" type="int" value="6"/>
   </Layout>
   <SubComponents>
@@ -49,13 +46,13 @@
     <Component class="javax.swing.JLabel" name="byText">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Programming by Klaus Six and Barrie Millar"/>
+        <Property name="text" type="java.lang.String" value="Development by Klaus Six, Barrie Millar and Rene Smit"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="versionText">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Version 0.0.1"/>
+        <Property name="text" type="java.lang.String" value="Version 0.1.0"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="okButton">
@@ -63,7 +60,7 @@
         <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="closeForm"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
