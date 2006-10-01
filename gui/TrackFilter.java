@@ -24,7 +24,8 @@ public class TrackFilter extends FileFilter
     
     public boolean accept(File trackFilter)
     {
-        return (trackFilter.getName().toLowerCase().startsWith("f1ct") && trackFilter.getName().toLowerCase().endsWith(".dat")) || trackFilter.isDirectory();
+        //return (trackFilter.getName().toLowerCase().startsWith("f1ct") && trackFilter.getName().toLowerCase().endsWith(".dat")) || trackFilter.isDirectory();
+        return trackFilter.getName().toLowerCase().endsWith(".dat") || trackFilter.isDirectory();
     }
     
     public String getDescription()

@@ -101,16 +101,34 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     private void saveTrack(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrack
         // Saves the current track file in memory by using ksix's track output processing
         
-        // Warning: No overwrite checking code in place yet
-        
+        boolean cancelCalled = false;
+        String fileName = new String();
         FileDialog fileDialog = new FileDialog(appFrame,true);
-        String fileName = fileDialog.showSaveDialog();
-        if (fileName.toLowerCase().endsWith(".dat") == false)
+        try
         {
-                fileName = fileName + ".DAT";
+            fileName = fileDialog.showSaveDialog();
         }
-        File trackFile = new File(fileName);
-        currentTrack.save(trackFile);
+        catch (Exception exceptionError)
+        {
+            cancelCalled = true;
+        }
+        if (cancelCalled == false)
+        {
+            if (fileName.toLowerCase().endsWith(".dat") == false)
+            {
+                    fileName = fileName + ".DAT";
+            }
+            File fileTest = new File(fileName);
+            if (fileTest.exists() == true)
+            {
+                JOptionPane.showMessageDialog(this, "The filename you have provided already exists. Please try again.", "Filename already exists", JOptionPane.ERROR_MESSAGE);
+            }
+            else
+            {
+                File trackFile = new File(fileName);
+                currentTrack.save(trackFile);
+            }
+        }
     }//GEN-LAST:event_saveTrack
 
     private void windowResize(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_windowResize

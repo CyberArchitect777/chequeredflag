@@ -35,8 +35,7 @@ public class MainGUI extends javax.swing.JFrame
         
         setSize(576,432);
         setVisible(true);
-        
-               
+                      
     }
     
     /** This method is called from within the constructor to
@@ -144,22 +143,34 @@ public class MainGUI extends javax.swing.JFrame
         // Opens a new track file and reads in data by using ksix's track input processing
         
         FileDialog fileDialog = new FileDialog(this,true);  
-        String fileName = fileDialog.showOpenDialog();
-        File trackFile = new File(fileName);
-        currentTrack = new Track();
-        currentTrack.load(trackFile);
+        String fileName = new String();
+        boolean cancelCalled = false;
+        try
+        {
+            fileName = fileDialog.showOpenDialog();
+        }
+        catch (Exception exceptionError)
+        {
+            cancelCalled = true;
+        }
+        if (cancelCalled == false)
+        {
+            File trackFile = new File(fileName);
+            currentTrack = new Track();
+            currentTrack.load(trackFile);
         
-        // Calculate size of track editing window
+            // Calculate size of track editing window
+            
+            int windowX = mainEditorWindow.getWidth();
+            int windowY = mainEditorWindow.getHeight();
+            TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
+            newTrackWindow.reshape(0,0,windowX,windowY);
+            newTrackWindow.setVisible(true);
         
-        int windowX = mainEditorWindow.getWidth();
-        int windowY = mainEditorWindow.getHeight();
-        TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
-        newTrackWindow.reshape(0,0,windowX,windowY);
-        newTrackWindow.setVisible(true);
+            // Add track editor window
         
-        // Add track editor window
-        
-        mainEditorWindow.add(newTrackWindow);
+            mainEditorWindow.add(newTrackWindow);
+        }                
                            
     }//GEN-LAST:event_openTrackFile
    

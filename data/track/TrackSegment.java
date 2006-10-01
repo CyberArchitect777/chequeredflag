@@ -341,7 +341,6 @@ public class TrackSegment extends CFDataObject {
         boolean stopFlag = false;
         while (stopFlag == false)
         {
-            System.out.println("TotalLeft: " + totalLeft + " - CurrentLimit: " + currentLimit);
             if (totalLeft >= currentLimit)
             {
                 binaryCode.append("1");

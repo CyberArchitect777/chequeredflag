@@ -51,8 +51,6 @@ public class HeaderTableModel extends StandardTableModel
         currentHeader.setUnknown1(new Integer((String)getValueAt(11,1)).intValue());
         currentHeader.setUnknown2(new Integer((String)getValueAt(12,1)).intValue());
         
-        System.out.println(curbType.getSelectedIndex());
-        
         if (curbType.getSelectedIndex() == 0)
         {
             currentHeader.setTotalKerbColours(2);
@@ -82,43 +80,30 @@ public class HeaderTableModel extends StandardTableModel
         
         setValueAt("Starting Angle of First Segment",0,0);
         setValueAt(new String(new Integer(currentHeader.getStartAngle()).toString()),0,1);
-        System.out.println("Starting Angle of First Segment = " + currentHeader.getStartAngle());
         setValueAt("Starting Height of First Segment",1,0);
         setValueAt(new String(new Integer(currentHeader.getStartHeight()).toString()),1,1);
-        System.out.println("Starting Height of First Segment = " + currentHeader.getStartHeight());
         setValueAt("X Coordinates Of Track Center At Start/Finish Line",2,0);
         setValueAt(new String(new Integer(currentHeader.getStartPos(0)).toString()),2,1);
-        System.out.println("X Coordinates of Track Center At Start/Finish Line = " + currentHeader.getStartPos(0));
         setValueAt("Y Coordinates Of Track Center At Start/Finish Line",3,0);
         setValueAt(new String(new Integer(currentHeader.getStartPos(1)).toString()),3,1);
-        System.out.println("Y Coordinates of Track Center At Start/Finish Line = " + currentHeader.getStartPos(1));
         setValueAt("Z Coordinates Of Track Center At Start/Finish Line",4,0);
         setValueAt(new String(new Integer(currentHeader.getStartPos(2)).toString()),4,1);
-        System.out.println("Z Coordinates of Track Center at Start/Finish Line = " + currentHeader.getStartPos(2));
         setValueAt("Starting Width of First Segment",5,0);
         setValueAt(new String(new Integer(currentHeader.getStartWidth()).toString()),5,1);
-        System.out.println("Starting Width of First Segment = " + currentHeader.getStartWidth());
         setValueAt("Pole Width (Unknown Setting)",6,0);
         setValueAt(new String(new Integer(currentHeader.getPoleWidth()).toString()),6,1);
-        System.out.println("Pole Width (Unknown Setting) = " + currentHeader.getPoleWidth());
         setValueAt("Pits Located on Left of Track?",7,0);
         setValueAt(new Boolean(currentHeader.getPitSide()),7,1);
-        System.out.println("Pits Located on Left of Track" + currentHeader.getPitSide());
         setValueAt("TrSurround (Unknown Setting)",8,0);
         setValueAt(new String(new Integer(currentHeader.getTrSurround()).toString()),8,1);
-        System.out.println("TrSurround (Unknown Setting)" + currentHeader.getTrSurround());
         setValueAt("Starting Distance of Left Fence",9,0);
         setValueAt(new String(new Integer(currentHeader.getFenceDistL()).toString()),9,1);
-        System.out.println("Starting Distance of Left Fence" + currentHeader.getFenceDistL());
         setValueAt("Starting Distance of Rignt Fence",10,0);
         setValueAt(new String(new Integer(currentHeader.getFenceDistR()).toString()),10,1);
-        System.out.println("Starting Distance of Right Fence" + currentHeader.getFenceDistR());
         setValueAt("Unknown 1",11,0);
         setValueAt(new String(new Integer(currentHeader.getUnknown1()).toString()),11,1);
-        System.out.println("Unknown 1 - " + currentHeader.getUnknown1());
         setValueAt("Unknown 2",12,0);
         setValueAt(new String(new Integer(currentHeader.getUnknown2()).toString()),12,1);
-        System.out.println("Unknown 2 - " + currentHeader.getUnknown2());
         setValueAt("Circuit Kerb Type",13,0);
         setValueAt(curbType,13,1);
         

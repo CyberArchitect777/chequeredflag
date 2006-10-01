@@ -269,7 +269,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         
         if (objectNotEditable == true)
         {
-            JOptionPane.showMessageDialog(this, "Command editing is only available for track or pit track segments", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Command editing is only available for individual track or pit track segments", "Error", JOptionPane.ERROR_MESSAGE);
         }
         
     }//GEN-LAST:event_editCommandsButtonActionPerformed
@@ -278,78 +278,58 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         // Edit the current object selected on the tree. Called natively by Edit button
         
         TreePath fullPath = trackDetails.getSelectionPath();
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
-        if (selectedNode.toString().equals("Track Headers"))
+        try
         {
-            System.out.println("Track Header edited");
-            TrackDataHeader currentHeaders = currentTrack.getTrackDataHeader();
-            SegmentEditGUI headersEditor = new SegmentEditGUI();
-            headersEditor.editDataHeaders(currentHeaders);
-            headersEditor.setVisible(true);
-            headersEditor.setTitle("Editing Track Data Headers");
-            parentFrame.add(headersEditor);
-            headersEditor.toFront();
-            try
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
+            if (selectedNode.toString().equals("Track Headers"))
             {
-                headersEditor.setSelected(true);
-            }
-            catch (Exception exceptionError)
-            {
-                exceptionError.printStackTrace();
-            }
-        }
-        else
-        {
-            if (selectedNode.getLevel() != 0)
-            {
-                TreePath parentPath = fullPath.getParentPath();
-                DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
-                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
-                if (((parentNode.toString()).equals("Track Segments")) || ((parentNode.toString()).equals("Pit Segments")))
+                TrackDataHeader currentHeaders = currentTrack.getTrackDataHeader();
+                SegmentEditGUI headersEditor = new SegmentEditGUI();
+                headersEditor.editDataHeaders(currentHeaders);
+                headersEditor.setVisible(true);
+                headersEditor.setTitle("Editing Track Data Headers");
+                parentFrame.add(headersEditor);
+                headersEditor.toFront();
+                try
                 {
-                    TrackSegments currentTrackSegments = new TrackSegments();
-                    if ((parentNode.toString()).equals("Track Segments"))
-                    {
-                        currentTrackSegments = currentTrack.getTrackSegments();
-                    }
-                    else
-                    {
-                        currentTrackSegments = currentTrack.getPitlaneSegments();   
-                    }
-                    TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
-                    SegmentEditGUI segmentEditor = new SegmentEditGUI();
-                    segmentEditor.editTrackSegment(selectedTrackSegment);
-                    segmentEditor.setVisible(true);
-                    if ((parentNode.toString()).equals("Track Segments"))
-                    {
-                        segmentEditor.setTitle("Editing Track Segment " + segmentNo);
-                    }
-                    else
-                    {
-                        segmentEditor.setTitle("Editing Pit Segment " + segmentNo);
-                    }
-                    parentFrame.add(segmentEditor);
-                    segmentEditor.toFront();
-                    try
-                    {
-                        segmentEditor.setSelected(true);
-                    }
-                    catch (Exception exceptionError)
-                    {
-                        exceptionError.printStackTrace();
-                    }
+                    headersEditor.setSelected(true);
                 }
-                else
+                catch (Exception exceptionError)
                 {
-                    if ((parentNode.toString()).equals("Best Line Segments"))
-                    {   
-                        CCLine currentLines = currentTrack.getCCLine();
-                        CCLineSegment selectedBestLine = currentLines.getAt(segmentNo);
+                    exceptionError.printStackTrace();
+                }
+            }
+            else
+            {
+                if (selectedNode.getLevel() > 1)
+                {
+                    TreePath parentPath = fullPath.getParentPath();
+                    DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+                    int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+                    int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+                    if (((parentNode.toString()).equals("Track Segments")) || ((parentNode.toString()).equals("Pit Segments")))
+                    {
+                        TrackSegments currentTrackSegments = new TrackSegments();
+                        if ((parentNode.toString()).equals("Track Segments"))
+                        {
+                            currentTrackSegments = currentTrack.getTrackSegments();
+                        }
+                        else
+                        {
+                            currentTrackSegments = currentTrack.getPitlaneSegments();   
+                        }
+                        TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
                         SegmentEditGUI segmentEditor = new SegmentEditGUI();
-                        segmentEditor.editBestLineSegment(selectedBestLine);
+                        segmentEditor.editTrackSegment(selectedTrackSegment);
                         segmentEditor.setVisible(true);
-                        segmentEditor.setTitle("Editing Best Line Segment " + segmentNo);
+                        if ((parentNode.toString()).equals("Track Segments"))
+                        {
+                            segmentEditor.setTitle("Editing Track Segment " + segmentNo);
+                        }
+                        else
+                        {
+                            segmentEditor.setTitle("Editing Pit Segment " + segmentNo);
+                        }
                         parentFrame.add(segmentEditor);
                         segmentEditor.toFront();
                         try
@@ -361,8 +341,38 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                             exceptionError.printStackTrace();
                         }
                     }
+                    else
+                    {
+                        if ((parentNode.toString()).equals("Best Line Segments"))
+                        {   
+                            CCLine currentLines = currentTrack.getCCLine();
+                            CCLineSegment selectedBestLine = currentLines.getAt(segmentNo);
+                            SegmentEditGUI segmentEditor = new SegmentEditGUI();
+                            segmentEditor.editBestLineSegment(selectedBestLine);
+                            segmentEditor.setVisible(true);
+                            segmentEditor.setTitle("Editing Best Line Segment " + segmentNo);
+                            parentFrame.add(segmentEditor);
+                            segmentEditor.toFront();
+                            try
+                            {
+                                segmentEditor.setSelected(true);
+                            }
+                            catch (Exception exceptionError)
+                            {
+                                exceptionError.printStackTrace();
+                            }
+                        }                         
+                    }
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "Segment editing is only available for either track headers or individual track, pit or best line segments", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        }
+        catch (Exception exceptionError)
+        {
+            // No tree item selected, so exception thrown
         }
     }//GEN-LAST:event_editObject
 
@@ -370,16 +380,23 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         // Gets the full path of the tree node upon selection by the user.
         
         TreePath fullPath = trackDetails.getSelectionPath();
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
-        if (selectedNode.getLevel() != 0)
+        try 
         {
-            TreePath parentPath = fullPath.getParentPath();
-            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-            if (parentNode.toString() == "Track Segments")
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
+            if (selectedNode.getLevel() != 0)
             {
-                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
-                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+                TreePath parentPath = fullPath.getParentPath();
+                DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+                if (parentNode.toString() == "Track Segments")
+                {
+                    int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+                    int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+                }
             }
+        }
+        catch (Exception exceptionError)
+        {
+            // No tree item selected, so exception thrown
         }
     }//GEN-LAST:event_setSelectedPaths
     

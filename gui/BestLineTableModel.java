@@ -39,7 +39,6 @@ public class BestLineTableModel extends StandardTableModel
         // Updates the track data held in memory with the information currently displayed in the table
         
         JComboBox currentList = (JComboBox)getValueAt(0,1);
-        System.out.println("Selected Index" + currentList.getSelectedIndex());
         switch (currentList.getSelectedIndex())
         {
             case 0: currentLineSegment.setType(0); break;
@@ -87,7 +86,6 @@ public class BestLineTableModel extends StandardTableModel
             case 2: tableDimension(5,2); break;
             case 3: tableDimension(6,2); break;
         }
-        System.out.println("Segment Type - " + segmentType);
         setValueAt("Best Line Type",0,0);
         setValueAt(typeList,0,1);
         setValueAt("Best Line Length",1,0);
@@ -141,8 +139,6 @@ public class BestLineTableModel extends StandardTableModel
         typeList.addItem(new String("Wider Radius"));
         typeList.addItem(new String("Displacement"));
         //typeList.addItem(new String("Combined")); // Possible, but unused in original game.
-        
-        System.out.println("Type - " + currentLineSegment.getType());
         
         switch (currentLineSegment.getType())
         {

@@ -76,7 +76,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         cancelButton = new javax.swing.JButton();
 
         setResizable(true);
-        setPreferredSize(new java.awt.Dimension(463, 440));
+        setPreferredSize(new java.awt.Dimension(463, 350));
         segmentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

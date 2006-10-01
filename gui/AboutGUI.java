@@ -33,6 +33,7 @@ public class AboutGUI extends javax.swing.JInternalFrame {
 
         getContentPane().setLayout(new java.awt.GridLayout(6, 1));
 
+        setPreferredSize(new java.awt.Dimension(433, 289));
         titleText.setFont(new java.awt.Font("Dialog", 1, 36));
         titleText.setForeground(new java.awt.Color(255, 51, 51));
         titleText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

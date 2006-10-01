@@ -49,10 +49,20 @@ public class FileDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         fileChooser.setFileFilter(fileChooser.getFileFilter());
         fileChooser.setFileView(fileChooser.getFileView());
+        fileChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileChooserActionPerformed(evt);
+            }
+        });
+
         getContentPane().add(fileChooser, java.awt.BorderLayout.CENTER);
 
         pack();
     }//GEN-END:initComponents
+
+    private void fileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fileChooserActionPerformed
     
     /**
      * @param args the command line arguments
