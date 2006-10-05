@@ -29,8 +29,14 @@ public class Track {
         m_Footer = new Footer();
     }
 
-    public void load( File file )
+    public boolean load( File file )
     {
+        
+        // Modified by Barrie to return the outcome of the track loading process
+        // Will return true if normal, false if loading resulted in an exception error
+        
+        boolean loadSuccess = true;
+        
         long lPos; // Position in file
         FileChannel fc;
         try {
@@ -82,13 +88,22 @@ public class Track {
             // Close input stream
             fis.close();
         }
-        catch( IOException ioe )
+        catch( Exception exceptionError ) // Modified to catch all exceptions
         {
-            System.err.println("Caught exception while loading track file");
+            loadSuccess = false;
         };
         // do all necessary calculations
-        calculateTrackLayout();
-        calculateCCLine();
+        
+        if (loadSuccess == false)
+        {
+            return false;
+        }
+        else
+        {
+            calculateTrackLayout();
+            calculateCCLine();
+            return true;
+        }
     }
 
     // Save back to file where it was loaded from

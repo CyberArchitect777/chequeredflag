@@ -157,19 +157,25 @@ public class MainGUI extends javax.swing.JFrame
         {
             File trackFile = new File(fileName);
             currentTrack = new Track();
-            currentTrack.load(trackFile);
-        
-            // Calculate size of track editing window
+            boolean loadSuccess = currentTrack.load(trackFile);
             
-            int windowX = mainEditorWindow.getWidth();
-            int windowY = mainEditorWindow.getHeight();
-            TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
-            newTrackWindow.reshape(0,0,windowX,windowY);
-            newTrackWindow.setVisible(true);
+            if (loadSuccess == true)
+            {
+                // Calculate size of track editing window
+                int windowX = mainEditorWindow.getWidth();
+                int windowY = mainEditorWindow.getHeight();
+                TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
+                newTrackWindow.reshape(0,0,windowX,windowY);
+                newTrackWindow.setVisible(true);
+                
+                // Add track editor window
         
-            // Add track editor window
-        
-            mainEditorWindow.add(newTrackWindow);
+                mainEditorWindow.add(newTrackWindow);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "There was a problem loading the track file specified. \nIt is likely that this is either not a track file, or that the track itself is corrupt.\nPlease try another valid track file", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }                
                            
     }//GEN-LAST:event_openTrackFile
