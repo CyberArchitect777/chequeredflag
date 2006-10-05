@@ -25,7 +25,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         initComponents();
         setDefaultElement();    
         createTree();
-        parentFrame = containerFrame;        
+        parentFrame = containerFrame;
     }
     
     public void populateTree()

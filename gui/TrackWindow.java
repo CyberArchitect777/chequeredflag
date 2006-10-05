@@ -23,12 +23,14 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     private TreeEditorWindow treeWindow;
     private GraphicalEditorWindow mapWindow;
     private MainGUI appFrame;
+    private String fileName;
     
     /** Creates new form TrackWindow */
     /* Receives a selected track as input */
-    public TrackWindow(Track selectedTrack, String fileName, MainGUI origContainer) 
+    public TrackWindow(Track selectedTrack, String trackFileName, MainGUI origContainer) 
     {
-        super("Track File: " + fileName);
+        super("Track File: " + trackFileName);
+        fileName = trackFileName;
         initComponents();
         setContentPane(trackEditorWindow);
         currentTrack = selectedTrack;
@@ -66,6 +68,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         trackMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         saveTrackItem = new javax.swing.JMenuItem();
+        saveTrackAsItem = new javax.swing.JMenuItem();
 
         getContentPane().setLayout(new java.awt.FlowLayout());
 
@@ -85,11 +88,20 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         saveTrackItem.setText("Save Track...");
         saveTrackItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveTrack(evt);
+                saveTrackItem(evt);
             }
         });
 
         fileMenu.add(saveTrackItem);
+
+        saveTrackAsItem.setText("Save Track As...");
+        saveTrackAsItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveTrackAs(evt);
+            }
+        });
+
+        fileMenu.add(saveTrackAsItem);
 
         trackMenuBar.add(fileMenu);
 
@@ -98,15 +110,24 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         pack();
     }//GEN-END:initComponents
 
-    private void saveTrack(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrack
-        // Saves the current track file in memory by using ksix's track output processing
+    private void saveTrackItem(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrackItem
+        // Saves the current track file to the same file it was loaded from
+        // FUTURE: New track files will have no existing filename and therefore will need to be routed to saveTrackAs
+        
+        File trackFile = new File(fileName);
+        currentTrack.save(trackFile);
+        
+    }//GEN-LAST:event_saveTrackItem
+    
+    private void saveTrackAs(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrackAs
+        // Prompts for a filename and then saves the current track file in memory to the specified filename
         
         boolean cancelCalled = false;
-        String fileName = new String();
+        String selectedFileName = new String();
         FileDialog fileDialog = new FileDialog(appFrame,true);
         try
         {
-            fileName = fileDialog.showSaveDialog();
+            selectedFileName = fileDialog.showSaveDialog();
         }
         catch (Exception exceptionError)
         {
@@ -114,22 +135,22 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         }
         if (cancelCalled == false)
         {
-            if (fileName.toLowerCase().endsWith(".dat") == false)
+            if (selectedFileName.toLowerCase().endsWith(".dat") == false)
             {
-                    fileName = fileName + ".DAT";
+                    selectedFileName = selectedFileName + ".DAT";
             }
-            File fileTest = new File(fileName);
+            File fileTest = new File(selectedFileName);
             if (fileTest.exists() == true)
             {
                 JOptionPane.showMessageDialog(this, "The filename you have provided already exists. Please try again.", "Filename already exists", JOptionPane.ERROR_MESSAGE);
             }
             else
             {
-                File trackFile = new File(fileName);
+                File trackFile = new File(selectedFileName);
                 currentTrack.save(trackFile);
             }
         }
-    }//GEN-LAST:event_saveTrack
+    }//GEN-LAST:event_saveTrackAs
 
     private void windowResize(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_windowResize
         // Calls window location and size re-calculation code when internal frame is resized.
@@ -142,6 +163,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem saveTrackAsItem;
     private javax.swing.JMenuItem saveTrackItem;
     private javax.swing.JDesktopPane trackEditorWindow;
     private javax.swing.JMenuBar trackMenuBar;

@@ -14,7 +14,15 @@
                 <Property name="text" type="java.lang.String" value="Save Track..."/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveTrack"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveTrackItem"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveTrackAsItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Track As..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveTrackAs"/>
               </Events>
             </MenuItem>
           </SubComponents>
