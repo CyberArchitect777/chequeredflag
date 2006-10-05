@@ -440,6 +440,13 @@ public class TrackPanel extends javax.swing.JPanel {
         standardTrans.translate( 0, -nYPan );
 		repaint();
     }
+    
+    public void redrawMap()
+    {
+        // Repaints the track map display
+        
+        repaint();
+    }
 
 	public void pan(int x, int y) {
 		standardTrans.translate(x, -y);

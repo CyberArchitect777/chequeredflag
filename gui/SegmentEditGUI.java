@@ -14,11 +14,16 @@ import javax.swing.*;
  *
  * @author  barrie
  */
-public class SegmentEditGUI extends javax.swing.JInternalFrame {
+public class SegmentEditGUI extends javax.swing.JInternalFrame 
+{
+    
+    private TrackWindow parentTrackWindow;
     
     /** Creates new form TrackSegmentEditGUI */
-    public SegmentEditGUI() {
+    public SegmentEditGUI(TrackWindow currentTrackWindow) 
+    {
         initComponents();
+        parentTrackWindow = currentTrackWindow;
     }
     
     public void editTrackSegment(TrackSegment trackSegment)
@@ -136,6 +141,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
         {
             HeaderTableModel currentTable = (HeaderTableModel)segmentTable.getModel();
             currentTable.updateTrackData();
+            parentTrackWindow.updateTrackMap();
             closeEditorWindow();
             /*try
             {
@@ -152,6 +158,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
             {
                 SegmentTableModel currentTable = (SegmentTableModel)segmentTable.getModel();
                 currentTable.updateTrackData();
+                parentTrackWindow.updateTrackMap();
                 closeEditorWindow();
             }
             else
@@ -160,6 +167,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
                 {
                     BestLineTableModel currentTable = (BestLineTableModel)segmentTable.getModel();
                     currentTable.updateTrackData();
+                    parentTrackWindow.updateTrackMap();
                     closeEditorWindow();
                 }
                 else
@@ -168,6 +176,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame {
                     {
                         CmdParamTableModel currentTable = (CmdParamTableModel)segmentTable.getModel();
                         currentTable.updateTrackData();
+                        parentTrackWindow.updateTrackMap();
                         closeEditorWindow();
                     }
                 }

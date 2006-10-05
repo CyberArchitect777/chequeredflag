@@ -19,13 +19,15 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
     private DefaultMutableTreeNode rootNode;
     private Track currentTrack;
     private JDesktopPane parentFrame;
+    private TrackWindow parentTrackWindow;
         
     /** Creates new form TreeEditorWindow */
-    public TreeEditorWindow(JDesktopPane containerFrame) {
+    public TreeEditorWindow(JDesktopPane containerFrame, TrackWindow currentTrackWindow) {
         initComponents();
         setDefaultElement();    
         createTree();
         parentFrame = containerFrame;
+        parentTrackWindow = currentTrackWindow;
     }
     
     public void populateTree()
@@ -235,7 +237,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                         currentTrackSegments = currentTrack.getPitlaneSegments();   
                     }
                     TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
-                    CommandEditGUI commandEditor = new CommandEditGUI(selectedTrackSegment, parentFrame);
+                    CommandEditGUI commandEditor = new CommandEditGUI(selectedTrackSegment, parentFrame, parentTrackWindow);
                     commandEditor.loadAllCommands();
                     commandEditor.setVisible(true);
                     if ((parentNode.toString()).equals("Track Segments"))
@@ -284,7 +286,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             if (selectedNode.toString().equals("Track Headers"))
             {
                 TrackDataHeader currentHeaders = currentTrack.getTrackDataHeader();
-                SegmentEditGUI headersEditor = new SegmentEditGUI();
+                SegmentEditGUI headersEditor = new SegmentEditGUI(parentTrackWindow);
                 headersEditor.editDataHeaders(currentHeaders);
                 headersEditor.setVisible(true);
                 headersEditor.setTitle("Editing Track Data Headers");
@@ -319,7 +321,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                             currentTrackSegments = currentTrack.getPitlaneSegments();   
                         }
                         TrackSegment selectedTrackSegment = currentTrackSegments.getAt(segmentNo);
-                        SegmentEditGUI segmentEditor = new SegmentEditGUI();
+                        SegmentEditGUI segmentEditor = new SegmentEditGUI(parentTrackWindow);
                         segmentEditor.editTrackSegment(selectedTrackSegment);
                         segmentEditor.setVisible(true);
                         if ((parentNode.toString()).equals("Track Segments"))
@@ -347,7 +349,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                         {   
                             CCLine currentLines = currentTrack.getCCLine();
                             CCLineSegment selectedBestLine = currentLines.getAt(segmentNo);
-                            SegmentEditGUI segmentEditor = new SegmentEditGUI();
+                            SegmentEditGUI segmentEditor = new SegmentEditGUI(parentTrackWindow);
                             segmentEditor.editBestLineSegment(selectedBestLine);
                             segmentEditor.setVisible(true);
                             segmentEditor.setTitle("Editing Best Line Segment " + segmentNo);

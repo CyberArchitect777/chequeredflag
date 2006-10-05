@@ -31,6 +31,14 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
         m_track = track;
         m_trackPanel.setTrack( track );
     }
+    
+    public void redrawTrackMap()
+    {
+    	// Passes on a signal to refresh the track map display
+	
+	m_trackPanel.redrawMap();
+	
+    }
 
     private Track m_track;
 

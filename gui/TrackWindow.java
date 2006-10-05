@@ -35,7 +35,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         setContentPane(trackEditorWindow);
         currentTrack = selectedTrack;
         appFrame = origContainer;
-        treeWindow = new TreeEditorWindow(trackEditorWindow);
+        treeWindow = new TreeEditorWindow(trackEditorWindow, this);
         mapWindow = new GraphicalEditorWindow();
         mapWindow.setTrack(currentTrack);
         treeWindow.setTrack(currentTrack);
@@ -110,6 +110,15 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         pack();
     }//GEN-END:initComponents
 
+    public void updateTrackMap()
+    {
+        // Send a command through the object model to update the track map.
+        // Should really use interfaces for this, but this involves less thinking for now.
+        
+        mapWindow.redrawTrackMap();
+        
+    }
+    
     private void saveTrackItem(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrackItem
         // Saves the current track file to the same file it was loaded from
         // FUTURE: New track files will have no existing filename and therefore will need to be routed to saveTrackAs

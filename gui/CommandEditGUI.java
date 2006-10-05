@@ -23,9 +23,10 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
     private TrackSegment trackSegment;
     private Vector currentSegmentCommands;
     private JDesktopPane parentFrame;
+    private TrackWindow parentTrackWindow;
     
     /** Creates new form CommandEditGUI */
-    public CommandEditGUI(TrackSegment currentSegment, JDesktopPane containerFrame) 
+    public CommandEditGUI(TrackSegment currentSegment, JDesktopPane containerFrame, TrackWindow currentTrackWindow) 
     {
         initComponents();
         parentFrame = containerFrame;
@@ -38,6 +39,7 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
         {
             currentSegmentCommands.add((Command)trackSegment.getCommands().get(x));
         }
+        parentTrackWindow = currentTrackWindow;
     }
     
     /** This method is called from within the constructor to
@@ -163,7 +165,7 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
             else
             {
                 Command selectedCommand = (Command)currentSegmentCommands.get(currentList.getSelectedIndex());
-                SegmentEditGUI cmdParamEditor = new SegmentEditGUI();
+                SegmentEditGUI cmdParamEditor = new SegmentEditGUI(parentTrackWindow);
                 cmdParamEditor.editCmdParams(selectedCommand, commandData.getParamArray());
                 cmdParamEditor.setVisible(true);
                 cmdParamEditor.setTitle("Editing Parameters of Command " + convertIntToHex(selectedCommand.getType()));
@@ -186,6 +188,7 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
         // Updates a segment with the specified set of commands
         
         trackSegment.setCommands(currentSegmentCommands);
+        parentTrackWindow.updateTrackMap();
         try
         {
             this.setClosed(true);
