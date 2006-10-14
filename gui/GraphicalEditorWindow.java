@@ -88,28 +88,28 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 
 		initAction(new AbstractAction("Pan Left") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.panX(-PAN_AMOUNT);
+					m_trackPanel.panX(PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD4, 0, panLeftItem);
 		panMenu.add(panLeftItem);
 
 		initAction(new AbstractAction("Pan Right") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.panX(PAN_AMOUNT);
+					m_trackPanel.panX(-PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD6, 0, panRightItem);
 		panMenu.add(panRightItem);
 
 		initAction(new AbstractAction("Pan Up") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.panY(-PAN_AMOUNT);
+					m_trackPanel.panY(PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD8, 0, panUpItem);
 		panMenu.add(panUpItem);
 
 		initAction(new AbstractAction("Pan Down") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.panY(PAN_AMOUNT);
+					m_trackPanel.panY(-PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD2, 0, panDownItem);
 		panMenu.add(panDownItem);
@@ -117,22 +117,22 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 		// diagonal panning actions (not in menu)
 		initAction(new AbstractAction("Pan Down/Left") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.pan(-PAN_AMOUNT, PAN_AMOUNT);
+					m_trackPanel.pan(PAN_AMOUNT, -PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD1, 0, null);
 		initAction(new AbstractAction("Pan Up/Left") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.pan(-PAN_AMOUNT, -PAN_AMOUNT);
+					m_trackPanel.pan(PAN_AMOUNT, PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD7, 0, null);
 		initAction(new AbstractAction("Pan Up/Right") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.pan(PAN_AMOUNT, -PAN_AMOUNT);
+					m_trackPanel.pan(-PAN_AMOUNT, PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD9, 0, null);
 		initAction(new AbstractAction("Pan Down/Right") {
 				public void actionPerformed(final ActionEvent e) {
-					m_trackPanel.pan(PAN_AMOUNT, PAN_AMOUNT);
+					m_trackPanel.pan(-PAN_AMOUNT, -PAN_AMOUNT);
 				}
 			}, KeyEvent.VK_NUMPAD3, 0, null);
 
