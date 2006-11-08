@@ -357,7 +357,7 @@ public class TrackPanel extends javax.swing.JPanel {
         // First, find out which angle increment gives a length of 10 pixels.
         double dAngleIncrement;
         if ( Math.abs(dStRadius) > 50 )
-            // calcculate increment to get lines about 10 pixels long
+            // calculate increment to get lines about 10 pixels long
             dAngleIncrement = Math.abs( 2 * Math.asin( 5.0 / dStRadius ) );
         else
             // small circle: divide full circle into 32 sectors
@@ -433,29 +433,33 @@ public class TrackPanel extends javax.swing.JPanel {
 
     public void panX( int nXPan ) {
         standardTrans.translate( nXPan, 0 );
-		repaint();
+	repaint();
     }
 
     public void panY( int nYPan ) {
         standardTrans.translate( 0, -nYPan );
-		repaint();
+	repaint();
     }
     
+    /** repaints the track map display */
     public void redrawMap()
     {
-        // Repaints the track map display
-        
+        // first recalculate the layout
+        m_track.calculateTrackLayout();
+        m_track.calculateCCLine();
+
+        // then repaint
         repaint();
     }
 
-	public void pan(int x, int y) {
-		standardTrans.translate(x, -y);
-		repaint();
-	}
+    public void pan(int x, int y) {
+        standardTrans.translate(x, -y);
+        repaint();
+    }
 
-	public void panCenter() {
-		moveTo(getWidth() / 2, -getHeight() / 2);
-	}
+    public void panCenter() {
+        moveTo(getWidth() / 2, -getHeight() / 2);
+    }
 
     public void moveTo(int x, int y) {
         // Set coordinate to be the point in the bottom left corner.
