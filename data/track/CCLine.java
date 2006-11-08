@@ -76,6 +76,40 @@ public class CCLine extends Vector {
             return (CCLineSegment) elementAt( nIndex - 1);
     }
 
-    // instance data members
+    /** inserts new CCline segment at given index (1-based).
+        returns newly created segment. */
+    public CCLineSegment insertAt( int i )
+    {
+        CCLineSegment newSeg;
+        // creating a straight segment of length 1.
+        newSeg = new CCLineSegment( 0 );
+        newSeg.m_nTlu = 1;
+        if ( i > elementCount )
+            add( newSeg );
+        else
+        {
+            try {
+                add( i - 1, newSeg );
+            }
+            catch ( ArrayIndexOutOfBoundsException e )
+            {
+                newSeg = null;
+            }
+        }
+        return null;
+    }
+
+    /** delete segment at given position (1-based) */
+    public void deleteAt(int i)
+    {
+        try {
+            remove( i - 1 );
+        }
+        catch( ArrayIndexOutOfBoundsException e )
+        {
+        }
+    }
+
+    /** instance data members */
     protected int m_nCumTlu;
 }

@@ -165,7 +165,41 @@ public class TrackSegments extends Vector {
         else
             return (TrackSegment) elementAt( i - 1 );
     }
+
+    /** insert segment at given position (1-based).
+        returns the newly inserted segment. */
+    public TrackSegment insertAt(int i)
+    {
+        TrackSegment newSeg;
+        newSeg = new TrackSegment();
+        // initialise with length = 1 so the segment will be visible
+        newSeg.m_nTlu = 1;
+        if ( i > elementCount )
+            add( newSeg );
+        else
+        {
+            try {
+                add( i - 1, newSeg );
+            }
+            catch( ArrayIndexOutOfBoundsException e )
+            {
+                newSeg = null;
+            }
+        }
+        return newSeg;
+    }
     
+    /** delete segment at given position (1-based) */
+    public void deleteAt(int i)
+    {
+        try {
+            remove( i - 1 );
+        }
+        catch( ArrayIndexOutOfBoundsException e )
+        {
+        }
+    }
+
     // data members
     Seg m_segs[]; // track segments as used by in-game calculations
 }
