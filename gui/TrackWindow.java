@@ -69,6 +69,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         fileMenu = new javax.swing.JMenu();
         saveTrackItem = new javax.swing.JMenuItem();
         saveTrackAsItem = new javax.swing.JMenuItem();
+        closeTrackItem = new javax.swing.JMenuItem();
 
         getContentPane().setLayout(new java.awt.FlowLayout());
 
@@ -103,12 +104,34 @@ public class TrackWindow extends javax.swing.JInternalFrame {
 
         fileMenu.add(saveTrackAsItem);
 
+        closeTrackItem.setText("Close Track");
+        closeTrackItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeTrackItemActionPerformed(evt);
+            }
+        });
+
+        fileMenu.add(closeTrackItem);
+
         trackMenuBar.add(fileMenu);
 
         setJMenuBar(trackMenuBar);
 
         pack();
     }//GEN-END:initComponents
+
+    private void closeTrackItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeTrackItemActionPerformed
+        // Close the track file
+        
+        try
+        {
+            this.setClosed(true);
+        }
+        catch (Exception errorReport)
+        {
+            // This is a normal result of the closing of an internal window. Nothing should be done.
+        }
+    }//GEN-LAST:event_closeTrackItemActionPerformed
 
     public void updateTrackMap()
     {
@@ -171,6 +194,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem closeTrackItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem saveTrackAsItem;
     private javax.swing.JMenuItem saveTrackItem;
