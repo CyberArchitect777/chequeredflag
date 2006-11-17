@@ -18,12 +18,14 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
 {
     
     private TrackWindow parentTrackWindow;
+    private TreeEditorWindow parentObjectWindow;
     
     /** Creates new form TrackSegmentEditGUI */
-    public SegmentEditGUI(TrackWindow currentTrackWindow) 
+    public SegmentEditGUI(TrackWindow currentTrackWindow, TreeEditorWindow currentObjectWindow) 
     {
         initComponents();
         parentTrackWindow = currentTrackWindow;
+        parentObjectWindow = currentObjectWindow;
     }
     
     public void editTrackSegment(TrackSegment trackSegment)
@@ -159,6 +161,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
                 SegmentTableModel currentTable = (SegmentTableModel)segmentTable.getModel();
                 currentTable.updateTrackData();
                 parentTrackWindow.updateTrackMap();
+                parentObjectWindow.updateCurrentNode();
                 closeEditorWindow();
             }
             else
@@ -168,6 +171,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
                     BestLineTableModel currentTable = (BestLineTableModel)segmentTable.getModel();
                     currentTable.updateTrackData();
                     parentTrackWindow.updateTrackMap();
+                    parentObjectWindow.updateCurrentNode();
                     closeEditorWindow();
                 }
                 else

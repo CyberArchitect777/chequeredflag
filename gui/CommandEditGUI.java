@@ -24,9 +24,10 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
     private Vector currentSegmentCommands;
     private JDesktopPane parentFrame;
     private TrackWindow parentTrackWindow;
+    private TreeEditorWindow parentObjectWindow;
     
     /** Creates new form CommandEditGUI */
-    public CommandEditGUI(TrackSegment currentSegment, JDesktopPane containerFrame, TrackWindow currentTrackWindow) 
+    public CommandEditGUI(TrackSegment currentSegment, JDesktopPane containerFrame, TrackWindow currentTrackWindow, TreeEditorWindow currentObjectWindow) 
     {
         initComponents();
         parentFrame = containerFrame;
@@ -40,6 +41,7 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
             currentSegmentCommands.add((Command)trackSegment.getCommands().get(x));
         }
         parentTrackWindow = currentTrackWindow;
+        parentObjectWindow = currentObjectWindow;
     }
     
     /** This method is called from within the constructor to
@@ -165,7 +167,7 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
             else
             {
                 Command selectedCommand = (Command)currentSegmentCommands.get(currentList.getSelectedIndex());
-                SegmentEditGUI cmdParamEditor = new SegmentEditGUI(parentTrackWindow);
+                SegmentEditGUI cmdParamEditor = new SegmentEditGUI(parentTrackWindow, parentObjectWindow);
                 cmdParamEditor.editCmdParams(selectedCommand, commandData.getParamArray());
                 cmdParamEditor.setVisible(true);
                 cmdParamEditor.setTitle("Editing Parameters of Command " + convertIntToHex(selectedCommand.getType()));

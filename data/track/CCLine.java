@@ -96,7 +96,9 @@ public class CCLine extends Vector {
                 newSeg = null;
             }
         }
-        return null;
+        //return null;
+        // Code bug found above by barrie. Suspected line is below
+        return newSeg;
     }
 
     /** delete segment at given position (1-based) */
