@@ -451,6 +451,12 @@ public class TrackPanel extends javax.swing.JPanel {
         // then repaint
         repaint();
     }
+    
+    public void selectSegment(int sectionType, int segmentNo)
+    {
+        // Selects a given segment depending on the tree node selected by the user
+        
+    }
 
     public void pan(int x, int y) {
         standardTrans.translate(x, -y);

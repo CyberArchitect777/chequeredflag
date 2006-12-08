@@ -142,6 +142,15 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         
     }
     
+    public void highlightSection(int sectionType, int segmentNo)
+    {
+        // Sends a command through the object model to highlight a section of the track map
+        // Should really use interfaces for this, but this involves less thinking for now.
+        
+        mapWindow.selectedSegment(sectionType, segmentNo);
+        
+    }
+    
     private void saveTrackItem(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTrackItem
         // Saves the current track file to the same file it was loaded from
         // FUTURE: New track files will have no existing filename and therefore will need to be routed to saveTrackAs

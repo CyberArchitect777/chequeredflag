@@ -256,6 +256,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
             if (selectedNode.getLevel() > 1)
             {
+                int deleteType = 0;
                 TreePath parentPath = fullPath.getParentPath();
                 DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
                 int spaceIndex = ((selectedNode.toString()).indexOf(" "));
@@ -266,35 +267,60 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                     if ((parentNode.toString()).equals("Track Segments"))
                     {
                         currentTrackSegments = currentTrack.getTrackSegments();
-                        currentTrackSegments.deleteAt(segmentNo);
-                        mainTrackSegmentNode.remove(segmentNo-1);
-                        int[] entryDeletions = {(segmentNo-1)};
-                        String[] dataDeletions = {selectedNode.toString()};
-                        ((DefaultTreeModel)(trackDetails.getModel())).nodesWereRemoved(mainTrackSegmentNode, entryDeletions, dataDeletions);
-                        reIndexNodes(0);
+                        if (currentTrackSegments.size() == 1)
+                        {
+                            JOptionPane.showMessageDialog(this, "The last remaining track segment cannot be deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            currentTrackSegments.deleteAt(segmentNo);
+                            mainTrackSegmentNode.remove(segmentNo-1);
+                            int[] entryDeletions = {(segmentNo-1)};
+                            String[] dataDeletions = {selectedNode.toString()};
+                            ((DefaultTreeModel)(trackDetails.getModel())).nodesWereRemoved(mainTrackSegmentNode, entryDeletions, dataDeletions);
+                            reIndexNodes(0);
+                            deleteType = 1;
+                        }
                     }
                     else
                     {
                         currentTrackSegments = currentTrack.getPitlaneSegments();
-                        currentTrackSegments.deleteAt(segmentNo);
-                        mainPitSegmentNode.remove(segmentNo-1);
-                        int[] entryDeletions = {(segmentNo-1)};
-                        String[] dataDeletions = {selectedNode.toString()};
-                        ((DefaultTreeModel)(trackDetails.getModel())).nodesWereRemoved(mainPitSegmentNode, entryDeletions, dataDeletions);
-                        reIndexNodes(1);
+                        if (currentTrackSegments.size() == 1)
+                        {
+                            JOptionPane.showMessageDialog(this, "The last remaining pit segment cannot be deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            currentTrackSegments.deleteAt(segmentNo);
+                            mainPitSegmentNode.remove(segmentNo-1);
+                            int[] entryDeletions = {(segmentNo-1)};
+                            String[] dataDeletions = {selectedNode.toString()};
+                            ((DefaultTreeModel)(trackDetails.getModel())).nodesWereRemoved(mainPitSegmentNode, entryDeletions, dataDeletions);
+                            reIndexNodes(1);
+                            deleteType = 2;
+                        }
                     }
                 }
                 else
                 {
                     CCLine currentLines = currentTrack.getCCLine();
-                    currentLines.deleteAt(segmentNo);
-                    mainLineSegmentNode.remove(segmentNo-1);
-                    int[] entryDeletions = {(segmentNo-1)};
-                    String[] dataDeletions = {selectedNode.toString()};
-                    ((DefaultTreeModel)(trackDetails.getModel())).nodesWereRemoved(mainLineSegmentNode, entryDeletions, dataDeletions);
-                    reIndexNodes(2);
+                    if (currentLines.size() == 1)
+                    {
+                        JOptionPane.showMessageDialog(this, "The last remaining best line segment cannot be deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else
+                    {
+                        currentLines.deleteAt(segmentNo);
+                        mainLineSegmentNode.remove(segmentNo-1);
+                        int[] entryDeletions = {(segmentNo-1)};
+                        String[] dataDeletions = {selectedNode.toString()};
+                        ((DefaultTreeModel)(trackDetails.getModel())).nodesWereRemoved(mainLineSegmentNode, entryDeletions, dataDeletions);
+                        reIndexNodes(2);
+                        deleteType = 3;
+                    }
                 }
                 parentTrackWindow.updateTrackMap();
+                parentTrackWindow.highlightSection(deleteType, -1); // Passing rogue detection value as no node will now be selected
             }
             else
             {
@@ -374,6 +400,7 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
                     reIndexNodes(2);
                 }
             parentTrackWindow.updateTrackMap();
+            currentTreePath();
             }
             else
             {
@@ -678,9 +705,10 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         trackDetails.setVisible(true);
     }
     
-    private void setSelectedPaths(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_setSelectedPaths
-        // Gets the full path of the tree node upon selection by the user.
-        
+    private void currentTreePath()
+    {
+        // Calculates the current tree node selected.
+    
         TreePath fullPath = trackDetails.getSelectionPath();
         try 
         {
@@ -689,10 +717,22 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
             {
                 TreePath parentPath = fullPath.getParentPath();
                 DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+                int spaceIndex = ((selectedNode.toString()).indexOf(" "));
+                int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
                 if (parentNode.toString() == "Track Segments")
                 {
-                    int spaceIndex = ((selectedNode.toString()).indexOf(" "));
-                    int segmentNo = new Integer((selectedNode.toString()).substring(0,spaceIndex)).intValue();
+                    parentTrackWindow.highlightSection(1, segmentNo);
+                }
+                else
+                {
+                    if (parentNode.toString() == "Pit Segments")
+                    {
+                        parentTrackWindow.highlightSection(2, segmentNo);
+                    }
+                    else
+                    {
+                        parentTrackWindow.highlightSection(3, segmentNo);
+                    }
                 }
             }
         }
@@ -700,6 +740,16 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         {
             // No tree item selected, so exception thrown
         }
+    }
+    
+    private void setSelectedPaths(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_setSelectedPaths
+        
+        
+        // Notifies another method that the tree node selected has changed
+               
+        currentTreePath();
+        
+        
     }//GEN-LAST:event_setSelectedPaths
     
     

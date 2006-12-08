@@ -39,6 +39,15 @@ public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
 	m_trackPanel.redrawMap();
 	
     }
+    
+    public void selectedSegment(int sectionType, int segmentNo)
+    {
+        // Passes on a signal to select a track map object
+        
+        m_trackPanel.selectSegment(sectionType, segmentNo);
+    
+    }
+    
 
     private Track m_track;
 
