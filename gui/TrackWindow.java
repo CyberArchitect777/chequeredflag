@@ -40,10 +40,11 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         mapWindow.setTrack(currentTrack);
         treeWindow.setTrack(currentTrack);
         treeWindow.populateTree();
-        trackEditorWindow.add(treeWindow);
-        trackEditorWindow.add(mapWindow);
+        trackEditorPane.setLeftComponent(treeWindow);
+        trackEditorPane.setRightComponent(mapWindow);
         treeWindow.setVisible(true);
         mapWindow.setVisible(true);
+        
         
     }
     
@@ -53,9 +54,8 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         
         int windowX = trackEditorWindow.getWidth();
         int windowY = trackEditorWindow.getHeight();
-        int halfX = new Double(windowX/2).intValue();
-        treeWindow.reshape(0,0,halfX,windowY);
-        mapWindow.reshape(halfX+1,0,windowX-(halfX+1),windowY);
+        trackEditorPane.reshape(0,0,windowX,windowY);
+        trackEditorPane.updateUI();
     }
     
     /** This method is called from within the constructor to
@@ -65,6 +65,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
      */
     private void initComponents() {//GEN-BEGIN:initComponents
         trackEditorWindow = new javax.swing.JDesktopPane();
+        trackEditorPane = new javax.swing.JSplitPane();
         trackMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         saveTrackItem = new javax.swing.JMenuItem();
@@ -82,6 +83,9 @@ public class TrackWindow extends javax.swing.JInternalFrame {
                 windowResize(evt);
             }
         });
+
+        trackEditorPane.setBounds(0, 0, 223, 27);
+        trackEditorWindow.add(trackEditorPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         getContentPane().add(trackEditorWindow);
 
@@ -207,6 +211,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem saveTrackAsItem;
     private javax.swing.JMenuItem saveTrackItem;
+    private javax.swing.JSplitPane trackEditorPane;
     private javax.swing.JDesktopPane trackEditorWindow;
     private javax.swing.JMenuBar trackMenuBar;
     // End of variables declaration//GEN-END:variables
