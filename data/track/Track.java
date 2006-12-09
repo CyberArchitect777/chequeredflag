@@ -523,143 +523,131 @@ public class Track {
     }
 
     // Calculate coordinates for start/end/center points of CCLine segments.
+    // 2006-12-09 Klaus: added exception handler just in case something goes wrong in the calculations.
     public void calculateCCLine()
     {
-        if ( m_CCLine.size() == 0 )
-            // emptry CCLine
-            return;
+        try {
+            if ( m_CCLine.size() == 0 )
+                // emptry CCLine
+                return;
 
-        // To calculate the CCline, both CCline data itself and
-        // track segment data is needed.
-        CCLineSegment ccLineSegment;
-        TrackSegment trackSegment;
-        int nCumulatedTrackTlu = 0, nCumulatedCCLineTlu = 0;
-        int nTrackSegmentIndex = 1, nCCLineSegmentIndex = 1;
-        double dXPos, dYPos, dOffset, dAngleStart, dAngleEnd, dRadius;
-        
-        // Get the first segments
-        ccLineSegment = m_CCLine.getAt( nCCLineSegmentIndex++ );
-        nCumulatedCCLineTlu = ccLineSegment.getTlu();
-        trackSegment = m_TrackSegments.getAt( nTrackSegmentIndex++ );
-        nCumulatedTrackTlu = trackSegment.getTlu();
+            // To calculate the CCline, both CCline data itself and
+            // track segment data is needed.
+            CCLineSegment ccLineSegment;
+            TrackSegment trackSegment;
+            int nCumulatedTrackTlu = 0, nCumulatedCCLineTlu = 0;
+            int nTrackSegmentIndex = 1, nCCLineSegmentIndex = 1;
+            double dXPos, dYPos, dOffset, dAngleStart, dAngleEnd, dRadius;
 
-        // First ccLine segment is related to the first track segment:
-        // starting point is on start/finish line, with an offset to the
-        // middle of the road.
-        dXPos = trackSegment.getPosXStart();
-        dYPos = trackSegment.getPosYStart();
-        // calculate offset from middle of the track
-        dOffset = ccLineSegment.getParam( 0 ) / 1024.0 ; // given in width scales, i.e. 1/1024 tlu
-        // calculate starting angle in radiens
-        dAngleStart = trackSegment.getAngleStart() * s_dANGLE_SCALE;
-        ccLineSegment.setAngleStart( dAngleStart );
-        ccLineSegment.setPosXStart( dXPos + Math.cos( dAngleStart ) * dOffset );
-        ccLineSegment.setPosYStart( dYPos + Math.sin( dAngleStart ) * dOffset );
+            // Get the first segments
+            ccLineSegment = m_CCLine.getAt( nCCLineSegmentIndex++ );
+            nCumulatedCCLineTlu = ccLineSegment.getTlu();
+            trackSegment = m_TrackSegments.getAt( nTrackSegmentIndex++ );
+            nCumulatedTrackTlu = trackSegment.getTlu();
 
-        do {
-            // retrieve starting values
-            dXPos = ccLineSegment.getPosXStart();
-            dYPos = ccLineSegment.getPosYStart();
-            dAngleStart = ccLineSegment.getAngleStart();
+            // First ccLine segment is related to the first track segment:
+            // starting point is on start/finish line, with an offset to the
+            // middle of the road.
+            dXPos = trackSegment.getPosXStart();
+            dYPos = trackSegment.getPosYStart();
+            // calculate offset from middle of the track
+            dOffset = ccLineSegment.getParam( 0 ) / 1024.0 ; // given in width scales, i.e. 1/1024 tlu
+            // calculate starting angle in radiens
+            dAngleStart = trackSegment.getAngleStart() * s_dANGLE_SCALE;
+            ccLineSegment.setAngleStart( dAngleStart );
+            ccLineSegment.setPosXStart( dXPos + Math.cos( dAngleStart ) * dOffset );
+            ccLineSegment.setPosYStart( dYPos + Math.sin( dAngleStart ) * dOffset );
 
-            // calculate radius
-            dRadius = ccLineSegment.calculateRadius();
+            do {
+                // retrieve starting values
+                dXPos = ccLineSegment.getPosXStart();
+                dYPos = ccLineSegment.getPosYStart();
+                dAngleStart = ccLineSegment.getAngleStart();
 
-/* will be calculated in intersect method....
-            // for curved segments, calculate arc center
-            if ( dRadius != 0.0 )
-            {
-                // Segment is possibly shifted along the current direction.
-                
-                ccLineSegment.setPosXCenter( dXPos
-                                             + Math.cos( Math.PI / 2 - dAngleStart ) * ccLineSegment.getShift() / 256.0
-                                             - Math.cos( Math.PI - dAngleStart ) * dRadius );
-                ccLineSegment.setPosYCenter( dYPos
-                                             + Math.sin( Math.PI / 2 - dAngleStart ) * ccLineSegment.getShift() / 256.0
-                                             - Math.sin( Math.PI - dAngleStart ) * dRadius );
-            }
-            else
-            {
-                ccLineSegment.setPosXCenter( 0.0 );
-                ccLineSegment.setPosYCenter( 0.0 );
-                // apply angle correction, if present
-                dAngleStart += (ccLineSegment.getShift() << 2) * s_dANGLE_SCALE;
-                ccLineSegment.setAngleStart( dAngleStart );
-            }
-*/
-            // calculate end point and end angle.
-            // TLU value from CCLine segment is used for TrackSegments lookup, not
-            // direct length calculations. Intersect CCLine segment with end
-            // of corresponding track segment to find end point. For curved segments,
-            // this calculation also gives the end angle.
+                // calculate radius
+                dRadius = ccLineSegment.calculateRadius();
 
-            // Find the track segment where the CCLine segment ends.
-            while ( nCumulatedCCLineTlu > nCumulatedTrackTlu )
-            {
-                trackSegment = m_TrackSegments.getAt( nTrackSegmentIndex++ );
-                if ( trackSegment == null )
+                // calculate end point and end angle.
+                // TLU value from CCLine segment is used for TrackSegments lookup, not
+                // direct length calculations. Intersect CCLine segment with end
+                // of corresponding track segment to find end point. For curved segments,
+                // this calculation also gives the end angle.
+
+                // Find the track segment where the CCLine segment ends.
+                while ( nCumulatedCCLineTlu > nCumulatedTrackTlu )
                 {
-                    // end of track reached
-                    nCumulatedTrackTlu = nCumulatedCCLineTlu;
-                    // previous TrackSegmentIndex pointed already behind the list and
-                    // was incremented once. Last track segment is a dummy segment, so
-                    // subtract 3 to get the last real segment.
-                    trackSegment = m_TrackSegments.getAt( nTrackSegmentIndex - 3 );
+                    trackSegment = m_TrackSegments.getAt( nTrackSegmentIndex++ );
+                    if ( trackSegment == null )
+                    {
+                        // end of track reached
+                        nCumulatedTrackTlu = nCumulatedCCLineTlu;
+                        // previous TrackSegmentIndex pointed already behind the list and
+                        // was incremented once. Last track segment is a dummy segment, so
+                        // subtract 3 to get the last real segment.
+                        nTrackSegmentIndex = nTrackSegmentIndex - 3;
+                        if ( nTrackSegmentIndex < 1 )
+                            nTrackSegmentIndex = 1;
+                        trackSegment = m_TrackSegments.getAt( nTrackSegmentIndex );
+                    }
+                    else
+                    {
+                        nCumulatedTrackTlu += trackSegment.getTlu();
+                    }
+                }
+
+                // Calculate angle of track segment border at the end of the ccLine segment.
+                double dTrackAngle = trackSegment.getAngleEnd()
+                                     - (nCumulatedCCLineTlu - nCumulatedTrackTlu) * trackSegment.getCurvature();
+                dTrackAngle = dTrackAngle * s_dANGLE_SCALE;
+
+                // Calculate point on the track segment border at the end of the ccLine segment.
+                double dTrackPosX;
+                double dTrackPosY;
+                if ( trackSegment.getCurvature() == 0 )
+                {
+                    // straight
+                    dTrackPosX = trackSegment.getPosXStart()
+                                 - (nCumulatedCCLineTlu - nCumulatedTrackTlu + trackSegment.getTlu() ) * Math.sin( dTrackAngle );
+                    dTrackPosY = trackSegment.getPosYStart()
+                                 + (nCumulatedCCLineTlu - nCumulatedTrackTlu + trackSegment.getTlu() ) * Math.cos( dTrackAngle );
                 }
                 else
                 {
-                    nCumulatedTrackTlu += trackSegment.getTlu();
+                    // curved: use center and radius for calculations
+                    dTrackPosX = trackSegment.getPosXCenter()
+                                 - trackSegment.getRadius() * Math.cos( dTrackAngle );
+                    dTrackPosY = trackSegment.getPosYCenter()
+                                 - trackSegment.getRadius() * Math.sin( dTrackAngle );
                 }
-            }
-            
-            // Calculate angle of track segment border at the end of the ccLine segment.
-            double dTrackAngle = trackSegment.getAngleEnd()
-                                 - (nCumulatedCCLineTlu - nCumulatedTrackTlu) * trackSegment.getCurvature();
-            dTrackAngle = dTrackAngle * s_dANGLE_SCALE;
 
-            // Calculate point on the track segment border at the end of the ccLine segment.
-            double dTrackPosX;
-            double dTrackPosY;
-            if ( trackSegment.getCurvature() == 0 )
-            {
-                // straight
-                dTrackPosX = trackSegment.getPosXStart()
-                             - (nCumulatedCCLineTlu - nCumulatedTrackTlu + trackSegment.getTlu() ) * Math.sin( dTrackAngle );
-                dTrackPosY = trackSegment.getPosYStart()
-                             + (nCumulatedCCLineTlu - nCumulatedTrackTlu + trackSegment.getTlu() ) * Math.cos( dTrackAngle );
-            }
-            else
-            {
-                // curved: use center and radius for calculations
-                dTrackPosX = trackSegment.getPosXCenter()
-                             - trackSegment.getRadius() * Math.cos( dTrackAngle );
-                dTrackPosY = trackSegment.getPosYCenter()
-                             - trackSegment.getRadius() * Math.sin( dTrackAngle );
-            }
+                // Intersect CCLine with end of track segment. Sets values
+                // for end point and end angle in ccline segment.
+                intersect( ccLineSegment, dTrackPosX, dTrackPosY, dTrackAngle );
 
-            // Intersect CCLine with end of track segment. Sets values
-            // for end point and end angle in ccline segment.
-            intersect( ccLineSegment, dTrackPosX, dTrackPosY, dTrackAngle );
-            
-            // get next ccline segment
-            if ( nCCLineSegmentIndex <= m_CCLine.size() )
-            {
-                // get end values of last segment
-                dXPos = ccLineSegment.getPosXEnd();
-                dYPos = ccLineSegment.getPosYEnd();
-                dAngleEnd = ccLineSegment.getAngleEnd();
-                // get next segment
-                ccLineSegment = m_CCLine.getAt( nCCLineSegmentIndex++ );
-                // add tlu's to cumulated value
-                nCumulatedCCLineTlu += ccLineSegment.getTlu();
-                // transfer end values of previous segment to new one.
-                ccLineSegment.setPosXStart( dXPos );
-                ccLineSegment.setPosYStart( dYPos );
-                ccLineSegment.setAngleStart( dAngleEnd );
-            }
-            else
-                ccLineSegment = null;
-        } while ( ccLineSegment != null );
+                // get next ccline segment
+                if ( nCCLineSegmentIndex <= m_CCLine.size() )
+                {
+                    // get end values of last segment
+                    dXPos = ccLineSegment.getPosXEnd();
+                    dYPos = ccLineSegment.getPosYEnd();
+                    dAngleEnd = ccLineSegment.getAngleEnd();
+                    // get next segment
+                    ccLineSegment = m_CCLine.getAt( nCCLineSegmentIndex++ );
+                    // add tlu's to cumulated value
+                    nCumulatedCCLineTlu += ccLineSegment.getTlu();
+                    // transfer end values of previous segment to new one.
+                    ccLineSegment.setPosXStart( dXPos );
+                    ccLineSegment.setPosYStart( dYPos );
+                    ccLineSegment.setAngleStart( dAngleEnd );
+                }
+                else
+                    ccLineSegment = null;
+            } while ( ccLineSegment != null );
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     // Returns a rectangle that contains the whole track graphics.
