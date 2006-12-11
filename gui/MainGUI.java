@@ -325,7 +325,6 @@ public class MainGUI extends javax.swing.JFrame
                 
             int windowX = mainEditorWindow.getWidth();
             int windowY = mainEditorWindow.getHeight();
-            System.out.println("X - " + windowX + " Y - " + windowY);
             TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
             newTrackWindow.reshape(0,0,windowX,windowY);
             newTrackWindow.setVisible(true);

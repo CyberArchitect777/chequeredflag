@@ -82,7 +82,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
             }
         });
 
-        trackEditorPane.setBounds(0, 0, 223, 27);
+        trackEditorPane.setBounds(0, 0, -1, -1);
         trackEditorWindow.add(trackEditorPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         getContentPane().add(trackEditorWindow);
