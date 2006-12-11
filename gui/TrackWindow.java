@@ -43,9 +43,7 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         trackEditorPane.setLeftComponent(treeWindow);
         trackEditorPane.setRightComponent(mapWindow);
         treeWindow.setVisible(true);
-        mapWindow.setVisible(true);
-        
-        
+        mapWindow.setVisible(true);        
     }
     
     private void positionWindows()

@@ -9,12 +9,15 @@ package chequeredflag.gui;
 import javax.swing.*;
 import java.io.*;
 import chequeredflag.data.track.*;
+import chequeredflag.data.gui.*;
+import java.util.prefs.Preferences;
+import java.awt.event.ActionListener;
 
 /**
  *
  * @author  barrie
  */
-public class MainGUI extends javax.swing.JFrame 
+public class MainGUI extends javax.swing.JFrame
 {
     
     private Track currentTrack;
@@ -35,6 +38,10 @@ public class MainGUI extends javax.swing.JFrame
         
         setSize(576,432);
         setVisible(true);
+        
+        // Setting menu item visibility based on recent file availability
+        
+        updateRecentFileList(new String());
                       
     }
     
@@ -49,7 +56,14 @@ public class MainGUI extends javax.swing.JFrame
         fileMenu = new javax.swing.JMenu();
         openMenu = new javax.swing.JMenu();
         openTrack = new javax.swing.JMenuItem();
+        menuSeparator3 = new javax.swing.JSeparator();
+        optionsMenu = new javax.swing.JMenuItem();
         menuSeparator1 = new javax.swing.JSeparator();
+        lastFileMenuOne = new javax.swing.JMenuItem();
+        lastFileMenuTwo = new javax.swing.JMenuItem();
+        lastFileMenuThree = new javax.swing.JMenuItem();
+        lastFileMenuFour = new javax.swing.JMenuItem();
+        menuSeparator2 = new javax.swing.JSeparator();
         exitItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutItem = new javax.swing.JMenuItem();
@@ -76,7 +90,7 @@ public class MainGUI extends javax.swing.JFrame
         openTrack.setText("Track File");
         openTrack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openTrackFile(evt);
+                loadTrack(evt);
             }
         });
 
@@ -84,7 +98,56 @@ public class MainGUI extends javax.swing.JFrame
 
         fileMenu.add(openMenu);
 
+        fileMenu.add(menuSeparator3);
+
+        optionsMenu.setText("Options");
+        optionsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsMenuActionPerformed(evt);
+            }
+        });
+
+        fileMenu.add(optionsMenu);
+
         fileMenu.add(menuSeparator1);
+
+        lastFileMenuOne.setText("Item");
+        lastFileMenuOne.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lastFileMenuOneActionPerformed(evt);
+            }
+        });
+
+        fileMenu.add(lastFileMenuOne);
+
+        lastFileMenuTwo.setText("Item");
+        lastFileMenuTwo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lastFileMenuTwoActionPerformed(evt);
+            }
+        });
+
+        fileMenu.add(lastFileMenuTwo);
+
+        lastFileMenuThree.setText("Item");
+        lastFileMenuThree.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lastFileMenuThreeActionPerformed(evt);
+            }
+        });
+
+        fileMenu.add(lastFileMenuThree);
+
+        lastFileMenuFour.setText("Item");
+        lastFileMenuFour.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lastFileMenuFourActionPerformed(evt);
+            }
+        });
+
+        fileMenu.add(lastFileMenuFour);
+
+        fileMenu.add(menuSeparator2);
 
         exitItem.setText("Exit");
         exitItem.addActionListener(new java.awt.event.ActionListener() {
@@ -114,6 +177,60 @@ public class MainGUI extends javax.swing.JFrame
         pack();
     }//GEN-END:initComponents
 
+    private void optionsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsMenuActionPerformed
+        // Handles the event after the option menu item is activated by the user.
+        
+        OptionsWindow programOptions = new OptionsWindow(this);
+        programOptions.setVisible(true);
+        programOptions.setTitle("Chequered Flag Options");
+        mainEditorWindow.add(programOptions);
+        programOptions.toFront();
+        try
+        {
+            programOptions.setSelected(true);
+        }
+        catch (Exception exceptionError)
+        {
+            exceptionError.printStackTrace();
+        }
+                
+    }//GEN-LAST:event_optionsMenuActionPerformed
+
+    private void lastFileMenuFourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastFileMenuFourActionPerformed
+        // Handler method for recent file selection four
+        
+        recentFileMenuHandler(3);
+        
+    }//GEN-LAST:event_lastFileMenuFourActionPerformed
+
+    private void lastFileMenuThreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastFileMenuThreeActionPerformed
+        // Handler method for recent file selection three
+        
+        recentFileMenuHandler(2);
+        
+    }//GEN-LAST:event_lastFileMenuThreeActionPerformed
+
+    private void lastFileMenuTwoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastFileMenuTwoActionPerformed
+        // Handler method for recent file selection two
+        
+        recentFileMenuHandler(1);
+        
+    }//GEN-LAST:event_lastFileMenuTwoActionPerformed
+
+    private void lastFileMenuOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastFileMenuOneActionPerformed
+        // Handler method for recent file selection one        
+        
+        recentFileMenuHandler(0);
+        
+    }//GEN-LAST:event_lastFileMenuOneActionPerformed
+
+    public void recentFileMenuHandler(int buttonIndex)
+    {
+        RecentFiles usedFiles = new RecentFiles();
+        String recentFilePath = usedFiles.getRecentFilePath(buttonIndex);
+        openTrackFile(recentFilePath);
+    }
+    
     private void aboutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutItemActionPerformed
         // Displays the About dialog
         
@@ -138,9 +255,94 @@ public class MainGUI extends javax.swing.JFrame
         // WARNING: Will need to be implemented
         
     }//GEN-LAST:event_windowResizeEvent
-     
-    private void openTrackFile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openTrackFile
-        // Opens a new track file and reads in data by using ksix's track input processing
+    
+    public void updateIndividualMenu(JMenuItem selectedMenuItem, int recentElement)
+    {
+        // Updates a specific menu item
+        
+        RecentFiles usedFiles = new RecentFiles();
+        if ((usedFiles.getRecentFilePath(recentElement)).compareTo("") == 0)
+        {
+            selectedMenuItem.setVisible(false);
+        }
+        else
+        {
+            selectedMenuItem.setVisible(true);
+            final String recentFileName = usedFiles.getRecentFileName(recentElement);
+            selectedMenuItem.setText(recentFileName);
+        }        
+    }
+    
+    public void updateRecentFileList(String newFileName)
+    {
+    
+        // Updates the list of recently used files. If a filename is provided by parameter,
+        // the list will include this new file. If not, the list will merely be refreshed
+        
+        RecentFiles usedFiles = new RecentFiles();
+        if (usedFiles.addNewFile(newFileName) == true)
+        {
+            menuSeparator2.setVisible(true);            
+            updateIndividualMenu(lastFileMenuOne,0);
+            updateIndividualMenu(lastFileMenuTwo,1);
+            updateIndividualMenu(lastFileMenuThree,2);
+            updateIndividualMenu(lastFileMenuFour,3);
+        }
+        else
+        {
+            if (usedFiles.getNumberFiles() == 0)
+            {
+                menuSeparator2.setVisible(false);
+            }
+            else
+            {
+                menuSeparator2.setVisible(true);
+            }
+            updateIndividualMenu(lastFileMenuOne,0);
+            updateIndividualMenu(lastFileMenuTwo,1);
+            updateIndividualMenu(lastFileMenuThree,2);
+            updateIndividualMenu(lastFileMenuFour,3);
+        }                           
+    }       
+    
+    public void openTrackFile(String fileName)
+    {
+        
+        // Open a track file from a parameter passed filename by using Klaus's track input processing
+        
+        File trackFile = new File(fileName);
+        currentTrack = new Track();
+        boolean loadSuccess = currentTrack.load(trackFile);
+           
+        if (loadSuccess == true)
+        {
+              
+            // Updates the list of recently updated files
+                
+            updateRecentFileList(fileName);           
+                
+            // Calculate size of track editing window
+                
+            int windowX = mainEditorWindow.getWidth();
+            int windowY = mainEditorWindow.getHeight();
+            System.out.println("X - " + windowX + " Y - " + windowY);
+            TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
+            newTrackWindow.reshape(0,0,windowX,windowY);
+            newTrackWindow.setVisible(true);
+                
+            // Add track editor window
+        
+            mainEditorWindow.add(newTrackWindow);
+            newTrackWindow.toFront();
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "There was a problem loading the track file specified. \nIt is likely that this is either not a track file, or that the track itself is corrupt.\nPlease try another valid track file", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void loadTrack(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadTrack
+        // Handles the load track menu item and passes processing onto another method after prompting for a filename
         
         FileDialog fileDialog = new FileDialog(this,true);  
         String fileName = new String();
@@ -155,30 +357,10 @@ public class MainGUI extends javax.swing.JFrame
         }
         if (cancelCalled == false)
         {
-            File trackFile = new File(fileName);
-            currentTrack = new Track();
-            boolean loadSuccess = currentTrack.load(trackFile);
-            
-            if (loadSuccess == true)
-            {
-                // Calculate size of track editing window
-                int windowX = mainEditorWindow.getWidth();
-                int windowY = mainEditorWindow.getHeight();
-                TrackWindow newTrackWindow = new TrackWindow(currentTrack, fileName, this);
-                newTrackWindow.reshape(0,0,windowX,windowY);
-                newTrackWindow.setVisible(true);
-                
-                // Add track editor window
-        
-                mainEditorWindow.add(newTrackWindow);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(this, "There was a problem loading the track file specified. \nIt is likely that this is either not a track file, or that the track itself is corrupt.\nPlease try another valid track file", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            openTrackFile(fileName);
         }                
                            
-    }//GEN-LAST:event_openTrackFile
+    }//GEN-LAST:event_loadTrack
    
     private void exitProgram(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitProgram
         // Immediately exits the program with no further steps
@@ -210,11 +392,18 @@ public class MainGUI extends javax.swing.JFrame
     private javax.swing.JMenuItem exitItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem lastFileMenuFour;
+    private javax.swing.JMenuItem lastFileMenuOne;
+    private javax.swing.JMenuItem lastFileMenuThree;
+    private javax.swing.JMenuItem lastFileMenuTwo;
     private javax.swing.JDesktopPane mainEditorWindow;
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JSeparator menuSeparator1;
+    private javax.swing.JSeparator menuSeparator2;
+    private javax.swing.JSeparator menuSeparator3;
     private javax.swing.JMenu openMenu;
     private javax.swing.JMenuItem openTrack;
+    private javax.swing.JMenuItem optionsMenu;
     // End of variables declaration//GEN-END:variables
     
 }

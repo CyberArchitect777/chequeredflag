@@ -9,6 +9,7 @@ package chequeredflag;
 import chequeredflag.gui.*;
 
 import javax.swing.*;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -22,14 +23,14 @@ public class Main
     /** Creates a new instance of Main */
     public Main() 
     {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		mainScreen = new MainGUI();
+        Preferences userData = Preferences.userRoot();
+        Preferences cheqFlagData = userData.node("chequeredflag");
+        String interfaceType = cheqFlagData.get("CFUIMode", "System Default");
+        mainScreen = new MainGUI();
+        ThemeManager userInterfaceTheme = new ThemeManager();
+        userInterfaceTheme.setUserInterfaceType(interfaceType, mainScreen);        
     }
-    
+       
     /**
      * @param args the command line arguments
      */
