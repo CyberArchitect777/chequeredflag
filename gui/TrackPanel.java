@@ -79,6 +79,10 @@ public class TrackPanel extends javax.swing.JPanel {
         m_scale = 1.5;
         // First time drawing flag
         m_fFirstTime = true;
+        // nothing selected up to now
+        m_nSelectedTrackSegment = -1;
+        m_nSelectedPitLaneSegment = -1;
+        m_nSelectedCCLineSegment = -1;
         // Create mouse listener
         final TPMouseListener ml = new TPMouseListener();
         addMouseWheelListener(ml);
@@ -159,6 +163,18 @@ public class TrackPanel extends javax.swing.JPanel {
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
+
+            // Adjust settings for selected/unselected segments
+            if ( i == m_nSelectedTrackSegment )
+            {
+                // Paint selected segment in orange
+                g2d.setColor(Color.orange);
+            }
+            else
+            {
+                // Other segments are painted in black
+                g2d.setColor(Color.black);
+            }
 
             if ( trackSegment.getCurvature() == 0 )
             {
@@ -244,11 +260,21 @@ public class TrackPanel extends javax.swing.JPanel {
         m_nRightFenceDistPrev = m_track.getTrackDataHeader().getFenceDistL();
 
         oldColor = g2d.getColor();
-        g2d.setColor(Color.blue);
         trackSegments = m_track.getPitlaneSegments();
         for ( int i = 1; i <= trackSegments.size(); i++ )
         {
             trackSegment = trackSegments.getAt( i );
+            
+            if ( i == m_nSelectedPitLaneSegment )
+            {
+                // Paint selected segment pink
+                g2d.setColor(Color.pink);
+            }
+            else
+            {
+                // Default pit lane segment is blue
+                g2d.setColor(Color.blue);
+            }
 
             if ( trackSegment.getCurvature() == 0 )
             {
@@ -452,10 +478,29 @@ public class TrackPanel extends javax.swing.JPanel {
         repaint();
     }
     
+    /**
+        sectionType: 1 - Track, 2 - Pit, 3 - CCLine
+        segmentNo: 1-based number of the segment (-1 if nothing is selected).
+    */
     public void selectSegment(int sectionType, int segmentNo)
     {
         // Selects a given segment depending on the tree node selected by the user
-        
+        switch ( sectionType )
+        {
+        case 1: // Track segment selection
+            m_nSelectedTrackSegment = segmentNo;
+            break;
+        case 2: // Pit lane segment selection
+            m_nSelectedPitLaneSegment = segmentNo;
+            break;
+        case 3: // CCLine segment selection
+            m_nSelectedCCLineSegment = segmentNo;
+            break;
+        default:
+            // invalid section type
+            break;
+        }
+        repaint();
     }
 
     public void pan(int x, int y) {
@@ -821,15 +866,30 @@ public class TrackPanel extends javax.swing.JPanel {
 
     private boolean m_fRightFenceBridgedPrev;
 
+    // Segment number for selection
+    private int m_nSelectedTrackSegment;
+    private int m_nSelectedPitLaneSegment;
+    private int m_nSelectedCCLineSegment;
+
     // Display the computer car line.
     protected void paintCCLine(CCLine ccLine, Graphics2D g2d) {
         CCLineSegment ccLineSegment;
         Color oldColor = g2d.getColor();
-        // Use red color for CCline
-        g2d.setColor( Color.RED );
         for ( int i = 1; i <= ccLine.size(); i++ )
         {
             ccLineSegment = ccLine.getAt( i );
+
+            if ( i == m_nSelectedCCLineSegment )
+            {
+                // paint selected segment in magenta
+                g2d.setColor(Color.MAGENTA);
+            }
+            else
+            {
+                // default color is red.
+                g2d.setColor(Color.RED);
+            }
+
             // straight or curved?
             if ( ccLineSegment.isStraight() )
             {
@@ -847,12 +907,13 @@ public class TrackPanel extends javax.swing.JPanel {
                     CCLineSegment segShift = ccLineSegment.getShiftSegment();
                     // use different color for shift segment so shifting is visible
                     // in track display.
+                    Color colorSegment = g2d.getColor();
                     g2d.setColor( Color.GREEN );
                     g2d.drawLine( new Double( segShift.getPosXStart() * m_scale ).intValue(),
                                   new Double( segShift.getPosYStart() * m_scale ).intValue(),
                                   new Double( segShift.getPosXEnd() * m_scale ).intValue(),
                                   new Double( segShift.getPosYEnd() * m_scale ).intValue() );
-                    g2d.setColor( Color.RED );
+                    g2d.setColor( colorSegment );
                 }
 
                 if ( ccLineSegment.turnsRight() )
@@ -879,6 +940,7 @@ public class TrackPanel extends javax.swing.JPanel {
                 }
             } // curved segment
         }
+        // reset painting color of context
         g2d.setColor( oldColor );
     }
 
