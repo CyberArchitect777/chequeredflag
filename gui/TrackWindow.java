@@ -9,6 +9,8 @@ package chequeredflag.gui;
 import java.io.*;
 import chequeredflag.data.track.*;
 import javax.swing.*;
+import javax.swing.event.InternalFrameListener;
+import javax.swing.event.InternalFrameEvent;
 
 /**
  *
@@ -17,13 +19,15 @@ import javax.swing.*;
 
 /* Class designed to manage both the treeview and track map windows */
 
-public class TrackWindow extends javax.swing.JInternalFrame {
+public class TrackWindow extends javax.swing.JInternalFrame implements InternalFrameListener
+{
     
     private Track currentTrack;
     private TreeEditorWindow treeWindow;
     private GraphicalEditorWindow mapWindow;
     private MainGUI appFrame;
     private String fileName;
+    private boolean closingWindow;
     
     /** Creates new form TrackWindow */
     /* Receives a selected track as input */
@@ -43,7 +47,64 @@ public class TrackWindow extends javax.swing.JInternalFrame {
         trackEditorPane.setLeftComponent(treeWindow);
         trackEditorPane.setRightComponent(mapWindow);
         treeWindow.setVisible(true);
-        mapWindow.setVisible(true);        
+        mapWindow.setVisible(true);
+        addInternalFrameListener(this); // Listener for internal frame closing events
+        closingWindow = false; // Boolean value for detecting if closing occurs and then blocks any further events
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // Handle close operations manually
+    }
+    
+    public void internalFrameClosing(InternalFrameEvent e) 
+    {
+        // Handle window closing event
+        
+        closeTrack();
+    }
+    
+    public void closeTrack()
+    {
+        // Close the open track window after user confirmation
+        
+        if (closingWindow == false)
+        {
+            int selectionOption = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this track?", "Close Track", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (selectionOption == JOptionPane.YES_OPTION)
+            {
+                try
+                {
+                    closingWindow = true;
+                    this.setClosed(true);
+                }
+                catch (Exception errorReport)
+                {
+                    // This is a normal result of the closing of an internal window. Nothing should be done.
+                }
+            }       
+        }
+    }
+
+    public void internalFrameClosed(InternalFrameEvent e) 
+    {
+	//listenedToWindow = null;
+    }
+
+    public void internalFrameOpened(InternalFrameEvent e) 
+    {
+    }
+
+    public void internalFrameIconified(InternalFrameEvent e) 
+    {
+    }
+
+    public void internalFrameDeiconified(InternalFrameEvent e) 
+    {
+    }
+
+    public void internalFrameActivated(InternalFrameEvent e) 
+    {
+    }
+
+    public void internalFrameDeactivated(InternalFrameEvent e) 
+    {
     }
     
     private void positionWindows()
@@ -123,16 +184,10 @@ public class TrackWindow extends javax.swing.JInternalFrame {
     }//GEN-END:initComponents
 
     private void closeTrackItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeTrackItemActionPerformed
-        // Close the track file
+        // Handle close track menu event
         
-        try
-        {
-            this.setClosed(true);
-        }
-        catch (Exception errorReport)
-        {
-            // This is a normal result of the closing of an internal window. Nothing should be done.
-        }
+        closeTrack();      
+        
     }//GEN-LAST:event_closeTrackItemActionPerformed
 
     public void updateTrackMap()

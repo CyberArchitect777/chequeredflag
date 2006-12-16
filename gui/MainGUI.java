@@ -12,15 +12,18 @@ import chequeredflag.data.track.*;
 import chequeredflag.data.gui.*;
 import java.util.prefs.Preferences;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowEvent;
 
 /**
  *
  * @author  barrie
  */
-public class MainGUI extends javax.swing.JFrame
+public class MainGUI extends javax.swing.JFrame implements WindowListener
 {
     
     private Track currentTrack;
+    private boolean closingProgram;
             
     /** Creates new form MainGUI */
     public MainGUI() 
@@ -30,9 +33,15 @@ public class MainGUI extends javax.swing.JFrame
         super("Chequered Flag - An open-source F1GP/WC editor");
         initComponents();
         
-        // WARNING: Very little internal window management being done at present
+        // Setting global variables
+        
+        closingProgram = false;
+        
+        // Perform window management
         
         setContentPane(mainEditorWindow);
+        addWindowListener(this);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
         // Start of normal commands
         
@@ -177,6 +186,38 @@ public class MainGUI extends javax.swing.JFrame
         pack();
     }//GEN-END:initComponents
 
+    public void windowClosing(WindowEvent wetEvent)
+    {
+        // Handles window closing event
+                
+        quitChequeredFlag();
+    }
+	
+    public void windowOpened(WindowEvent wetEvent) 
+    {
+    }
+	
+    public void windowClosed(WindowEvent wetEvent)
+    {
+    }
+	
+    public void windowIconified(WindowEvent wetEvent)
+    {
+    }
+	
+    public void windowDeiconified(WindowEvent wetEvent)
+    {
+    }
+	
+    public void windowActivated(WindowEvent wetEvent)
+    {
+    }
+	
+    public void windowDeactivated(WindowEvent wetEvent)
+    {
+    }
+    
+    
     private void optionsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsMenuActionPerformed
         // Handles the event after the option menu item is activated by the user.
         
@@ -362,12 +403,27 @@ public class MainGUI extends javax.swing.JFrame
     }//GEN-LAST:event_loadTrack
    
     private void exitProgram(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitProgram
-        // Immediately exits the program with no further steps
+        // Handles the file menu's exit program function. 
         
-        System.exit(0);
+        quitChequeredFlag();
         
     }//GEN-LAST:event_exitProgram
 
+    public void quitChequeredFlag()
+    {
+        // Immediately exits the program after user confirmation
+        
+        if (closingProgram == false)
+        {
+            int selectionOption = JOptionPane.showConfirmDialog(this, "Are you sure you want to quit?", "Quit Chequered Flag", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (selectionOption == JOptionPane.YES_OPTION)
+            {
+                closingProgram = true;
+                System.exit(0);
+            }       
+        }        
+    }
+    
     private void fileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileMenuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fileMenuActionPerformed
