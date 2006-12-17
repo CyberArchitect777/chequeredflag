@@ -247,6 +247,60 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         pack();
     }//GEN-END:initComponents
 
+    public void deleteAllSegments(int segmentType)
+    {
+        // Delete all nodes (apart from one) for the given segment type.
+        
+        int deleteType = 0;
+        
+        if ((segmentType == 0) || (segmentType == 1))
+        {
+            TrackSegments currentTrackSegments = new TrackSegments();
+            if (segmentType == 0)
+            {
+                currentTrackSegments = currentTrack.getTrackSegments();
+                int originalSegmentNumber = currentTrackSegments.size();
+                for (int x=1;x<originalSegmentNumber;x++)
+                {
+                    currentTrackSegments.deleteAt(2);
+                    mainTrackSegmentNode.remove(1);
+                }
+                ((DefaultTreeModel)(trackDetails.getModel())).nodeStructureChanged(mainTrackSegmentNode);
+                deleteType = 1;
+                parentTrackWindow.updateTrackMap();
+                parentTrackWindow.highlightSection(deleteType, -1); // Passing rogue detection value as no node will now be selected        
+            }
+            else
+            {
+                currentTrackSegments = currentTrack.getPitlaneSegments();
+                int originalSegmentNumber = currentTrackSegments.size();
+                for (int x=1;x<originalSegmentNumber;x++)
+                {
+                    currentTrackSegments.deleteAt(2);
+                    mainPitSegmentNode.remove(1);
+                }
+                ((DefaultTreeModel)(trackDetails.getModel())).nodeStructureChanged(mainPitSegmentNode);
+                deleteType = 2;
+                parentTrackWindow.updateTrackMap();
+                parentTrackWindow.highlightSection(deleteType, -1); // Passing rogue detection value as no node will now be selected        
+            }
+        }        
+        else
+        {
+            CCLine currentLines = currentTrack.getCCLine();
+            int originalLineNumber = currentLines.size();
+            for (int x=1;x<originalLineNumber;x++)
+            {
+                currentLines.deleteAt(2);
+                mainLineSegmentNode.remove(1);
+            }
+            ((DefaultTreeModel)(trackDetails.getModel())).nodeStructureChanged(mainLineSegmentNode);
+            deleteType = 3;
+            parentTrackWindow.updateTrackMap();
+            parentTrackWindow.highlightSection(deleteType, -1); // Passing rogue detection value as no node will now be selected                    
+        }
+    }
+    
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // Deletes the current segment
         

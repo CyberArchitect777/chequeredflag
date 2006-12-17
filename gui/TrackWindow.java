@@ -130,6 +130,10 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
         saveTrackItem = new javax.swing.JMenuItem();
         saveTrackAsItem = new javax.swing.JMenuItem();
         closeTrackItem = new javax.swing.JMenuItem();
+        toolsMenu = new javax.swing.JMenu();
+        removeTrack = new javax.swing.JMenuItem();
+        removePit = new javax.swing.JMenuItem();
+        removeLine = new javax.swing.JMenuItem();
 
         getContentPane().setLayout(new java.awt.FlowLayout());
 
@@ -178,10 +182,73 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
 
         trackMenuBar.add(fileMenu);
 
+        toolsMenu.setText("Tools");
+        removeTrack.setText("Remove All Track Segments");
+        removeTrack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeAllTrack(evt);
+            }
+        });
+
+        toolsMenu.add(removeTrack);
+
+        removePit.setText("Remove All Pit Segments");
+        removePit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeAllPit(evt);
+            }
+        });
+
+        toolsMenu.add(removePit);
+
+        removeLine.setText("Remove All Best Line Segments");
+        removeLine.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeAllLine(evt);
+            }
+        });
+
+        toolsMenu.add(removeLine);
+
+        trackMenuBar.add(toolsMenu);
+
         setJMenuBar(trackMenuBar);
 
         pack();
     }//GEN-END:initComponents
+
+    private void removeAllLine(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllLine
+        // Handles line removal menu event
+        
+        int selectionOption = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove all best line segments?", "Clear Best Line", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (selectionOption == JOptionPane.YES_OPTION)
+        {
+            treeWindow.deleteAllSegments(2);
+        }
+        
+    }//GEN-LAST:event_removeAllLine
+
+    private void removeAllPit(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllPit
+        // Handles pit removal menu event
+        
+        int selectionOption = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove all pit segments?", "Clear Pit Segments", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (selectionOption == JOptionPane.YES_OPTION)
+        {
+            treeWindow.deleteAllSegments(1);
+        }
+        
+    }//GEN-LAST:event_removeAllPit
+
+    private void removeAllTrack(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllTrack
+        // Handles track removal menu event
+        
+        int selectionOption = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove all track segments?", "Clear Track Segments", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (selectionOption == JOptionPane.YES_OPTION)
+        {
+            treeWindow.deleteAllSegments(0);
+        }
+        
+    }//GEN-LAST:event_removeAllTrack
 
     private void closeTrackItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeTrackItemActionPerformed
         // Handle close track menu event
@@ -262,8 +329,12 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem closeTrackItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem removeLine;
+    private javax.swing.JMenuItem removePit;
+    private javax.swing.JMenuItem removeTrack;
     private javax.swing.JMenuItem saveTrackAsItem;
     private javax.swing.JMenuItem saveTrackItem;
+    private javax.swing.JMenu toolsMenu;
     private javax.swing.JSplitPane trackEditorPane;
     private javax.swing.JDesktopPane trackEditorWindow;
     private javax.swing.JMenuBar trackMenuBar;
