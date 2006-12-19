@@ -107,13 +107,14 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
     {
     }
     
-    private void positionWindows()
+    public void positionWindows()
     {
         // Re-position and resize internal windows based on size of main track window
         
         int windowX = trackEditorWindow.getWidth();
         int windowY = trackEditorWindow.getHeight();
         trackEditorPane.reshape(0,0,windowX,windowY);
+        trackEditorPane.setDividerLocation(0.42);
         trackEditorPane.updateUI();
     }
     

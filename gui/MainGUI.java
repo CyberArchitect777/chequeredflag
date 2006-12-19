@@ -373,6 +373,7 @@ public class MainGUI extends javax.swing.JFrame implements WindowListener
             // Add track editor window
         
             mainEditorWindow.add(newTrackWindow);
+            newTrackWindow.positionWindows();
             newTrackWindow.toFront();
         }
         else
