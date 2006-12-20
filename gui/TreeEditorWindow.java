@@ -402,7 +402,6 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         }
         catch (Exception exceptionError)
         {
-            exceptionError.printStackTrace();
             // No tree item selected, so exception thrown
         }                       
         
@@ -482,7 +481,6 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
         }
         catch (Exception exceptionError)
         {
-            exceptionError.printStackTrace();
             // No tree item selected, so exception thrown
         }
         

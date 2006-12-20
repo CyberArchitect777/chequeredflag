@@ -45,6 +45,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
         initComponents();
         parentTrackWindow = currentTrackWindow;
         parentObjectWindow = currentObjectWindow;
+        applyButton.setEnabled(false);
     }
     
     public void editTrackSegment(TrackSegment trackSegment)
@@ -99,6 +100,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
         segmentTable = new chequeredflag.gui.beans.JExtendedTable();
         buttonPanel = new javax.swing.JPanel();
         updateButton = new javax.swing.JButton();
+        applyButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setResizable(true);
@@ -114,6 +116,12 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        segmentTable.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                SegmentEditGUI.this.propertyChange(evt);
+            }
+        });
+
         tableScroll.setViewportView(segmentTable);
 
         getContentPane().add(tableScroll, java.awt.BorderLayout.CENTER);
@@ -129,6 +137,15 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
 
         buttonPanel.add(updateButton);
 
+        applyButton.setText("Apply Changes");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
+            }
+        });
+
+        buttonPanel.add(applyButton);
+
         cancelButton.setText("Cancel Changes");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -143,6 +160,29 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
         pack();
     }//GEN-END:initComponents
 
+    private void propertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        
+        if (segmentTable.getModel() instanceof CmdParamTableModel == false)
+        {
+            applyButton.setEnabled(true);
+        }
+        else
+        {
+            applyButton.setEnabled(false);
+        }
+        
+    }//GEN-LAST:event_propertyChange
+
+    private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        // Updates the track data with all changes made without closing the window
+        
+        updateData();
+        applyButton.setEnabled(false);
+        
+        
+    }//GEN-LAST:event_applyButtonActionPerformed
+
     public void closeEditorWindow()
     {
         try
@@ -155,23 +195,15 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
         }
     }
     
-    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-        // Updates the track data with all changes that have been made
+    public void updateData()
+    {
+        // Updates game data by using the current values displayed in the table
         
         if (segmentTable.getModel() instanceof HeaderTableModel)
         {
             HeaderTableModel currentTable = (HeaderTableModel)segmentTable.getModel();
             currentTable.updateTrackData();
             parentTrackWindow.updateTrackMap();
-            closeEditorWindow();
-            /*try
-            {
-                this.setClosed(true);
-            }
-            catch (Exception errorReport)
-            {
-                // This is a normal result of the closing of an internal window. Nothing should be done.
-            }*/
         }        
         else
         {
@@ -181,7 +213,6 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
                 currentTable.updateTrackData();
                 parentTrackWindow.updateTrackMap();
                 parentObjectWindow.updateCurrentNode();
-                closeEditorWindow();
             }
             else
             {
@@ -191,7 +222,6 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
                     currentTable.updateTrackData();
                     parentTrackWindow.updateTrackMap();
                     parentObjectWindow.updateCurrentNode();
-                    closeEditorWindow();
                 }
                 else
                 {
@@ -200,11 +230,18 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
                         CmdParamTableModel currentTable = (CmdParamTableModel)segmentTable.getModel();
                         currentTable.updateTrackData();
                         parentTrackWindow.updateTrackMap();
-                        closeEditorWindow();
                     }
                 }
             }
-        }
+        }        
+    }
+    
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        // Updates the track data with all changes made and closes the window
+        
+        updateData();
+        closeEditorWindow();        
+        
     }//GEN-LAST:event_updateButtonActionPerformed
 
     private void cancelAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelAction
@@ -223,6 +260,7 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton applyButton;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
     private chequeredflag.gui.beans.JExtendedTable segmentTable;
