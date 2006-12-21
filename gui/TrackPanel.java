@@ -589,14 +589,14 @@ public class TrackPanel extends javax.swing.JPanel {
                 // to the point where the fence is, multiply the X/YDiff by (1 + 1/32 FenceDist).
                 dXDiffFence = dXDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
                 dYDiffFence = dYDiff * ( 1.0 + ((double)m_nLeftFenceDistPrev) / 32.0);
-                nFenceStartX = new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue();
-                nFenceStartY = new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue();
+                nFenceStartX = new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue();
+                nFenceStartY = new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue();
                 dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);
                 dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistL()) / 32.0);;
                 g2d.drawLine(nFenceStartX,
                              nFenceStartY,
-                             new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
-                             new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
+                             new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
+                             new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
             }
             else
             {
@@ -646,14 +646,14 @@ public class TrackPanel extends javax.swing.JPanel {
             {
                 dXDiffFence = dXDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
                 dYDiffFence = dYDiff * ( 1.0 + ((double)m_nRightFenceDistPrev) / 32.0);
-                nFenceStartX = new Double((trackSegment.getPosXStart() + dXDiffFence) * m_scale).intValue();
-                nFenceStartY = new Double((trackSegment.getPosYStart() - dYDiffFence) * m_scale).intValue();
+                nFenceStartX = new Double((trackSegment.getPosXStart() - dXDiffFence) * m_scale).intValue();
+                nFenceStartY = new Double((trackSegment.getPosYStart() + dYDiffFence) * m_scale).intValue();
                 dXDiffFence = dXDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);
                 dYDiffFence = dYDiff * ( 1.0 + ((double)trackSegment.getFenceDistR()) / 32.0);;
                 g2d.drawLine(nFenceStartX,
                              nFenceStartY,
-                             new Double((trackSegment.getPosXEnd() + dXDiffFence) * m_scale).intValue(),
-                             new Double((trackSegment.getPosYEnd() - dYDiffFence) * m_scale).intValue());
+                             new Double((trackSegment.getPosXEnd() - dXDiffFence) * m_scale).intValue(),
+                             new Double((trackSegment.getPosYEnd() + dYDiffFence) * m_scale).intValue());
             } // straight segment
             else
             {
@@ -756,15 +756,15 @@ public class TrackPanel extends javax.swing.JPanel {
                 // straight
                 int aXPoints[] = new int[ 4 ];
                 int aYPoints[] = new int[ 4 ];
-                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiffStart) * m_scale).intValue();
-                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiffStart) * m_scale).intValue();
-                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() - ( dXDiffStart * 1.25 ) ) * m_scale).intValue();
-                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() + ( dYDiffStart * 1.25 ) ) * m_scale).intValue();
+                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() + dXDiffStart) * m_scale).intValue();
+                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() - dYDiffStart) * m_scale).intValue();
+                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + ( dXDiffStart * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - ( dYDiffStart * 1.25 ) ) * m_scale).intValue();
 
-                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() - ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
-                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() + ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
-                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiffEnd) * m_scale).intValue();
-                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiffEnd) * m_scale).intValue();
+                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - ( dYDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() + dXDiffEnd) * m_scale).intValue();
+                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() - dYDiffEnd) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
             }
             else
@@ -816,15 +816,15 @@ public class TrackPanel extends javax.swing.JPanel {
                 // straight
                 int aXPoints[] = new int[ 4 ];
                 int aYPoints[] = new int[ 4 ];
-                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() + dXDiffStart) * m_scale).intValue();
-                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() - dYDiffStart) * m_scale).intValue();
-                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() + ( dXDiffStart * 1.25 ) ) * m_scale).intValue();
-                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() - ( dYDiffStart * 1.25 ) ) * m_scale).intValue();
+                aXPoints[ 0 ] = new Double((trackSegment.getPosXStart() - dXDiffStart) * m_scale).intValue();
+                aYPoints[ 0 ] = new Double((trackSegment.getPosYStart() + dYDiffStart) * m_scale).intValue();
+                aXPoints[ 1 ] = new Double((trackSegment.getPosXStart() - ( dXDiffStart * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 1 ] = new Double((trackSegment.getPosYStart() + ( dYDiffStart * 1.25 ) ) * m_scale).intValue();
 
-                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() + ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
-                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() - ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
-                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() + dXDiffEnd) * m_scale).intValue();
-                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() - dYDiffEnd) * m_scale).intValue();
+                aXPoints[ 2 ] = new Double((trackSegment.getPosXEnd() - ( dXDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aYPoints[ 2 ] = new Double((trackSegment.getPosYEnd() + ( dYDiffEnd * 1.25 ) ) * m_scale).intValue();
+                aXPoints[ 3 ] = new Double((trackSegment.getPosXEnd() - dXDiffEnd) * m_scale).intValue();
+                aYPoints[ 3 ] = new Double((trackSegment.getPosYEnd() + dYDiffEnd) * m_scale).intValue();
                 g2d.drawPolygon( aXPoints, aYPoints, 4 );
             }
             else
