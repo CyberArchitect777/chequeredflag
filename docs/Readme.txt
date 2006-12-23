@@ -12,8 +12,10 @@ Contents
 1. Introduction
 2. System Requirements
 3. Instructions
-4. Support
-5. License
+4. Known Issues
+5. Support
+6. Development Details
+7. License
 
 1. Introduction
 ***************
@@ -54,7 +56,7 @@ specific issues that need to be mentioned below.
 
 * Although Chequered Flag could potentially be run on a very small desktop
 display, it has been generally assumed during the design of this program that a 
-minimum desktop size of 800x600 is being utilzed by the end-user. Therefore,
+minimum desktop size of 800x600 is being utilized by the end-user. Therefore,
 Chequered Flag may not run as expected on anything lower than this. 
 
 * This program has been created using Sun's version of the Java programming 
@@ -77,9 +79,30 @@ bear in mind that you will need to have your Java interpreter working properly
 before attempting this.
 
 Windows - chequeredflag.bat
-Linux/Solaris - chequeredflag.sh
 
-4. Support
+Linux/Solaris - chequeredflag.sh (You may need to make the script executable 
+before running it, or instead process it through a shell interpreter with a 
+command similar to the following: sh chequeredflag.sh)
+
+There are also other ways in which the Java package can be run directly on any 
+of the above operating systems. Experienced end-users may use any of these as 
+required, but the guide above should be enough for anybody to get started with 
+Chequered Flag.
+
+4. Known Issues
+***************
+
+* A bug has been found in some versions of Sun Java 1.4.2 which results in an 
+exception error appearing after the program has been run. This seems to have 
+no other impact on the editor, but users may see an error message appearing 
+after loading Chequered Flag if they use specific versions of Sun Java.
+
+* The best line generator on the track map is not working correctly. As yet, 
+the developers have not yet had time to implement the new calculations which 
+will resolve this issue. Users can expect this to appear in version 0.1.1 or 
+0.1.2 of Chequered Flag.
+
+5. Support
 **********
 
 Although most modern software packages are designed to be easy to use as well 
@@ -112,7 +135,7 @@ designed for open discussion.
 
 If any direct discussions with the project team is required, it is possible to 
 contact them directly. The following web addresses will allow you to email the
-project administators. 
+project administrators.
 
 To contact B-za: http://sourceforge.net/sendmessage.php?touser=830819
 To contact Ksix: http://sourceforge.net/sendmessage.php?touser=1214945
@@ -120,7 +143,17 @@ To contact Ksix: http://sourceforge.net/sendmessage.php?touser=1214945
 Please do not abuse this option if your message can be handled in one of the 
 other sections above; as we all have too much work already... :)
 
-5. License
+6. Development Details
+**********************
+
+Chequered Flag version 0.1.0 was built to run on Sun Java 1.4.2.06 and 1.4.2.07.
+Most of the development work was conducted with the aid of the Netbeans IDE tool
+version 4.0.
+
+This is likely to change in future releases, with newer versions of both
+interpreter and IDE tool utilized by the developers.
+
+7. License
 **********
 
 Chequered Flag has been created and licensed under the GNU General Public 
