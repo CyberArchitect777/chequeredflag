@@ -1,0 +1,24 @@
+Chequered Flag Changelog
+************************
+
+Version 0.1.1
+*************
+
+Developer Log (Will be parsed and re-structured to reflect user output for final release):
+
+* Support for Sun Java 1.4 dropped. Sun Java 1.5 is now the development platform.
+* Updated programming to remove all depreciated code as of Sun Java 1.5.
+* Added an option to clear the recent file list.
+* Implemented new ability to edit the game executable files. Provided three sample options
+* Updated version number on About screen
+* Updated file dialog to support EXE file filter
+* Added new options to support a pre-defined EXE file and also to clear the recent file list
+
+
+
+
+Version 0.1.0
+*************
+
+Initial release.
+
