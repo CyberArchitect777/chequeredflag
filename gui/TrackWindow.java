@@ -103,7 +103,6 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
 
     public void internalFrameClosed(InternalFrameEvent e) 
     {
-	//listenedToWindow = null;
     }
 
     public void internalFrameOpened(InternalFrameEvent e) 
@@ -132,7 +131,7 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
         
         int windowX = trackEditorWindow.getWidth();
         int windowY = trackEditorWindow.getHeight();
-        trackEditorPane.reshape(0,0,windowX,windowY);
+        trackEditorPane.setBounds(0,0,windowX,windowY);
         trackEditorPane.setDividerLocation(0.42);
         trackEditorPane.updateUI();
     }
