@@ -37,11 +37,24 @@ public class FileDialog extends javax.swing.JDialog {
         initComponents();
     }
     
+    public void setFilterType(int filterType)
+    {
+        // Sets the type of file filter used
+        // 1 - Track Filter
+        // 2 - Executable Filter
+        
+        switch(filterType)
+        {
+            case 1: fileChooser.setFileFilter(new TrackFilter()); break;
+            case 2: fileChooser.setFileFilter(new ExecutableFilter()); break;
+        }
+        
+    }
+    
     public String showOpenDialog()
     {
         // Displays an input dialog for opening F1GP tracks
         
-        fileChooser.setFileFilter(new TrackFilter());
         int userChoice = fileChooser.showOpenDialog(this);
         String fileName = fileChooser.getSelectedFile().getPath();
         return fileName;
@@ -51,7 +64,6 @@ public class FileDialog extends javax.swing.JDialog {
     {
         // Displays a save dialog for storing F1GP tracks
         
-        fileChooser.setFileFilter(new TrackFilter());
         int userChoice = fileChooser.showSaveDialog(this);
         String fileName = fileChooser.getSelectedFile().getPath();
         return fileName;
