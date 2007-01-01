@@ -25,7 +25,7 @@
 
 package chequeredflag.data.gui;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.io.*;
 import java.util.prefs.Preferences;
 
@@ -107,6 +107,16 @@ public class RecentFiles
                 numberFiles++;
             }
         }
+    }
+    
+    public void clearRecentFiles()
+    {
+        for (int x=0;x<4;x++)
+        {
+            recentFileList[x] = new String();
+        }
+        numberFiles=0;
+        saveRecentFiles();
     }
     
     public int getNumberFiles()
