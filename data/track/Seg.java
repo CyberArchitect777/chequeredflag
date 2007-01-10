@@ -1,6 +1,6 @@
 /*
  * Chequered Flag: An editor for Formula One Grand Prix/World Circuit
- * Copyright (C) 2005-2006  The Chequered Flag Development Team
+ * Copyright (C) 2005-2007  The Chequered Flag Development Team
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ package chequeredflag.data.track;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:29
- * $Id: Seg.java,v 1.2 2006/12/20 00:49:52 b-za Exp $
+ * $Id: Seg.java,v 1.3 2007/01/10 15:59:10 b-za Exp $
  */
 
 public class Seg {
