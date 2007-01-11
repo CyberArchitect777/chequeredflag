@@ -98,13 +98,19 @@ public class GameMods
         BinaryManager.setDataByte(gameVersion, binaryAccess, 125581, 125529, 125537, new Byte(byteValue[0]));
         if (qualifyingTyres == true)
         {
-            byteValue[0] = 0x01;
+            byteValue[0] = (byte)0x80;
+            byteValue[1] = 0x75;
+            byteValue[2] = 0x40;
         }
         else
         {
-            byteValue[0] = 0x00;
+            byteValue[0] = 0x40;
+            byteValue[1] = 0x74;
+            byteValue[2] = 0x04;
         }
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 58395, 58395, 58395, new Byte(byteValue[0]));
+        BinaryManager.setDataByte(gameVersion, binaryAccess, 44056, 44056, 44056, new Byte(byteValue[0]));
+        BinaryManager.setDataByte(gameVersion, binaryAccess, 44057, 44057, 44057, new Byte(byteValue[1]));
+        BinaryManager.setDataByte(gameVersion, binaryAccess, 44083, 44083, 44083, new Byte(byteValue[2]));
         if (languageSelection == true)
         {
             byteValue[0] = 0x00;
@@ -125,10 +131,10 @@ public class GameMods
     
     public boolean loadData(RandomAccessFile binaryAccess, int gameVersion)
     {
-        Byte dataValue = BinaryManager.getDataByte(gameVersion, binaryAccess, 125581, 125529, 125537);
-        System.out.println(dataValue);
-        //if (dataValue == 24)
-        if (dataValue == 0x18)
+        byte[] dataValue = new byte[3];
+        dataValue[0] = BinaryManager.getDataByte(gameVersion, binaryAccess, 125581, 125529, 125537);
+        System.out.println(dataValue[0]);
+        if (dataValue[0] == 0x18)
         {
             fastFade = true;
         }
@@ -136,10 +142,11 @@ public class GameMods
         {
             fastFade = false;
         }
-        dataValue = BinaryManager.getDataByte(gameVersion, binaryAccess, 58395, 58395, 58395);
-        System.out.println(dataValue);
-        //if (dataValue == 1)
-        if (dataValue == 0x01)
+        dataValue[0] = BinaryManager.getDataByte(gameVersion, binaryAccess, 44056, 44056, 44056);
+        dataValue[1] = BinaryManager.getDataByte(gameVersion, binaryAccess, 44057, 44057, 44057);
+        dataValue[2] = BinaryManager.getDataByte(gameVersion, binaryAccess, 44083, 44083, 44083);        
+        System.out.println(dataValue[0] + " " + dataValue[1] + " " + dataValue[2]);
+        if ((dataValue[0] == (byte)0x80) && (dataValue[1] == 0x75) && (dataValue[2] == 0x40))
         {
             qualifyingTyres = true;
         }
@@ -147,10 +154,9 @@ public class GameMods
         {
             qualifyingTyres = false;
         }
-        dataValue = BinaryManager.getDataByte(gameVersion, binaryAccess, 203440, 203338, 203396);
-        System.out.println(dataValue);
-        //if (dataValue == 0)
-        if (dataValue == 0x00)
+        dataValue[0] = BinaryManager.getDataByte(gameVersion, binaryAccess, 203440, 203338, 203396);
+        System.out.println(dataValue[0]);
+        if (dataValue[0] == 0x00)
         {
             languageSelection = true;
         }
