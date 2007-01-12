@@ -45,7 +45,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     private Executable currentExecutable;
     private ExecutableTreeSelector executableSelector;
     private JPanel multiPageContainer;
-    private GameTweaks gameTweaks;
+    private GameTweaksPanel gameTweaks;
     private CardLayout cardLayout;
     
     /** Creates new form ExecutableWindow */
@@ -63,8 +63,8 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         multiPageContainer.setLayout(cardLayout);
         executableEditorPane.setLeftComponent(executableSelector);
         executableEditorPane.setRightComponent(multiPageContainer);
-        gameTweaks = new GameTweaks(currentExecutable.getGameTweaks());
-        ExecutableInfo executableInfo = new ExecutableInfo(selectedExecutable.returnGameVersionString());
+        gameTweaks = new GameTweaksPanel(currentExecutable.getGameTweaks());
+        ExecutableInfoPanel executableInfo = new ExecutableInfoPanel(selectedExecutable.returnGameVersionString());
         multiPageContainer.add("Executable Info", executableInfo);
         multiPageContainer.add("Game Tweaks", gameTweaks);
         ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info");

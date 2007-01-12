@@ -36,7 +36,7 @@ public class Executable
     
     private int gameVersion;
     private File gameFile;
-    private GameMods gameTweaks;
+    private GameTweaks gameTweaks;
     
     /** Creates a new instance of Executable */
     public Executable(File loadedFile)
@@ -52,7 +52,7 @@ public class Executable
             default: gameVersion = 4; break;
         }    
         
-        gameTweaks = new GameMods();
+        gameTweaks = new GameTweaks();
     }
     
     public int returnGameVersionID()
@@ -71,7 +71,7 @@ public class Executable
         }
     }   
     
-    public GameMods getGameTweaks()
+    public GameTweaks getGameTweaks()
     {
         return gameTweaks;
     }

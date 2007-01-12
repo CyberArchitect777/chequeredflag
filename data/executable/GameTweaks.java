@@ -18,7 +18,7 @@
 */
 
 /*
- * GameMods.java
+ * GameTweaks.java
  *
  * Created on 01 January 2007, 03:16
  *
@@ -34,15 +34,17 @@ import java.io.*;
  *
  * @author barrie
  */
-public class GameMods 
+public class GameTweaks 
 {
     
     private boolean qualifyingTyres;
     private boolean fastFade;
     private boolean languageSelection;
     
-    /** Creates a new instance of GameMods */
-    public GameMods() 
+    /**
+     * Creates a new instance of GameTweaks
+     */
+    public GameTweaks() 
     {
         qualifyingTyres = false;
         fastFade = false;
@@ -81,60 +83,72 @@ public class GameMods
     
     public boolean saveData(RandomAccessFile binaryAccess, int gameVersion)
     {
-        byte[] byteValue = new byte[3];
-        for (int x=0;x<3;x++)
-        {
-            byteValue[x] = 0;
-        }
+        byte[] fastFadeData = new byte[10];
         if (fastFade == true)
         {
-            byteValue[0] = 0x18;
-            
+            for (int x=0;x<10;x++)
+            {
+                fastFadeData[x] = (byte)0x90;
+            }
         }
         else
         {
-            byteValue[0] = (byte)0x80;
+            fastFadeData[0] = (byte)0xEC;
+            fastFadeData[1] = (byte)0xA8;
+            fastFadeData[2] = 0x08;
+            fastFadeData[3] = 0x75;
+            fastFadeData[4] = (byte)0xFB;
+            fastFadeData[5] = (byte)0xEC;
+            fastFadeData[6] = (byte)0xA8;
+            fastFadeData[7] = 0x08;
+            fastFadeData[8] = 0x74;
+            fastFadeData[9] = (byte)0xFB;           
         }
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 125581, 125529, 125537, new Byte(byteValue[0]));
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 304646, 304507, 304480, fastFadeData);
+        byte[] qualifyingTyresData1 = new byte[2];
+        byte[] qualifyingTyresData2 = new byte[1];
         if (qualifyingTyres == true)
         {
-            byteValue[0] = (byte)0x80;
-            byteValue[1] = 0x75;
-            byteValue[2] = 0x40;
+            qualifyingTyresData1[0] = (byte)0x80;
+            qualifyingTyresData1[1] = 0x75;
+            qualifyingTyresData2[0] = 0x40;
         }
         else
         {
-            byteValue[0] = 0x40;
-            byteValue[1] = 0x74;
-            byteValue[2] = 0x04;
+            qualifyingTyresData1[0] = 0x40;
+            qualifyingTyresData1[1] = 0x74;
+            qualifyingTyresData2[0] = 0x04;
         }
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 44056, 44056, 44056, new Byte(byteValue[0]));
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 44057, 44057, 44057, new Byte(byteValue[1]));
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 44083, 44083, 44083, new Byte(byteValue[2]));
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 44056, 44056, 44056, qualifyingTyresData1);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 44083, 44083, 44083, qualifyingTyresData2);
+        byte[] languageSelectionData1 = new byte[1];
+        byte[] languageSelectionData2 = new byte[1];
+        byte[] languageSelectionData3 = new byte[1];
         if (languageSelection == true)
         {
-            byteValue[0] = 0x00;
-            byteValue[1] = 0x00;
-            byteValue[2] = 0x00;
+            languageSelectionData1[0] = 0x00;
+            languageSelectionData2[0] = 0x00;
+            languageSelectionData3[0] = 0x00;
         }
         else
         {
-            byteValue[0] = (byte)0xA8;
-            byteValue[1] = 0x2C;
-            byteValue[2] = 0x1F;                    
+            languageSelectionData1[0] = (byte)0xA8;
+            languageSelectionData2[0] = 0x2C;
+            languageSelectionData3[0] = 0x1F;                    
         }
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 203440, 203338, 203396, new Byte(byteValue[0]));
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 203450, 203398, 203406, new Byte(byteValue[1]));
-        BinaryManager.setDataByte(gameVersion, binaryAccess, 203467, 203415, 203423, new Byte(byteValue[2]));
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203440, 203338, 203396, languageSelectionData1);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203450, 203398, 203406, languageSelectionData2);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203467, 203415, 203423, languageSelectionData3);
         return true;
     }
     
     public boolean loadData(RandomAccessFile binaryAccess, int gameVersion)
     {
-        byte[] dataValue = new byte[3];
-        dataValue[0] = BinaryManager.getDataByte(gameVersion, binaryAccess, 125581, 125529, 125537);
-        System.out.println(dataValue[0]);
-        if (dataValue[0] == 0x18)
+        //byte[] dataValue = new byte[3];
+        byte[] dataValues;
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 304646, 304507, 304480, 1);
+        System.out.println(dataValues);
+        if (dataValues[0] == (byte)0x90)
         {
             fastFade = true;
         }
@@ -142,11 +156,9 @@ public class GameMods
         {
             fastFade = false;
         }
-        dataValue[0] = BinaryManager.getDataByte(gameVersion, binaryAccess, 44056, 44056, 44056);
-        dataValue[1] = BinaryManager.getDataByte(gameVersion, binaryAccess, 44057, 44057, 44057);
-        dataValue[2] = BinaryManager.getDataByte(gameVersion, binaryAccess, 44083, 44083, 44083);        
-        System.out.println(dataValue[0] + " " + dataValue[1] + " " + dataValue[2]);
-        if ((dataValue[0] == (byte)0x80) && (dataValue[1] == 0x75) && (dataValue[2] == 0x40))
+        qualifyingTyres = false;
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 44056, 44056, 44056, 1);
+        if (dataValues[0] == (byte)0x80)
         {
             qualifyingTyres = true;
         }
@@ -154,9 +166,8 @@ public class GameMods
         {
             qualifyingTyres = false;
         }
-        dataValue[0] = BinaryManager.getDataByte(gameVersion, binaryAccess, 203440, 203338, 203396);
-        System.out.println(dataValue[0]);
-        if (dataValue[0] == 0x00)
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 203440, 203338, 203396, 1);
+        if (dataValues[0] == 0x00)
         {
             languageSelection = true;
         }

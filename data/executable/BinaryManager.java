@@ -42,17 +42,21 @@ public class BinaryManager
     {
     }
     
-    public static void setDataByte(int gameVersion, RandomAccessFile openFile, int europeanVersion, int italianVersion, int usVersion, Byte dataValue)
+    public static void setDataBytes(int gameVersion, RandomAccessFile openFile, int europeanVersion, int italianVersion, int usVersion, byte[] dataValues)
     {
         try
         {
             switch (gameVersion)
             {
-                case 1: openFile.seek(europeanVersion); break;
-                case 2: openFile.seek(italianVersion); break;
-                case 3: openFile.seek(usVersion); break;
+                case 1: openFile.seek(europeanVersion); System.out.println("Seeking to: " + europeanVersion); break;
+                case 2: openFile.seek(italianVersion); System.out.println("Seeking to: " + europeanVersion); break;
+                case 3: openFile.seek(usVersion); System.out.println("Seeking to: " + europeanVersion); break;
             }
-            openFile.writeByte(dataValue);
+            for (int x=0;x<dataValues.length;x++)
+            {
+                System.out.println("Writing value: " + dataValues[x]);
+                openFile.write(dataValues[x]);
+            }
         }
         catch (Exception exceptionError)
         {
@@ -60,25 +64,32 @@ public class BinaryManager
         }
     }
     
-    public static Byte getDataByte(int gameVersion, RandomAccessFile openFile, int europeanVersion, int italianVersion, int usVersion)
+    public static byte[] getDataBytes(int gameVersion, RandomAccessFile openFile, int europeanVersion, int italianVersion, int usVersion, int numberBytes)
     {
+        byte[] dataValues = new byte[numberBytes];
         try
         {
-            switch (gameVersion)
+            for (int x=0;x<numberBytes;x++)
             {
-                case 1: openFile.seek(europeanVersion); break;
-                case 2: openFile.seek(italianVersion); break;
-                case 3: openFile.seek(usVersion); break;
+                switch (gameVersion)
+                {
+                    case 1: openFile.seek(europeanVersion); System.out.println("Seeking to: " + europeanVersion); break;
+                    case 2: openFile.seek(italianVersion); System.out.println("Seeking to: " + italianVersion); break;
+                    case 3: openFile.seek(usVersion); System.out.println("Seeking to: " + usVersion); break;
+                }
+                dataValues[x] = (byte)openFile.read();
+                System.out.println("Reading value: " + dataValues[x]);
+                //int unsignedByte = (0x000000FF & dataValue); // Convert signed to unsigned byte (still inside integer)
+                //short convertedByte = (short)unsignedByte; // Move the integer type to a short
             }
-            Byte dataValue = openFile.readByte();
-            //int unsignedByte = (0x000000FF & dataValue); // Convert signed to unsigned byte (still inside integer)
-            //short convertedByte = (short)unsignedByte; // Move the integer type to a short
-            return dataValue;
+            return dataValues;
         }
         catch (Exception exceptionError)
         {
             exceptionError.printStackTrace();
-            return 0;
+            byte[] emptyValue = new byte[1];
+            emptyValue[0] = 0x00;
+            return emptyValue;
         }
     }    
 }

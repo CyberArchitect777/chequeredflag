@@ -18,28 +18,28 @@
 */
 
 /*
- * GameTweaks.java
+ * GameTweaksPanel.java
  *
  * Created on 31 December 2006, 21:11
  */
 
 package chequeredflag.gui.panels;
 
-import chequeredflag.data.executable.GameMods;
+import chequeredflag.data.executable.GameTweaks;
 
 /**
  *
  * @author  barrie
  */
-public class GameTweaks extends javax.swing.JPanel 
+public class GameTweaksPanel extends javax.swing.JPanel 
 {
     
-    private GameMods gameTweaks;
+    private GameTweaks gameTweaks;
     
     /**
-     * Creates new form GameTweaks
+     * Creates new form GameTweaksPanel
      */
-    public GameTweaks(GameMods passedGameTweaks) 
+    public GameTweaksPanel(GameTweaks passedGameTweaks) 
     {
         initComponents();
         gameTweaks = passedGameTweaks;

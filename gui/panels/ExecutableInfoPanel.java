@@ -18,7 +18,7 @@
 */
 
 /*
- * ExecutableInfo.java
+ * ExecutableInfoPanel.java
  *
  * Created on 01 January 2007, 01:32
  */
@@ -29,10 +29,12 @@ package chequeredflag.gui.panels;
  *
  * @author  barrie
  */
-public class ExecutableInfo extends javax.swing.JPanel {
+public class ExecutableInfoPanel extends javax.swing.JPanel {
     
-    /** Creates new form ExecutableInfo */
-    public ExecutableInfo(String gameVersion) 
+    /**
+     * Creates new form ExecutableInfoPanel
+     */
+    public ExecutableInfoPanel(String gameVersion) 
     {
         initComponents();
         versionText.setText("Game Version: " + gameVersion);
