@@ -18,7 +18,7 @@
 */
 
 /*
- * TreeEditorWindow.java
+ * TrackTreeSelector.java
  *
  * Created on 24 March 2005, 01:26
  */
@@ -33,7 +33,7 @@ import javax.swing.*;
  *
  * @author  barrie
  */
-public class TreeEditorWindow extends javax.swing.JInternalFrame {
+public class TrackTreeSelector extends javax.swing.JInternalFrame {
     
     private DefaultMutableTreeNode rootNode;
     private Track currentTrack;
@@ -44,8 +44,10 @@ public class TreeEditorWindow extends javax.swing.JInternalFrame {
     private DefaultMutableTreeNode mainPitSegmentNode;
     private DefaultMutableTreeNode mainLineSegmentNode;
         
-    /** Creates new form TreeEditorWindow */
-    public TreeEditorWindow(JDesktopPane containerFrame, TrackWindow currentTrackWindow) {
+    /**
+     * Creates new form TrackTreeSelector
+     */
+    public TrackTreeSelector(JDesktopPane containerFrame, TrackWindow currentTrackWindow) {
         initComponents();
         setDefaultElement();    
         createTree();

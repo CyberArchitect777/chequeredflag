@@ -43,8 +43,8 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
 {
     
     private Track currentTrack;
-    private TreeEditorWindow treeWindow;
-    private GraphicalEditorWindow mapWindow;
+    private TrackTreeSelector treeWindow;
+    private TrackGraphicalViewer mapWindow;
     private MainGUI appFrame;
     private String fileName;
     private boolean closingWindow;
@@ -59,8 +59,8 @@ public class TrackWindow extends javax.swing.JInternalFrame implements InternalF
         setContentPane(trackEditorWindow);
         currentTrack = selectedTrack;
         appFrame = origContainer;
-        treeWindow = new TreeEditorWindow(trackEditorWindow, this);
-        mapWindow = new GraphicalEditorWindow();
+        treeWindow = new TrackTreeSelector(trackEditorWindow, this);
+        mapWindow = new TrackGraphicalViewer();
         mapWindow.setTrack(currentTrack);
         treeWindow.setTrack(currentTrack);
         treeWindow.populateTree();

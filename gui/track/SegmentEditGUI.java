@@ -42,10 +42,10 @@ public class SegmentEditGUI extends javax.swing.JInternalFrame
 {
     
     private TrackWindow parentTrackWindow;
-    private TreeEditorWindow parentObjectWindow;
+    private TrackTreeSelector parentObjectWindow;
     
     /** Creates new form TrackSegmentEditGUI */
-    public SegmentEditGUI(TrackWindow currentTrackWindow, TreeEditorWindow currentObjectWindow) 
+    public SegmentEditGUI(TrackWindow currentTrackWindow, TrackTreeSelector currentObjectWindow) 
     {
         initComponents();
         parentTrackWindow = currentTrackWindow;

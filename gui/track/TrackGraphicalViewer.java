@@ -18,7 +18,7 @@
 */
 
 /*
- * GraphicalEditorWindow.java
+ * TrackGraphicalViewer.java
  *
  * Created on 24 March 2005, 01:27
  */
@@ -36,11 +36,11 @@ import java.awt.event.KeyEvent;
  *
  * @author  barrie
  */
-public class GraphicalEditorWindow extends javax.swing.JInternalFrame {
+public class TrackGraphicalViewer extends javax.swing.JInternalFrame {
 	private static final int PAN_AMOUNT = 100;
 
 	/** Creates new form graphicalEditorWindow */
-    public GraphicalEditorWindow() {
+    public TrackGraphicalViewer() {
         initComponents();
 		initActions();
         m_trackPanel = new TrackPanel();

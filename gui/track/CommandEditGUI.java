@@ -44,10 +44,10 @@ public class CommandEditGUI extends javax.swing.JInternalFrame
     private Vector currentSegmentCommands;
     private JDesktopPane parentFrame;
     private TrackWindow parentTrackWindow;
-    private TreeEditorWindow parentObjectWindow;
+    private TrackTreeSelector parentObjectWindow;
     
     /** Creates new form CommandEditGUI */
-    public CommandEditGUI(TrackSegment currentSegment, JDesktopPane containerFrame, TrackWindow currentTrackWindow, TreeEditorWindow currentObjectWindow) 
+    public CommandEditGUI(TrackSegment currentSegment, JDesktopPane containerFrame, TrackWindow currentTrackWindow, TrackTreeSelector currentObjectWindow) 
     {
         initComponents();
         parentFrame = containerFrame;
