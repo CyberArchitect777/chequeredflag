@@ -23,9 +23,10 @@
  * Created on 29 September 2006, 21:46
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.track;
 
 import chequeredflag.data.track.*;
+import chequeredflag.gui.*;
 import java.util.Vector;
 import javax.swing.*;
 

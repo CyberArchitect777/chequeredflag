@@ -25,6 +25,8 @@
 
 package chequeredflag.gui;
 
+import chequeredflag.gui.executable.ExecutableWindow;
+import chequeredflag.gui.track.TrackWindow;
 import javax.swing.*;
 import java.io.*;
 import chequeredflag.data.track.*;

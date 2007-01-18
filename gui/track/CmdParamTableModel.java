@@ -23,8 +23,10 @@
  * Created on 13 May 2005, 23:55
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.track;
 import chequeredflag.data.track.*;
+import chequeredflag.gui.*;
+import chequeredflag.gui.table.StandardTableModel;
 
 /**
  *

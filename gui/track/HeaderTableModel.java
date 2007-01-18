@@ -23,9 +23,11 @@
  * Created on November 24, 2005, 6:50 PM
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.track;
 
 import chequeredflag.data.track.*;
+import chequeredflag.gui.*;
+import chequeredflag.gui.table.StandardTableModel;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 

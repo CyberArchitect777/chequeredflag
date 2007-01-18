@@ -25,6 +25,9 @@
 
 package chequeredflag.gui;
 
+import chequeredflag.gui.executable.ExecutableFilter;
+import chequeredflag.gui.track.TrackFilter;
+
 /**
  *
  * @author  barrie

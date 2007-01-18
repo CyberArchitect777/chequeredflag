@@ -23,14 +23,16 @@
  * Created on 31 December 2006, 04:21
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.executable;
 
+import chequeredflag.gui.*;
+import chequeredflag.gui.executable.panels.ExecutableInfoPanel;
+import chequeredflag.gui.executable.panels.GameTweaksPanel;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.*;
 import java.awt.*;
 import chequeredflag.data.executable.*;
-import chequeredflag.gui.panels.*;
 
 /**
  *

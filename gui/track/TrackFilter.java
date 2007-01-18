@@ -18,44 +18,38 @@
 */
 
 /*
- * TextTableCellEditor.java
+ * TrackFilter.java
  *
- * Created on 04 June 2005, 01:04
+ * Created on 18 March 2005, 23:36
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.track;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.table.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.*;
 
 /**
  *
  * @author barrie
  */
-public class TextTableCellEditor extends AbstractCellEditor implements TableCellEditor
+public class TrackFilter extends FileFilter
 {
     
-    private JTextField cellField;
-    
-    /** Creates a new instance of TextTableCellEditor */
-    public TextTableCellEditor() 
+    /** Creates a new instance of TrackFilter */
+    public TrackFilter() 
     {
-        cellField = new JTextField();
+        
     }
     
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+    public boolean accept(File trackFilter)
     {
-        cellField.setHorizontalAlignment(SwingConstants.CENTER);
-        cellField.setOpaque(true);
-        Font labelFont = cellField.getFont();
-        cellField.setFont(new Font("SansSerif", Font.PLAIN, labelFont.getSize()));
-        cellField.setText((String)value);
-        return cellField;
+        //return (trackFilter.getName().toLowerCase().startsWith("f1ct") && trackFilter.getName().toLowerCase().endsWith(".dat")) || trackFilter.isDirectory();
+        return trackFilter.getName().toLowerCase().endsWith(".dat") || trackFilter.isDirectory();
     }
     
-    public Object getCellEditorValue()
+    public String getDescription()
     {
-        return cellField.getText();
+        return "F1GP/WC Track File";
     }
+    
 }

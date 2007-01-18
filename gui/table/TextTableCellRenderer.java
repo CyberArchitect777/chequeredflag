@@ -23,10 +23,9 @@
  * Created on 23 May 2005, 01:42
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.table;
 
 import javax.swing.*;
-import chequeredflag.gui.beans.*;
 import java.awt.*;
 import javax.swing.table.*;
 

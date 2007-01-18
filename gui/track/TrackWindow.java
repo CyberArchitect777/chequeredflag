@@ -23,8 +23,9 @@
  * Created on 07 April 2005, 03:43
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.track;
 
+import chequeredflag.gui.*;
 import java.io.*;
 import chequeredflag.data.track.*;
 import javax.swing.*;

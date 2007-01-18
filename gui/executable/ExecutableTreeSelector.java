@@ -23,7 +23,7 @@
  * Created on 31 December 2006, 20:03
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.executable;
 
 import chequeredflag.data.track.*;
 import javax.swing.*;

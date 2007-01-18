@@ -23,7 +23,7 @@
  * Created on 14 June 2005, 02:15
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.table;
 
 import javax.swing.table.*;
 import javax.swing.JComboBox;

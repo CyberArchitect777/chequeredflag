@@ -23,7 +23,7 @@
  * Created on 30. März 2005, 23:13
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.track;
 
 import chequeredflag.data.track.*;
 

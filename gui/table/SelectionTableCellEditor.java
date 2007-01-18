@@ -18,38 +18,43 @@
 */
 
 /*
- * TrackFilter.java
+ * SelectionTableCellEditor.java
  *
- * Created on 18 March 2005, 23:36
+ * Created on 07 July 2005, 00:48
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.table;
 
-import javax.swing.filechooser.FileFilter;
-import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import javax.swing.table.*;
 
 /**
  *
  * @author barrie
  */
-public class TrackFilter extends FileFilter
+public class SelectionTableCellEditor extends AbstractCellEditor implements TableCellEditor
 {
     
-    /** Creates a new instance of TrackFilter */
-    public TrackFilter() 
+    private JComboBox selectionList;
+    
+    /** Creates a new instance of SelectionTableCellEditor */
+    public SelectionTableCellEditor() 
     {
+        selectionList = new JComboBox();
+    }
+    
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+    {
+        selectionList = (JComboBox)value;
+        selectionList.setAlignmentX(SwingConstants.CENTER);
+        selectionList.setOpaque(true);
         
+        return selectionList;
     }
     
-    public boolean accept(File trackFilter)
+    public Object getCellEditorValue()
     {
-        //return (trackFilter.getName().toLowerCase().startsWith("f1ct") && trackFilter.getName().toLowerCase().endsWith(".dat")) || trackFilter.isDirectory();
-        return trackFilter.getName().toLowerCase().endsWith(".dat") || trackFilter.isDirectory();
+        return selectionList;
     }
-    
-    public String getDescription()
-    {
-        return "F1GP/WC Track File";
-    }
-    
 }

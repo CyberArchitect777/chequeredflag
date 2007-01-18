@@ -18,43 +18,39 @@
 */
 
 /*
- * SelectionTableCellEditor.java
+ * ExecutableFilter.java
  *
- * Created on 07 July 2005, 00:48
+ * Created on 31 December 2006, 01:47
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.executable;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.table.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.*;
 
 /**
  *
  * @author barrie
  */
-public class SelectionTableCellEditor extends AbstractCellEditor implements TableCellEditor
+public class ExecutableFilter extends FileFilter
 {
     
-    private JComboBox selectionList;
-    
-    /** Creates a new instance of SelectionTableCellEditor */
-    public SelectionTableCellEditor() 
-    {
-        selectionList = new JComboBox();
+    /** Creates a new instance of ExecutableFilter */
+    public ExecutableFilter() 
+    {        
     }
     
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+    public boolean accept(File executableFilter)
     {
-        selectionList = (JComboBox)value;
-        selectionList.setAlignmentX(SwingConstants.CENTER);
-        selectionList.setOpaque(true);
-        
-        return selectionList;
+        return executableFilter.getName().toLowerCase().endsWith(".exe") || executableFilter.isDirectory();
     }
     
-    public Object getCellEditorValue()
+    public String getDescription()
     {
-        return selectionList;
+        return "F1GP/WC Executable File";
     }
+    
 }

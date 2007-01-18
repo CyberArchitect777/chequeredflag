@@ -18,39 +18,44 @@
 */
 
 /*
- * ExecutableFilter.java
+ * TextTableCellEditor.java
  *
- * Created on 31 December 2006, 01:47
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Created on 04 June 2005, 01:04
  */
 
-package chequeredflag.gui;
+package chequeredflag.gui.table;
 
-import javax.swing.filechooser.FileFilter;
-import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import javax.swing.table.*;
 
 /**
  *
  * @author barrie
  */
-public class ExecutableFilter extends FileFilter
+public class TextTableCellEditor extends AbstractCellEditor implements TableCellEditor
 {
     
-    /** Creates a new instance of ExecutableFilter */
-    public ExecutableFilter() 
-    {        
-    }
+    private JTextField cellField;
     
-    public boolean accept(File executableFilter)
+    /** Creates a new instance of TextTableCellEditor */
+    public TextTableCellEditor() 
     {
-        return executableFilter.getName().toLowerCase().endsWith(".exe") || executableFilter.isDirectory();
+        cellField = new JTextField();
     }
     
-    public String getDescription()
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
     {
-        return "F1GP/WC Executable File";
+        cellField.setHorizontalAlignment(SwingConstants.CENTER);
+        cellField.setOpaque(true);
+        Font labelFont = cellField.getFont();
+        cellField.setFont(new Font("SansSerif", Font.PLAIN, labelFont.getSize()));
+        cellField.setText((String)value);
+        return cellField;
     }
     
+    public Object getCellEditorValue()
+    {
+        return cellField.getText();
+    }
 }

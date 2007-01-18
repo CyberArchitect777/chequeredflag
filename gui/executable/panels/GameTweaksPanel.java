@@ -23,7 +23,7 @@
  * Created on 31 December 2006, 21:11
  */
 
-package chequeredflag.gui.panels;
+package chequeredflag.gui.executable.panels;
 
 import chequeredflag.data.executable.GameTweaks;
 
