@@ -36,7 +36,9 @@ public class Executable
     
     private int gameVersion;
     private File gameFile;
-    private GameTweaks gameTweaks;
+    private GameOptions gameOptions;
+    private GameSettings gameSettings;
+    private GamePoints gamePoints;
     
     /** Creates a new instance of Executable */
     public Executable(File loadedFile)
@@ -55,7 +57,9 @@ public class Executable
             default: gameVersion = 7; break;
         }    
         
-        gameTweaks = new GameTweaks();
+        gameOptions = new GameOptions();
+        gameSettings = new GameSettings();
+        gamePoints = new GamePoints();
     }
     
     public int returnGameVersionID()
@@ -77,9 +81,19 @@ public class Executable
         }
     }   
     
-    public GameTweaks getGameTweaks()
+    public GameOptions getGameOptions()
     {
-        return gameTweaks;
+        return gameOptions;
+    }
+    
+    public GameSettings getGameSettings()
+    {
+        return gameSettings;
+    }
+    
+    public GamePoints getGamePoints()
+    {
+        return gamePoints;
     }
     
     public boolean saveData()
@@ -91,9 +105,12 @@ public class Executable
         try
         {
             RandomAccessFile binaryAccess = new RandomAccessFile(filePath, "rw");
-            boolean gameTweaksSuccess = gameTweaks.saveData(binaryAccess, gameVersion);
+            int operationSuccess = 0;
+            operationSuccess = operationSuccess + gameOptions.saveData(binaryAccess, gameVersion);
+            operationSuccess = operationSuccess + gameSettings.saveData(binaryAccess, gameVersion);
+            operationSuccess = operationSuccess + gamePoints.saveData(binaryAccess, gameVersion);
             binaryAccess.close();
-            if (gameTweaksSuccess == true)
+            if (operationSuccess == 0)
             {
                 return true;
             }
@@ -125,8 +142,11 @@ public class Executable
             try
             {
                 RandomAccessFile binaryAccess = new RandomAccessFile(filePath, "r");
-                boolean gameTweaksSuccess = gameTweaks.loadData(binaryAccess, gameVersion);
-                if (gameTweaksSuccess == true)
+                int operationSuccess = 0;
+                operationSuccess = operationSuccess + gameOptions.loadData(binaryAccess, gameVersion);
+                operationSuccess = operationSuccess + gameSettings.loadData(binaryAccess, gameVersion);
+                operationSuccess = operationSuccess + gamePoints.loadData(binaryAccess, gameVersion);
+                if (operationSuccess == 0)
                 {
                     return 0;
                 }

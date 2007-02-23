@@ -18,34 +18,32 @@
 */
 
 /*
- * GameTweaksPanel.java
+ * GameSettingsPanel.java
  *
- * Created on 31 December 2006, 21:11
+ * Created on 11 February 2007, 21:11
  */
 
 package chequeredflag.gui.executable.panels;
 
-import chequeredflag.data.executable.GameTweaks;
+import chequeredflag.data.executable.GameSettings;
 
 /**
  *
  * @author  barrie
  */
-public class GameTweaksPanel extends javax.swing.JPanel 
+public class GameSettingsPanel extends javax.swing.JPanel 
 {
     
-    private GameTweaks gameTweaks;
+    private GameSettings gameSettings;
     
     /**
-     * Creates new form GameTweaksPanel
+     * Creates new form GameOptionsPanel
      */
-    public GameTweaksPanel(GameTweaks passedGameTweaks) 
+    public GameSettingsPanel(GameSettings passedGameSettings) 
     {
         initComponents();
-        gameTweaks = passedGameTweaks;
-        fastFade.setSelected(gameTweaks.getFastFade());
-        unlimitedTyres.setSelected(gameTweaks.getQualifyingTyres());
-        removeLanguage.setSelected(gameTweaks.getLanguageSelection());
+        gameSettings = passedGameSettings;
+        unlimitedTyres.setSelected(gameSettings.getQualifyingTyres());
     }
     
     /** This method is called from within the constructor to
@@ -57,42 +55,25 @@ public class GameTweaksPanel extends javax.swing.JPanel
     private void initComponents() {
         textPanel = new javax.swing.JPanel();
         descText = new javax.swing.JLabel();
-        carsetText = new javax.swing.JLabel();
         booleanPanel = new javax.swing.JPanel();
         unlimitedTyres = new javax.swing.JCheckBox();
-        fastFade = new javax.swing.JCheckBox();
-        removeLanguage = new javax.swing.JCheckBox();
 
         setLayout(new java.awt.GridLayout(3, 1));
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        textPanel.setLayout(new java.awt.GridLayout(2, 1));
+        textPanel.setLayout(new java.awt.GridLayout(1, 1));
 
         descText.setText("<html>The following options can be modified to adjust the default behaviour of F1GP/WC.</html>");
         textPanel.add(descText);
 
-        carsetText.setForeground(new java.awt.Color(0, 0, 0));
-        carsetText.setText("<html>Please note that these options will not be loaded from, or saved to a carset</html>");
-        textPanel.add(carsetText);
-
         add(textPanel);
 
-        booleanPanel.setLayout(new java.awt.GridLayout(3, 1));
+        booleanPanel.setLayout(new java.awt.GridLayout(1, 1));
 
         unlimitedTyres.setText("Allow Unlimited Qualifying Tyres");
         unlimitedTyres.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         unlimitedTyres.setMargin(new java.awt.Insets(0, 0, 0, 0));
         booleanPanel.add(unlimitedTyres);
-
-        fastFade.setText("Improve Menu Navigation Speed");
-        fastFade.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        fastFade.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        booleanPanel.add(fastFade);
-
-        removeLanguage.setText("Remove Language Selection Screen");
-        removeLanguage.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        removeLanguage.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        booleanPanel.add(removeLanguage);
 
         add(booleanPanel);
 
@@ -103,17 +84,13 @@ public class GameTweaksPanel extends javax.swing.JPanel
         
         // Confirms the values currently displayed on the interface. Updates the data values stored in memory.
         
-        gameTweaks.setFastFade(fastFade.isSelected());
-        gameTweaks.setQualifyingTyres(unlimitedTyres.isSelected());
-        gameTweaks.setLanguageSelection(removeLanguage.isSelected());
+        gameSettings.setQualifyingTyres(unlimitedTyres.isSelected());
+        
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel booleanPanel;
-    private javax.swing.JLabel carsetText;
     private javax.swing.JLabel descText;
-    private javax.swing.JCheckBox fastFade;
-    private javax.swing.JCheckBox removeLanguage;
     private javax.swing.JPanel textPanel;
     private javax.swing.JCheckBox unlimitedTyres;
     // End of variables declaration//GEN-END:variables

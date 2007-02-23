@@ -87,12 +87,12 @@ public class BinaryManager
             {
                 switch (gameVersion)
                 {
-                    case 1: openFile.seek(europeanPackedVersion); System.out.println("Seeking to: " + europeanPackedVersion); break;
-                    case 2: openFile.seek(italianPackedVersion); System.out.println("Seeking to: " + italianPackedVersion); break;
-                    case 3: openFile.seek(usPackedVersion); System.out.println("Seeking to: " + usPackedVersion); break;
-                    case 4: openFile.seek(europeanUnpackedVersion); System.out.println("Seeking to: " + europeanUnpackedVersion); break;
-                    case 5: openFile.seek(italianUnpackedVersion); System.out.println("Seeking to: " + italianUnpackedVersion); break;
-                    case 6: openFile.seek(usUnpackedVersion); System.out.println("Seeking to: " + usUnpackedVersion); break;
+                    case 1: openFile.seek(europeanPackedVersion+x); System.out.println("Seeking to: " + europeanPackedVersion+x); break;
+                    case 2: openFile.seek(italianPackedVersion+x); System.out.println("Seeking to: " + italianPackedVersion+x); break;
+                    case 3: openFile.seek(usPackedVersion+x); System.out.println("Seeking to: " + usPackedVersion+x); break;
+                    case 4: openFile.seek(europeanUnpackedVersion+x); System.out.println("Seeking to: " + europeanUnpackedVersion+x); break;
+                    case 5: openFile.seek(italianUnpackedVersion+x); System.out.println("Seeking to: " + italianUnpackedVersion+x); break;
+                    case 6: openFile.seek(usUnpackedVersion+x); System.out.println("Seeking to: " + usUnpackedVersion+x); break;
                 }
                 dataValues[x] = (byte)openFile.read();
                 System.out.println("Reading value: " + dataValues[x]);

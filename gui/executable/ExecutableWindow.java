@@ -26,8 +26,7 @@
 package chequeredflag.gui.executable;
 
 import chequeredflag.gui.*;
-import chequeredflag.gui.executable.panels.ExecutableInfoPanel;
-import chequeredflag.gui.executable.panels.GameTweaksPanel;
+import chequeredflag.gui.executable.panels.*;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.*;
@@ -47,7 +46,9 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     private Executable currentExecutable;
     private ExecutableTreeSelector executableSelector;
     private JPanel multiPageContainer;
-    private GameTweaksPanel gameTweaks;
+    private GameOptionsPanel gameOptions;
+    private GameSettingsPanel gameSettings;
+    private GamePointsPanel gamePoints;
     private CardLayout cardLayout;
     
     /** Creates new form ExecutableWindow */
@@ -65,10 +66,14 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         multiPageContainer.setLayout(cardLayout);
         executableEditorPane.setLeftComponent(executableSelector);
         executableEditorPane.setRightComponent(multiPageContainer);
-        gameTweaks = new GameTweaksPanel(currentExecutable.getGameTweaks());
-        ExecutableInfoPanel executableInfo = new ExecutableInfoPanel(selectedExecutable.returnGameVersionString());
+        gameOptions = new GameOptionsPanel(currentExecutable.getGameOptions());
+        gameSettings = new GameSettingsPanel(currentExecutable.getGameSettings());
+        gamePoints = new GamePointsPanel(currentExecutable.getGamePoints(), currentExecutable.returnGameVersionID()); 
+        ExecutableInfoPanel executableInfo = new ExecutableInfoPanel(currentExecutable.returnGameVersionString());
         multiPageContainer.add("Executable Info", executableInfo);
-        multiPageContainer.add("Game Tweaks", gameTweaks);
+        multiPageContainer.add("Game Settings", gameSettings);
+        multiPageContainer.add("Game Options", gameOptions);
+        multiPageContainer.add("Points", gamePoints);
         ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info");
         executableSelector.setVisible(true);
         multiPageContainer.setVisible(true);
@@ -127,7 +132,9 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     private void saveExecutableItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveExecutableItemActionPerformed
         // Handle the save executable menu item
         
-        gameTweaks.confirmSettings();
+        gameOptions.confirmSettings();
+        gameSettings.confirmSettings();
+        gamePoints.confirmSettings();
         currentExecutable.saveData();        
         
     }//GEN-LAST:event_saveExecutableItemActionPerformed
@@ -136,9 +143,11 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     {
         switch(pageNumber)
 	{
-		case 1: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info"); break;
-                case 2: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Game Tweaks"); break;
-                default: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info"); break; 
+            case 1: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info"); break;
+            case 2: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Game Settings"); break;
+            case 3: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Game Options"); break;
+            case 4: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Points"); break;
+            default: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info"); break;  
         }
     }
     

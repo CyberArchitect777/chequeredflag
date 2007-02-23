@@ -85,15 +85,29 @@ public class ExecutableTreeSelector extends javax.swing.JInternalFrame
         try 
         {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)fullPath.getLastPathComponent();
-            if (selectedNode.toString() == "Game Tweaks")
+            if (selectedNode.toString() == "Game Options")
             {
-                parentExecutableWindow.changePage(2);
+                parentExecutableWindow.changePage(3);
             }
             else
             {
-                if (selectedNode.toString() == "Executable Data")
+                if (selectedNode.toString() == "Game Settings")
                 {
-                    parentExecutableWindow.changePage(1);
+                    parentExecutableWindow.changePage(2);
+                }
+                else
+                {
+                    if (selectedNode.toString() == "Executable Data")
+                    {
+                        parentExecutableWindow.changePage(1);
+                    }
+                    else
+                    {
+                        if (selectedNode.toString() == "Points")
+                        {
+                            parentExecutableWindow.changePage(4);
+                        }
+                    }
                 }
             }
         }
@@ -107,8 +121,12 @@ public class ExecutableTreeSelector extends javax.swing.JInternalFrame
     {
         // Creates the default tree as part of initial configuration.
         rootNode = new DefaultMutableTreeNode("Executable Data");
-        DefaultMutableTreeNode gameTweaks = new DefaultMutableTreeNode("Game Tweaks");
-        rootNode.add(gameTweaks);
+        DefaultMutableTreeNode gamePoints = new DefaultMutableTreeNode("Points");
+        rootNode.add(gamePoints);
+        DefaultMutableTreeNode gameSettings = new DefaultMutableTreeNode("Game Settings");
+        rootNode.add(gameSettings);
+        DefaultMutableTreeNode gameOptions = new DefaultMutableTreeNode("Game Options");
+        rootNode.add(gameOptions);
     }
     
     private void createTree()

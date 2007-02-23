@@ -18,7 +18,7 @@
 */
 
 /*
- * GameTweaks.java
+ * GameOptions.java
  *
  * Created on 01 January 2007, 03:16
  *
@@ -34,26 +34,19 @@ import java.io.*;
  *
  * @author barrie
  */
-public class GameTweaks 
+public class GameOptions 
 {
     
-    private boolean qualifyingTyres;
     private boolean fastFade;
     private boolean languageSelection;
     
     /**
-     * Creates a new instance of GameTweaks
+     * Creates a new instance of GameOptions
      */
-    public GameTweaks() 
+    public GameOptions() 
     {
-        qualifyingTyres = false;
         fastFade = false;
         languageSelection = false;
-    }
-    
-    public boolean getQualifyingTyres()
-    {
-        return qualifyingTyres;
     }
     
     public boolean getFastFade()
@@ -66,11 +59,6 @@ public class GameTweaks
         return languageSelection;
     }
     
-    public void setQualifyingTyres(boolean newValue)
-    {
-        qualifyingTyres = newValue;
-    }
-    
     public void setFastFade(boolean newValue)
     {
         fastFade = newValue;
@@ -81,7 +69,7 @@ public class GameTweaks
         languageSelection = newValue;
     }
     
-    public boolean saveData(RandomAccessFile binaryAccess, int gameVersion)
+    public int saveData(RandomAccessFile binaryAccess, int gameVersion)
     {
         byte[] fastFadeData = new byte[10];
         if (fastFade == true)
@@ -105,22 +93,6 @@ public class GameTweaks
             fastFadeData[9] = (byte)0xFB;           
         }
         BinaryManager.setDataBytes(gameVersion, binaryAccess, 304646, 304507, 304480, 578506, 578362, 578346, fastFadeData, fastFadeData);
-        byte[] qualifyingTyresData1 = new byte[2];
-        byte[] qualifyingTyresData2 = new byte[1];
-        if (qualifyingTyres == true)
-        {
-            qualifyingTyresData1[0] = (byte)0x80;
-            qualifyingTyresData1[1] = 0x75;
-            qualifyingTyresData2[0] = 0x40;
-        }
-        else
-        {
-            qualifyingTyresData1[0] = 0x40;
-            qualifyingTyresData1[1] = 0x74;
-            qualifyingTyresData2[0] = 0x04;
-        }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 44056, 44056, 44056, 48808, 48808, 48808, qualifyingTyresData1, qualifyingTyresData1);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 44083, 44083, 44083, 48835, 48835, 48835, qualifyingTyresData2, qualifyingTyresData2);
         byte[] languageSelectionData1 = new byte[1];
         byte[] languageSelectionData2 = new byte[1];
         byte[] languageSelectionData3 = new byte[1];
@@ -143,13 +115,13 @@ public class GameTweaks
             languageSelectionData2[0] = 0x2C;
             languageSelectionData3[0] = 0x1F;                    
         }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203440, 203338, 203396, 1, 1, 1, languageSelectionData1, languageSelectionData1);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203450, 203398, 203406, 1, 1, 1, languageSelectionData2, languageSelectionData2);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203467, 203415, 203423, 1, 1, 1, languageSelectionData3, languageSelectionData3);
-        return true;
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203440, 203338, 203396, 433528, 433414, 433480, languageSelectionData1, languageSelectionData1);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203450, 203398, 203406, 433538, 433474, 433490, languageSelectionData2, languageSelectionData2);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203467, 203415, 203423, 433555, 433491, 433507, languageSelectionData3, languageSelectionData3);
+        return 0;
     }
     
-    public boolean loadData(RandomAccessFile binaryAccess, int gameVersion)
+    public int loadData(RandomAccessFile binaryAccess, int gameVersion)
     {
         //byte[] dataValue = new byte[3];
         byte[] dataValues;
@@ -163,16 +135,6 @@ public class GameTweaks
         {
             fastFade = false;
         }
-        qualifyingTyres = false;
-        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 44056, 44056, 44056, 48808, 48808, 48808, 1);
-        if (dataValues[0] == (byte)0x80)
-        {
-            qualifyingTyres = true;
-        }
-        else
-        {
-            qualifyingTyres = false;
-        }
         dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 203450, 203398, 203406, 433538, 433474, 433490, 1);
         if (dataValues[0] == 0x00)
         {
@@ -182,6 +144,6 @@ public class GameTweaks
         {
             languageSelection = false;
         }
-        return true;
+        return 0;
     }       
 }
