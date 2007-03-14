@@ -669,6 +669,45 @@ public class Track {
         }
     }
 
+    /**
+        Returns rectangle that contains all track graphics
+        based on F1GP in-game calculations (Seg objects).
+    */
+
+    public Rectangle getF1GPBoundingRectangle()
+    {
+        double dMinX, dMinY, dMaxX, dMaxY, dX, dY;
+        TrackSegments trackSegments = getTrackSegments();
+        Seg seg;
+        // Initialize coordinates with first point
+        seg = trackSegments.getSegAt( 1 );
+        dMinX = seg.getPosX();
+        dMaxX = dMinX;
+        dMinY = seg.getPosY();
+        dMaxY = dMinY;
+        // search for min/max values
+        for ( int i = 1; i <= trackSegments.getMaxTrackSegIndex(); i++ )
+        {
+            seg = trackSegments.getSegAt( i );
+            dX = seg.getPosX();
+            if ( dX > dMaxX )
+                dMaxX = dX;
+            if ( dX < dMinX )
+                dMinX = dX;
+            dY = seg.getPosY();
+            if ( dY > dMaxY )
+                dMaxY = dY;
+            if ( dY < dMinY )
+                dMinY = dY;
+        } // for
+        // Put data into rectangle
+        Rectangle r = new Rectangle( new Double(dMinX).intValue(),
+                                     new Double(dMinY).intValue(),
+                                     new Double(dMaxX - dMinX).intValue(),
+                                     new Double(dMaxY - dMinY).intValue() );
+        return r;
+    }
+
     // Returns a rectangle that contains the whole track graphics.
     // x/y coordinates represent the minimum coordinates and heigth/width
     // give the size of the rectangle needed to contain the track.
