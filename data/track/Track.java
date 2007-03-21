@@ -27,7 +27,10 @@ package chequeredflag.data.track;
 
 import java.io.*;
 import java.nio.channels.*;
+import java.util.*;
 import java.awt.*;
+
+import chequeredflag.f1gp.*;
 
 /**
  *
@@ -547,7 +550,7 @@ public class Track {
     {
         try {
             if ( m_CCLine.size() == 0 )
-                // emptry CCLine
+                // empty CCLine
                 return;
 
             // To calculate the CCline, both CCline data itself and
@@ -667,6 +670,253 @@ public class Track {
         {
             e.printStackTrace();
         }
+
+        // new calculations retrieved from game
+        calculateGameCCLine();
+    }
+
+    private int length, radius;
+    private short shiftx;
+    private short wTmpAngleZ;
+    private short wSegPosX;
+
+    /**
+      CCLine calculations retrieved from game by Rene.
+    */
+
+    protected void calculateGameCCLine()
+    {
+        int s = 0;
+        wTmpAngleZ = m_TrackSegments.getSegAt( s ).wAngleZ;
+        CCLineSegment cclineSeg;
+
+        for (Enumeration e = m_CCLine.elements(); e.hasMoreElements(); ) {
+                cclineSeg = (CCLineSegment) e.nextElement();
+
+                int val3, val4, val5;
+                int nParam = 0;
+
+                if ((cclineSeg.m_nType & 0x80) != 0)   // starting sector
+                        wSegPosX = (short) cclineSeg.m_nParam[ nParam++ ];
+
+                val3 = cclineSeg.m_nParam[ nParam++ ];  // shift
+
+                val4 = cclineSeg.m_nParam[ nParam++ ];
+                radius = val4;
+
+                if ((cclineSeg.m_nType & 0x40) != 0) {
+                        // 32bit radius
+                        val5 = cclineSeg.m_nParam[ nParam++ ];
+                        radius = (val4 << 16) | val5;   // radius1
+                }
+
+                radius <<= 3;
+
+                // shift longitudinal or by angle
+                if (radius != 0)  // curve segment
+                        shiftx = (short) (val3 << 2);
+                else {	// straight segment
+                        shiftx = 0;
+                        wTmpAngleZ += (short) val3;
+                }
+
+                length = ((cclineSeg.m_nType & 0x3f) << 8) | cclineSeg.m_nTlu;
+
+                ProcessCCLineSector(m_TrackSegments.getSegAt( s ));
+
+                try {
+                    for (int i = 0; i < length; i++) {
+                            m_TrackSegments.getSegAt( s ).wCCLineRAngle = wTmpAngleZ - m_TrackSegments.getSegAt( s ).wAngleZ;
+                            m_TrackSegments.getSegAt( s ).wCCLine = wSegPosX;
+
+                            s++;
+                            if (s >= m_TrackSegments.nSegNumber)
+                                    s = 1;	// cyclic (should restart at 0??)
+
+                            ProcessCCLineSegment(m_TrackSegments.getSegAt( s ));
+                    }
+                }
+                catch( Exception exc )
+                {
+                    exc.printStackTrace();                    
+                }
+        }
+    }
+
+    /**
+        ProcessCCLineSector
+    */
+
+    private int tmpX = 0, tmpY = 0;
+    private int tmpCos = 0, tmpSin = 0;
+    private int tmp1 = 0, tmp2 = 0, tmp5 = 0, tmp6 = 0;
+
+
+    private void ProcessCCLineSector(Seg pSeg) {
+        short wSegPosY = (short) ((wSegPosX * pSeg.wAngleZChangeMulHalfPI) >> 15);
+
+        tmpSin = F1GPMath.LookupSin(pSeg.wAngleZ);
+        tmpCos = F1GPMath.LookupCos(pSeg.wAngleZ);
+
+        tmp5 = ((wSegPosY * tmpCos) - (wSegPosX * tmpSin)) >> 14;
+        tmp6 = ((wSegPosX * tmpCos) + (wSegPosY * tmpSin)) >> 14;
+
+        tmp5 += pSeg.getPosY();
+        tmp6 += pSeg.getPosX();
+
+        tmp5 += (F1GPMath.LookupCos((short) wTmpAngleZ) * shiftx) >> 14;
+        tmpY = tmp5;
+
+        tmp6 += (F1GPMath.LookupSin((short) wTmpAngleZ) * shiftx) >> 14;
+        tmpX = tmp6;
+
+        tmp2 = radius;
+
+        if (tmp2 != 0) {
+                tmp2 = Math.abs(tmp2);
+                tmp5 = tmp2;
+
+                if (radius >= 0)
+                        tmpCos = wTmpAngleZ + 0x4000;
+                else
+                        tmpCos = wTmpAngleZ - 0x4000;
+
+                sinAndCosBig();
+
+                long ll = (long) tmpSin * (long) tmp2;
+                //    tmpX += ((ll >> 16) * 4) >> 16;
+                tmpX += (ll >> 30);
+
+                ll = (long) tmpCos * (long) tmp5;
+                //    tmpY += ((ll >> 16) * 4) >> 16;
+                tmpY += (ll >> 30);
+        }
+    }
+
+    /**
+        ProcessCCLineSegment
+    */
+
+    void ProcessCCLineSegment( Seg seg )
+    {
+        int nXDiff = tmpX - seg.getPosX();
+        int nYDiff = tmpY - seg.getPosY();
+
+        int invPI = 0x517D; // 0x10000 / PI
+        int a1 = seg.wAngleZ - (((seg.wAngleZChangeMulHalfPI >> 1) * invPI) >> 15);
+        tmpCos = a1;
+
+        // convert to degrees for debugging...
+        double dAngleDeg = ((double) a1 / 0x10000) * 360.0;
+
+        // sinBig( tmpCos ) stored in tmpCos
+        // cosBig( tmpCos ) stored in tmpSin
+        sinAndCosBig();
+
+        tmp5 = (int) ((((long) tmpCos * (long) nXDiff) - ((long) tmpSin * (long) nYDiff)) >> 30);
+        tmp6 = (int) ((((long) tmpCos * (long) nYDiff) + ((long) tmpSin * (long) nXDiff)) >> 30);
+
+        if (radius == 0) {
+            int tmp = wTmpAngleZ - a1;
+            tmp1 = F1GPMath.LookupSinbig((short) tmp);
+            tmp2 = F1GPMath.LookupCosbig((short) tmp);
+            long lTemp = (long) tmp1 * (long) tmp6;
+            if ( tmp2 == 0 )
+            {
+                // Makes no sense, but I think this happens in the game (KS)
+                tmp6 = (int) (lTemp & (long) 0x0000FFFF);
+            }
+            else
+            {
+                tmp6 = (int) (lTemp / ((long) tmp2));
+            }
+            wSegPosX = (short) (tmp5 - tmp6);
+        }
+        else
+        {
+            // Pythagoras
+            long ll = (((long) radius * (long) radius) - ((long) tmp6 * (long) tmp6));
+            tmp1 = (int) F1GPMath.sqrt64(ll);
+
+            if (radius < 0)
+                tmp1 = -tmp1;
+
+            wSegPosX = (short) (tmp5 - tmp1);
+
+            int r = radius;
+            if (r < 0)
+                    r = -r;
+
+            for (; r >= 0x7F00; r >>= 1) {
+                tmp1 >>= 1;
+                tmp6 >>= 1;
+            }
+
+            int a2 = F1GPMath.LookupAtan2(tmp1, tmp6);
+
+            if (radius < 0)
+                a2 = a2 + 0x4000;
+            else
+                a2 = a2 - 0x4000;
+
+            wTmpAngleZ = (short) (a1 + a2);
+        }
+    }
+
+    private void getOppositeEdgeLength() {
+            long tmp = 0x1000000000000000l - ((long) tmpCos * (long) tmpCos);
+
+            if (tmp < 0)
+                    tmp = 0;
+
+            tmpSin = (int) F1GPMath.sqrt64(tmp);
+    }
+
+
+    private void sinAndCosBig() {
+            short oldCos = (short) tmpCos;
+            short index = (short) ((-tmpCos) + (short) 0x4000);
+
+            if (index < 0)
+                    index = (short) -index;
+
+            int i = (index >> 2) & 0xFFFE;
+            short val = CosLookupTable.get(i / 2);
+
+            if (val < 0)
+                    val = (short) -val;
+
+            if (val < 0x2000) {
+                    tmpCos = F1GPMath.LookupSinbig((short) tmpCos);
+
+                    if (oldCos < 0)
+                            oldCos = (short) -oldCos;
+
+                    int j = (oldCos >> 2) & 0xFFFE;
+                    oldCos = CosLookupTable.get(j / 2);
+                    getOppositeEdgeLength();
+
+                    if (oldCos < 0)
+                            tmpSin = -tmpSin;
+
+                    // swap tmpCos and tmpSin
+                    int temp = tmpSin;
+                    tmpSin = tmpCos;
+                    tmpCos = temp;
+            } else {
+                    tmpCos = F1GPMath.LookupCosbig((short) tmpCos);
+                    oldCos = (short) (-oldCos + 0x4000);
+
+                    if (oldCos < 0)
+                            oldCos = (short) -oldCos;
+
+                    int j = (oldCos >> 2) & 0xFFFE;
+                    oldCos = CosLookupTable.get(j / 2);
+                    getOppositeEdgeLength();
+
+                    if (oldCos < 0)
+                            tmpSin = -tmpSin;
+            }
     }
 
     /**
