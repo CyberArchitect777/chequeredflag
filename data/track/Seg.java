@@ -23,7 +23,7 @@ package chequeredflag.data.track;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:29
- * $Id: Seg.java,v 1.4 2007/03/14 21:44:48 ksix Exp $
+ * $Id: Seg.java,v 1.5 2007/03/21 22:27:15 ksix Exp $
  */
 
 public class Seg {
@@ -53,7 +53,7 @@ public class Seg {
         };
 
         public int getTrackWidth()
-        { return 512; } // @@@ not set yet
+        { return 1700; } // @@@ not set yet
 
         public int getAngleZ()
         { return wAngleZ; };
