@@ -452,6 +452,7 @@ public class TrackPanel extends javax.swing.JPanel {
         for ( int i = 0; i <= trackSegments.getMaxTrackSegIndex() - 1; i++ )
         {
             // Adjust settings for selected/unselected segments
+            // m_nSelectedTrackSegment is WHOLE segment, not only single Seg @@@
             if ( i == m_nSelectedTrackSegment )
             {
                 // Paint selected segment in orange
@@ -472,14 +473,26 @@ public class TrackPanel extends javax.swing.JPanel {
             double dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getTrackWidth();
             double dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getTrackWidth();
             aXPoints[ 0 ] = new Double(((double)seg.getPosX() + dXDiff) * m_scale).intValue();
-            aYPoints[ 0 ] = new Double(((double)seg.getPosY() + dYDiff) * m_scale).intValue();
+            aYPoints[ 0 ] = new Double(((double)seg.getPosY() - dYDiff) * m_scale).intValue();
             aXPoints[ 1 ] = new Double(((double)segNext.getPosX() + dXDiff) * m_scale).intValue();
-            aYPoints[ 1 ] = new Double(((double)segNext.getPosY() + dYDiff) * m_scale).intValue();
+            aYPoints[ 1 ] = new Double(((double)segNext.getPosY() - dYDiff) * m_scale).intValue();
             aXPoints[ 2 ] = new Double(((double)segNext.getPosX() - dXDiff) * m_scale).intValue();
-            aYPoints[ 2 ] = new Double(((double)segNext.getPosY() - dYDiff) * m_scale).intValue();
+            aYPoints[ 2 ] = new Double(((double)segNext.getPosY() + dYDiff) * m_scale).intValue();
             aXPoints[ 3 ] = new Double(((double)seg.getPosX() - dXDiff) * m_scale).intValue();
-            aYPoints[ 3 ] = new Double(((double)seg.getPosY() - dYDiff) * m_scale).intValue();
+            aYPoints[ 3 ] = new Double(((double)seg.getPosY() + dYDiff) * m_scale).intValue();
             g2d.drawPolygon( aXPoints, aYPoints, 4 );
+
+            // Draw CCLine
+            dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
+            dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
+            aXPoints[ 0 ] = new Double(((double)seg.getPosX() + dXDiff) * m_scale).intValue();
+            aYPoints[ 0 ] = new Double(((double)seg.getPosY() - dYDiff) * m_scale).intValue();
+            dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
+            dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
+            aXPoints[ 1 ] = new Double(((double)segNext.getPosX() + dXDiff) * m_scale).intValue();
+            aYPoints[ 1 ] = new Double(((double)segNext.getPosY() - dYDiff) * m_scale).intValue();
+            g2d.setColor(Color.red);
+            g2d.drawLine(aXPoints[ 0 ], aYPoints[ 0 ], aXPoints[ 1 ], aYPoints[ 1 ] );
         }
 
         // reset transformations
@@ -553,7 +566,7 @@ public class TrackPanel extends javax.swing.JPanel {
     private AffineTransform standardTrans;
     private double m_scale;
     private boolean m_fFirstTime;
-    private boolean m_fPaintNew = false;
+    private boolean m_fPaintNew = true;
 
     public void setTrack(Track track) {
         m_track = track;
