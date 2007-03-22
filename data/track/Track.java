@@ -706,7 +706,7 @@ public class Track {
 
                 if ((cclineSeg.m_nType & 0x40) != 0) {
                         // 32bit radius
-                        val5 = cclineSeg.m_nParam[ nParam++ ];
+                        val5 = cclineSeg.m_nParam[ nParam++ ] & 0x0FFFF;
                         radius = (val4 << 16) | val5;   // radius1
                 }
 
