@@ -97,7 +97,7 @@ public class TrackSegments extends Vector {
             // get the next element
             TrackSegment ts = (TrackSegment) e.nextElement();
             // Process commands
-            ProcessTrackCommands( nSegStart, bTrackCompilePass2 );
+            ProcessTrackCommands( ts, nSegStart, bTrackCompilePass2 );
             // Process layout
             nSegsProcessed = ProcessTrackLayout( ts, nSegStart, bTrackCompilePass2 );
             nSegStart = nSegStart + nSegsProcessed;
@@ -107,9 +107,23 @@ public class TrackSegments extends Vector {
         return nSegStart;
     };
 
-    protected void ProcessTrackCommands( int nSegStart, boolean bTrackCompilePass2 )
+    protected void ProcessTrackCommands( TrackSegment ts, int nSegStart, boolean bTrackCompilePass2 )
     {
-        // not needed for layout processing?
+        if ( bTrackCompilePass2 )
+            // nothing to do in pass2
+            return;
+
+        // For layout processing, we need to process at least command A5
+        Vector commands = ts.getCommands();
+        fTC0xa5 = false;
+        for ( Enumeration e = commands.elements(); e.hasMoreElements(); )
+        {
+            Command cmd = (Command) e.nextElement();
+            if ( cmd.getType() == 0xA5 )
+            {
+                fTC0xa5 = true;
+            }
+        }
     };
 
     protected int ProcessTrackLayout( TrackSegment ts, int nSegStart, boolean bTrackCompilePass2 )
@@ -179,13 +193,13 @@ public class TrackSegments extends Vector {
         Segment number and angle of following segment provided by parameters.
     */
 
-    protected void TCWriteAngleZChangeMulHalfPI(int nSeg, int nAngleZ)
+    protected void TCWriteAngleZChangeMulHalfPI(int nSeg, int nAngleZ, int nOldAngleZ)
     {
         if ( nSeg < 0 )
             return;
 
         Seg seg = m_segs[ nSeg ];
-        int nAngleChange = (short)((short) nAngleZ - seg.wAngleZ);
+        int nAngleChange = (short)((short) nAngleZ - (short) nOldAngleZ);
         // shift right by 14 bits = division by 16k
         int nAngleChangeMulHalfPi = (nAngleChange * const2PI_mul_4k) >> 14;
         seg.wAngleZChangeMulHalfPI = nAngleChangeMulHalfPi;
@@ -197,54 +211,58 @@ public class TrackSegments extends Vector {
         TCCalcVergeWidth();
         TCSelectiveClearBufW1E920();
         short wTCOldAbsAngleZ = 0;
-        boolean fFirstLoop = true;
+        boolean fIncrementAngle = true;
+
+        if ( fTC0xa5 )
+        {
+            // Command A5 is present on this sector
+            wTCAbsAngleZ_2 = (short) (wTCAbsAngleZ_2 - (ts.m_nCurvature >> 1));
+            wTCAbsAngleX = (short) (wTCAbsAngleX - (ts.m_nHeightChange >> 1));
+            fTC0xa5 = false;
+        }
+        else
+        {
+            // Shift AngleZ values: AngleZ_2 -> AngleZ -> OldAngleZ
+            wTCOldAbsAngleZ = wTCAbsAngleZ;
+            wTCAbsAngleZ = wTCAbsAngleZ_2;
+            // modify angles
+            wTCAbsAngleZ_2 = (short) (wTCAbsAngleZ_2 + (ts.m_nCurvature >> 1));
+            wTCAbsAngleX = (short) (wTCAbsAngleX + (ts.m_nHeightChange >> 1));
+
+            // no further angle change in this loop
+            fIncrementAngle = false;
+        }
+
         for ( int i = nSegStart; i < nSegStart + ts.m_nTlu; i++ )
         {
             // Calculate Angles
-            if ( fFirstLoop )
-            {
-                if ( fTC0xa5 )
-                {
-                    // Command A5 is present on this sector
-                    wTCAbsAngleZ_2 = (short) (wTCAbsAngleZ_2 - ts.m_nCurvature / 2);
-                    wTCAbsAngleX = (short) (wTCAbsAngleX - ts.m_nHeightChange / 2);
-                    fTC0xa5 = false;
-                }
-                else
-                {
-                    // Shift AngleZ values: AngleZ_2 -> AngleZ -> OldAngleZ
-                    wTCOldAbsAngleZ = wTCAbsAngleZ;
-                    wTCAbsAngleZ = wTCAbsAngleZ_2;
-                    // modify angles
-                    wTCAbsAngleZ_2 = (short) (wTCAbsAngleZ_2 + ts.m_nCurvature / 2);
-                    wTCAbsAngleX = (short) (wTCAbsAngleX + ts.m_nHeightChange / 2);
-                }
-                fFirstLoop = false;
-            }
-            else
+            if ( fIncrementAngle )
             {
                 wTCAbsAngleZ_2 += ts.m_nCurvature;
                 wTCOldAbsAngleZ = wTCAbsAngleZ;
                 wTCAbsAngleZ += ts.m_nCurvature;
                 wTCAbsAngleX += ts.m_nHeightChange;
             }
+            else
+                // next loops will increment again.
+                fIncrementAngle = true;
        
             // TCPrepareSegFlags_91034();
             // TCCalcOffsetsByTrk_Width();
             TCInitSeg(i);
-            TCWriteAngleZChangeMulHalfPI(i - 1, wTCAbsAngleZ);
+            TCWriteAngleZChangeMulHalfPI(i - 1, wTCAbsAngleZ, wTCOldAbsAngleZ );
 
             // -----------------------------------------------------------
             // calculate positions
             int nPosChangeX, nPosChangeY, nPosChangeZ;
-            nPosChangeX = F1GPMath.LookupSin( wTCAbsAngleZ_2 );
-            nPosChangeX = (nPosChangeX * 1024) / 0x4000; // convert to 1/1024 tlu
+            nPosChangeX = F1GPMath.LookupSinRaw( wTCAbsAngleZ_2 );
+            nPosChangeX = (nPosChangeX * 1024) >> 14; // convert to 1/1024 tlu
 
-            nPosChangeY = F1GPMath.LookupCos( wTCAbsAngleZ_2 );
-            nPosChangeY = (nPosChangeY * 1024) / 0x4000;
+            nPosChangeY = F1GPMath.LookupCosRaw( wTCAbsAngleZ_2 );
+            nPosChangeY = (nPosChangeY * 1024) >> 14;
 
-            nPosChangeZ = F1GPMath.LookupSin( wTCAbsAngleX );
-            nPosChangeZ = (nPosChangeZ * 1024) / 0x4000;
+            nPosChangeZ = F1GPMath.LookupSinRaw( wTCAbsAngleX );
+            nPosChangeZ = (nPosChangeZ * 1024) >> 14;
             
             // update absolute positions
             dTCAbsPosX = dTCAbsPosX + nPosChangeX;
@@ -255,8 +273,8 @@ public class TrackSegments extends Vector {
         }
 
         // Calculate angles at end of sector
-        wTCAbsAngleZ_2 += ts.m_nCurvature / 2;
-        wTCAbsAngleX += ts.m_nHeightChange / 2;
+        wTCAbsAngleZ_2 += ts.m_nCurvature >> 1;
+        wTCAbsAngleX += ts.m_nHeightChange >> 1;
         wTCOldVergeWidth = (short) ts.m_nFenceDistL; // DistR ??? @@@
 
         return ts.m_nTlu;
@@ -442,6 +460,10 @@ public class TrackSegments extends Vector {
         nWidthEnd = 0;
         dANGLE_SCALE = Math.PI * 2.0 / 65535.0;
  
+        // ----------------------------------------------------------
+        // Calculations following in-game calculations
+        TCCompileTrack(nStartWidth, nStartAngle, nPosX, nPosY);
+
         // convert pos to double for "old" calculations
         double dPosX, dPosY;
         dPosX = nPosX;
@@ -466,10 +488,6 @@ public class TrackSegments extends Vector {
             nWidthLength = ts.getWidthChangeLength();
             nWidthEnd = ts.getWidthChangeEnd();
         }
-
-        // ----------------------------------------------------------
-        // Calculations following in-game calculations
-        TCCompileTrack(nStartWidth, nStartAngle, nPosX, nPosY);
     }
 
     /**
