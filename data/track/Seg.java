@@ -23,33 +23,35 @@ package chequeredflag.data.track;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:29
- * $Id: Seg.java,v 1.5 2007/03/21 22:27:15 ksix Exp $
+ * $Id: Seg.java,v 1.6 2007/04/04 21:02:31 ksix Exp $
  */
 
 public class Seg {
 	short wAngleZ;
 	short wAngleXChase;
-	int nPosX;
-	int nPosZ;
-	int nPosY;
+	short wPosX;
+	short wPosZ;
+	short wPosY;
 	int wCCLineRAngle;
 	int wCCLine;
 	int wAngleZChangeMulHalfPI;
-	short bPosFine;	// 3 bits for x in low nibble, 3 bits for y in high nibble NOT USED HERE!
+	short bPosFine;	// 3 bits for x in low nibble, 3 bits for y in high nibble
 
-        public int getPosX() { return nPosX; };    // for hiding details of x/y pos storage (bPosFine)
-        public int getPosY() { return nPosY; };
-        public int getPosZ() { return nPosZ; };
+        // for hiding details of x/y pos storage (bPosFine)
+        public int getPosX() { return ((int) wPosX << 3) | bPosFine & 0x07; };
+        public int getPosY() { return ((int) wPosY << 3) | ((bPosFine >> 4) & 0x07); };
+        public int getPosZ() { return wPosZ; };
 
         /**
-            Unlike F1GP internal storage, X and Y position are directly stored as 32 bit int.
-            bPosFine is not used as long as it is not definitely needed (KS 13.03.07)
+            F1GP uses 19 bit for x and y coordinates: 16 bits in wPosX/Y, and 3 in bPosFine.
+            We do the same so values can be compared directly with game.
         */
         public void setPos( int nNewPosX, int nNewPosY, int nNewPosZ )
         {
-            nPosX = nNewPosX;
-            nPosY = nNewPosY;
-            nPosZ = nNewPosZ;
+            bPosFine = (short) ((nNewPosX & 0x07) | ((nNewPosY & 0x07) << 4));
+            wPosX = (short) (nNewPosX >> 3);
+            wPosY = (short) (nNewPosY >> 3);
+            wPosZ = (short) nNewPosZ;
         };
 
         public int getTrackWidth()
