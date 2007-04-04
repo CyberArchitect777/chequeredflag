@@ -302,8 +302,8 @@ public class Track {
     {
         // Layout of the track segments.
         int nStartPosX, nStartPosY;
-        nStartPosX = 0; // m_DataHeader.getStartPos( 0 ) * 8;
-        nStartPosY = 0; // m_DataHeader.getStartPos( 1 ) * 8;
+        nStartPosX = m_DataHeader.getStartPos( 0 ) << 3;
+        nStartPosY = m_DataHeader.getStartPos( 1 ) << 3;
         m_TrackSegments.calculateTrackLayout(
             m_DataHeader.getStartWidth(),
             m_DataHeader.getStartAngle(),
@@ -722,18 +722,20 @@ public class Track {
 
                 length = ((cclineSeg.m_nType & 0x3f) << 8) | cclineSeg.m_nTlu;
 
-                ProcessCCLineSector(m_TrackSegments.getSegAt( s ));
+                Seg seg = m_TrackSegments.getSegAt( s );
+                ProcessCCLineSector(seg);
 
                 try {
                     for (int i = 0; i < length; i++) {
-                            m_TrackSegments.getSegAt( s ).wCCLineRAngle = wTmpAngleZ - m_TrackSegments.getSegAt( s ).wAngleZ;
-                            m_TrackSegments.getSegAt( s ).wCCLine = wSegPosX;
+                            seg.wCCLineRAngle = wTmpAngleZ - seg.wAngleZ;
+                            seg.wCCLine = wSegPosX;
 
                             s++;
                             if (s >= m_TrackSegments.nSegNumber)
                                     s = 1;	// cyclic (should restart at 0??)
 
-                            ProcessCCLineSegment(m_TrackSegments.getSegAt( s ));
+                            seg = m_TrackSegments.getSegAt( s );
+                            ProcessCCLineSegment(seg);
                     }
                 }
                 catch( Exception exc )
