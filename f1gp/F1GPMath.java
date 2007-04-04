@@ -23,7 +23,7 @@ package chequeredflag.f1gp;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:20
- * $Id: F1GPMath.java,v 1.1 2007/03/22 20:04:06 ksix Exp $
+ * $Id: F1GPMath.java,v 1.2 2007/04/04 21:13:00 ksix Exp $
  */
 
 public class F1GPMath {
@@ -122,6 +122,26 @@ public class F1GPMath {
 		x = (short) ((-x) + (short) 0x4000);
 		return LookupCos(x);
 	}
+
+        /**
+            Just like LookupCos, but without interpolation.
+        */
+        public static short LookupCosRaw(short x) {
+		if ((x & 0x8000) != 0)
+			x = (short) -x;
+
+		int i = (x >> 2) & 0xFFFE;
+
+		return CosLookupTable.get(i / 2);
+        }
+
+        /**
+            Lookup without interpolation.
+        */
+        public static short LookupSinRaw(short x) {
+		x = (short) ((-x) + (short) 0x4000);
+		return LookupCosRaw(x);
+        }
 
 
 	public static int LookupCosbig(short x) {
