@@ -27,6 +27,7 @@ package chequeredflag.gui;
 
 import chequeredflag.gui.executable.ExecutableFilter;
 import chequeredflag.gui.track.TrackFilter;
+import java.io.File;
 
 /**
  *
@@ -52,6 +53,11 @@ public class FileDialog extends javax.swing.JDialog {
             case 2: fileChooser.setFileFilter(new ExecutableFilter()); break;
         }
         
+    }
+    
+    public void setInitialDirectory(String directoryName)
+    {
+        fileChooser.setCurrentDirectory(new File(directoryName));
     }
     
     public String showOpenDialog()

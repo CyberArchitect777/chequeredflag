@@ -1,3 +1,4 @@
+
 /*
  * Chequered Flag: An editor for Formula One Grand Prix/World Circuit
  * Copyright (C) 2005-2007  The Chequered Flag Development Team

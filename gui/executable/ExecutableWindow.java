@@ -49,6 +49,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     private GameOptionsPanel gameOptions;
     private GameSettingsPanel gameSettings;
     private GamePointsPanel gamePoints;
+    private GameDriversPanel gameDrivers;
     private CardLayout cardLayout;
     
     /** Creates new form ExecutableWindow */
@@ -69,11 +70,13 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         gameOptions = new GameOptionsPanel(currentExecutable.getGameOptions());
         gameSettings = new GameSettingsPanel(currentExecutable.getGameSettings());
         gamePoints = new GamePointsPanel(currentExecutable.getGamePoints(), currentExecutable.returnGameVersionID()); 
+        gameDrivers = new GameDriversPanel(currentExecutable.getGameDrivers());
         ExecutableInfoPanel executableInfo = new ExecutableInfoPanel(currentExecutable.returnGameVersionString());
         multiPageContainer.add("Executable Info", executableInfo);
         multiPageContainer.add("Game Settings", gameSettings);
         multiPageContainer.add("Game Options", gameOptions);
         multiPageContainer.add("Points", gamePoints);
+        multiPageContainer.add("Drivers", gameDrivers);
         ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info");
         executableSelector.setVisible(true);
         multiPageContainer.setVisible(true);
@@ -97,6 +100,16 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         closeExecutableItem = new javax.swing.JMenuItem();
 
         getContentPane().setLayout(new java.awt.FlowLayout());
+
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setMaximumSize(new java.awt.Dimension(600, 400));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                windowResize(evt);
+            }
+        });
 
         executableEditorPane.setBounds(0, 0, -1, -1);
         executableEditorWindow.add(executableEditorPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -129,12 +142,21 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void windowResize(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_windowResize
+
+        // Calls window location and size re-calculation code when internal frame is resized.
+        
+        positionWindows();
+        
+    }//GEN-LAST:event_windowResize
+
     private void saveExecutableItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveExecutableItemActionPerformed
         // Handle the save executable menu item
         
         gameOptions.confirmSettings();
         gameSettings.confirmSettings();
         gamePoints.confirmSettings();
+        //gameDrivers.confirmSettings(); Not required, updated automatically.
         currentExecutable.saveData();        
         
     }//GEN-LAST:event_saveExecutableItemActionPerformed
@@ -147,6 +169,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
             case 2: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Game Settings"); break;
             case 3: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Game Options"); break;
             case 4: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Points"); break;
+            case 5: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Drivers"); break;
             default: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info"); break;  
         }
     }
@@ -214,7 +237,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     
     public void positionWindows()
     {
-        // Re-position and resize internal windows based on size of main track window
+        // Re-position and resize internal windows based on size of main executable window
         
         int windowX = executableEditorWindow.getWidth();
         int windowY = executableEditorWindow.getHeight();

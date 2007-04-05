@@ -180,6 +180,7 @@ public class OptionsWindow extends javax.swing.JInternalFrame
         
         FileDialog fileDialog = new FileDialog(mainWindow,true);  
         fileDialog.setFilterType(2);
+        fileDialog.setInitialDirectory(executableLocation.getText());
         String fileName = new String();
         boolean cancelCalled = false;
         try
@@ -202,7 +203,7 @@ public class OptionsWindow extends javax.swing.JInternalFrame
             }
         }        
     }//GEN-LAST:event_executableSelectorActionPerformed
-
+       
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // Saves all changes and applies chosen settings to the editor
         
