@@ -20,7 +20,7 @@
 /*
  * TrackPanel.java
  *
- * Created on 30. März 2005, 23:13
+ * Created on 30 March 2005, 23:13
  */
 
 package chequeredflag.gui.track;
