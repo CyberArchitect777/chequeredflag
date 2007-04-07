@@ -875,6 +875,12 @@ public class Track {
     }
 
 
+    /**
+        Calculate 32Bit Sin and Cos from tmpCos.
+        If Cos is below 0.5, Sin is read from the lookup tables and Cos is
+        calculated from it.
+        Otherwise Cos is read from lookup table and Sin is calculated from it.
+    */
     private void sinAndCosBig() {
             short oldCos = (short) tmpCos;
             short index = (short) ((-tmpCos) + (short) 0x4000);
@@ -882,13 +888,14 @@ public class Track {
             if (index < 0)
                     index = (short) -index;
 
-            int i = (index >> 2) & 0xFFFE;
+            int i = (index >> 2) & 0x3FFE; // also remove sign bits that could be present (e.g. tmpCos = C000h)
             short val = CosLookupTable.get(i / 2);
 
             if (val < 0)
                     val = (short) -val;
 
             if (val < 0x2000) {
+                    // Calculate Cos from Sin
                     tmpCos = F1GPMath.LookupSinbig((short) tmpCos);
 
                     if (oldCos < 0)
@@ -906,6 +913,7 @@ public class Track {
                     tmpSin = tmpCos;
                     tmpCos = temp;
             } else {
+                    // Calculate Sin from Cos
                     tmpCos = F1GPMath.LookupCosbig((short) tmpCos);
                     oldCos = (short) (-oldCos + 0x4000);
 
