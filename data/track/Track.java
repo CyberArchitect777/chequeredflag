@@ -901,7 +901,7 @@ public class Track {
                     if (oldCos < 0)
                             oldCos = (short) -oldCos;
 
-                    int j = (oldCos >> 2) & 0xFFFE;
+                    int j = (oldCos >> 2) & 0x3FFE;// also remove sign bits that could be present
                     oldCos = CosLookupTable.get(j / 2);
                     getOppositeEdgeLength();
 
@@ -920,7 +920,7 @@ public class Track {
                     if (oldCos < 0)
                             oldCos = (short) -oldCos;
 
-                    int j = (oldCos >> 2) & 0xFFFE;
+                    int j = (oldCos >> 2) & 0x3FFE; // also remove sign bits that could be present
                     oldCos = CosLookupTable.get(j / 2);
                     getOppositeEdgeLength();
 
