@@ -23,7 +23,7 @@ package chequeredflag.data.f1gp;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:20
- * $Id: F1GPMath.java,v 1.1 2007/04/11 20:17:30 ksix Exp $
+ * $Id: F1GPMath.java,v 1.2 2007/04/11 21:33:59 ksix Exp $
  */
 
 public class F1GPMath {
@@ -149,7 +149,7 @@ public class F1GPMath {
 			x = (short) -x;
 
 		int tmp = x & 7;
-		int i = (x >> 2) & 0xFFFE;
+		int i = (x >> 2) & 0x3FFE;
 		short v1 = CosLookupTable.get(i / 2 + 1);
 		short v2 = CosLookupTable.get(i / 2);
 		v1 = (short) (v1 - v2);
