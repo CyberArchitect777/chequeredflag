@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-package chequeredflag.f1gp;
+package chequeredflag.data.f1gp;
 
 /*
  * User: Rene
  * Date: 19-okt-2005
  * Time: 0:27:11
- * $Id: Atan2LookupTable.java,v 1.1 2007/03/22 20:04:05 ksix Exp $
+ * $Id: Atan2LookupTable.java,v 1.1 2007/04/11 20:17:30 ksix Exp $
  */
 
 public class Atan2LookupTable {

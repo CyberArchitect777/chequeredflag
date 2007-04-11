@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-package chequeredflag.f1gp;
+package chequeredflag.data.f1gp;
 
 /*
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:20
- * $Id: F1GPMath.java,v 1.2 2007/04/04 21:13:00 ksix Exp $
+ * $Id: F1GPMath.java,v 1.1 2007/04/11 20:17:30 ksix Exp $
  */
 
 public class F1GPMath {
