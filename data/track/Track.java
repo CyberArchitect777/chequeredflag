@@ -30,7 +30,9 @@ import java.nio.channels.*;
 import java.util.*;
 import java.awt.*;
 
-import chequeredflag.f1gp.*;
+
+import chequeredflag.data.f1gp.CosLookupTable;
+import chequeredflag.data.f1gp.F1GPMath;
 
 /**
  *
@@ -49,6 +51,9 @@ public class Track {
         m_CCSetup = new CCSetup();
         m_PitlaneSegments = new TrackSegments();
         m_Footer = new Footer();
+
+        // In layout mode, Segs are not moved to make start and finish fit together.
+        m_fLayoutMode = false;
     }
 
     public boolean load( File file )
@@ -276,6 +281,18 @@ public class Track {
         return m_Objects;
     }
 
+    public boolean getLayoutMode()
+    {
+        return m_fLayoutMode;
+    }
+
+    public boolean setLayoutMode( boolean fLayoutMode )
+    {
+        boolean fOldLayoutMode = m_fLayoutMode;
+        m_fLayoutMode = fLayoutMode;
+        return fLayoutMode;
+    }
+
     /** Data members */
     protected File m_File;    // File where track was loaded from
 
@@ -289,6 +306,8 @@ public class Track {
     protected CCSetup m_CCSetup;
     protected TrackSegments m_PitlaneSegments;
     protected Footer m_Footer;
+
+    protected boolean m_fLayoutMode;
 
     /** statics */
     // factor for converting width units in meters - probably fractions of feet
@@ -308,14 +327,16 @@ public class Track {
             m_DataHeader.getStartWidth(),
             m_DataHeader.getStartAngle(),
             nStartPosX,
-            nStartPosY // start coordinates
+            nStartPosY, // start coordinates
+            m_fLayoutMode
             );
 
         // Layout of the pit lane.
         // List of track segments is used to find
         // position and direction of pit entry.
         m_PitlaneSegments.calculatePitlaneLayout(
-            m_TrackSegments, m_DataHeader.getPitSide()
+            m_TrackSegments, m_DataHeader.getPitSide(),
+            m_fLayoutMode
             );
     };
 
@@ -686,6 +707,10 @@ public class Track {
 
     protected void calculateGameCCLine()
     {
+        if ( m_fLayoutMode )
+            // no CCLine in (track/pit) layout mode.
+            return;
+
         int s = 0;
         wTmpAngleZ = m_TrackSegments.getSegAt( s ).wAngleZ;
         CCLineSegment cclineSeg;

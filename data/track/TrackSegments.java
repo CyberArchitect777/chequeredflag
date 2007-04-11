@@ -29,7 +29,8 @@ import java.io.*;
 import java.nio.channels.*;
 import java.util.*;
 
-import chequeredflag.f1gp.*;
+
+import chequeredflag.data.f1gp.F1GPMath;
 
 /**
  *
@@ -107,21 +108,135 @@ public class TrackSegments extends Vector {
         return nSegStart;
     };
 
+    /**
+        Parameters:
+         ts - current track segment (data from track file)
+         nSegStart - corresponding index into Segs array.
+         bTrackCompilePass2 - true if called through second pass of track data.
+    */
     protected void ProcessTrackCommands( TrackSegment ts, int nSegStart, boolean bTrackCompilePass2 )
     {
-        if ( bTrackCompilePass2 )
-            // nothing to do in pass2
-            return;
-
-        // For layout processing, we need to process at least command A5
+        int nSegNr = nSegStart; // Seg index to which command applies (including offset from command)
         Vector commands = ts.getCommands();
         fTC0xa5 = false;
         for ( Enumeration e = commands.elements(); e.hasMoreElements(); )
         {
             Command cmd = (Command) e.nextElement();
-            if ( cmd.getType() == 0xA5 )
+
+            if ( bTrackCompilePass2 )
             {
+                // In the second pass, all Segs are already created.
+                // Most commands can be processed only in the second pass, because
+                // they carry Seg offset parameters from the beginning of the sector.
+                nSegNr = nSegNr + cmd.getParam( 0 );
+                if ( nSegNr > nTrackSegs )
+                    // wrap around start/finish line
+                    nSegNr = nSegNr - nTrackSegs;
+            }
+
+            switch( cmd.getType() )
+            {
+            case 0x80:
+                //TCAnchorObject(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x81:
+            case 0x82:
+                //TCViewDistance(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x83:
+            case 0x84:
+                //TCDrawingSequence(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x85:
+                TCTrackWidthChange((short) cmd.getParam( 1 ), (short) cmd.getParam( 2 ), bTrackCompilePass2);
+                break;
+            case 0x86:
+            case 0x87:
+                //TCConnectPitlane(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x88:
+            case 0x89:
+                //TCPitlaneParkingZone(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x8A:
+            case 0x8B:
+                //TCTrackMarkings(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x8C:
+            case 0x8D:
+                // Up to now unknown purpose
+                //TC0x8cAnd0x8d(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x8E:
+            case 0x8F:
+                //TCKerbsBeginAndLength(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x90:
+            case 0x91:
+                //TCViewDistanceReversed(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x92:
+            case 0x93:
+                // Up to now unknown purpose
+                //TC0x92And0x93(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x94:
+            case 0x95:
+                //TCCCCoaching(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x96:
+            case 0x97:
+                //TCPitlaneStartAndEnd(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x98:
+            case 0x99:
+                //TCFenceHeightSwitch(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x9A:
+                //TCCustomFenceHeight(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x9B:
+            case 0x9C:
+            case 0x9D:
+            case 0x9E:
+                //TCPitlaneOffsets(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0x9F:
+            case 0xA0:
+                //TCPitlaneFencesBeginAndEnd(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xA1:
+            case 0xA2:
+            case 0xA3:
+            case 0xA4:
+                //TCPitlaneJoin(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xA5:
+                // Flag changes behaviour of track layout angle calculations.
                 fTC0xa5 = true;
+                break;
+            case 0xA6:
+            case 0xA7:
+                //TC0xa6And0xa7(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xA8:
+                //TCWaveChequeredFlag(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xA9:
+                // Up to now unknown purpose.
+                //TC0xa9(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xAA:
+                // Up to now unknown purpose.
+                //TC0xaa(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xAB:
+                // Up to now unknown purpose.
+                //TC0xab(ts, nSegNr, bTrackCompilePass2);
+                break;
+            case 0xAC:
+                //TCPaletteChange(ts, nSegNr, bTrackCompilePass2);
+                break;
             }
         }
     };
@@ -248,7 +363,7 @@ public class TrackSegments extends Vector {
                 fIncrementAngle = true;
        
             // TCPrepareSegFlags_91034();
-            // TCCalcOffsetsByTrk_Width();
+            TCCalcOffsetsByTrk_Width(i);
             TCInitSeg(i);
             TCWriteAngleZChangeMulHalfPI(i - 1, wTCAbsAngleZ, wTCOldAbsAngleZ );
 
@@ -269,7 +384,7 @@ public class TrackSegments extends Vector {
             dTCAbsPosY = dTCAbsPosY + nPosChangeY;
             dTCAbsPosZ = dTCAbsPosZ + nPosChangeZ;
 
-            // TCIncrCountersCalcVergeTrackWidth();
+            TCIncrCountersCalcVergeTrackWidth();
         }
 
         // Calculate angles at end of sector
@@ -421,7 +536,11 @@ public class TrackSegments extends Vector {
         bTCSectorArgFlagsBridgedWallCntd = 0;
     }
 
-    protected void TCCompileTrack(int nStartWidth, int nStartAngle, int nPosX, int nPosY)
+    /**
+        11.04.07 KS added fLayoutMode to prevent Seg moving.
+    */
+
+    protected void TCCompileTrack(int nStartWidth, int nStartAngle, int nPosX, int nPosY, boolean fLayoutMode)
     {
         TCInitData(nStartWidth, nStartAngle, nPosX, nPosY);
 
@@ -442,18 +561,27 @@ public class TrackSegments extends Vector {
 
         int nSegTmp1 = 0;
 
-        // Calculate difference of angle and position between first and last seg
-        TCCalcPosAngleDifference( nLastTrackSeg );
-        // Adjust positions
-        TCRecalcPosToFit( nLastTrackSeg, dTCAbsPosX, dTCAbsPosY, dTCAbsPosZ );
-        // Calculate difference once again (for now adjusted track)
-        TCCalcPosAngleDifference( nLastTrackSeg );
+        // Segs are moved so that start and finish line fit together.
+        // When building new tracks, this would give strange results. Therefore, it
+        // can be switched off by the "LayoutMode" flag.
+        if ( !fLayoutMode )
+        {
+            // Calculate difference of angle and position between first and last seg
+            TCCalcPosAngleDifference( nLastTrackSeg );
+            // Adjust positions
+            TCRecalcPosToFit( nLastTrackSeg, dTCAbsPosX, dTCAbsPosY, dTCAbsPosZ );
+            // Calculate difference once again (for now adjusted track)
+            TCCalcPosAngleDifference( nLastTrackSeg );
+        }
     }
 
     /**
-      Calculate all coordinates and angles of segments
+      Calculate all coordinates and angles of segments.
+      11.04.07 KS: new parameter fLayoutMode prevents Seg moving.
     */
-    public void calculateTrackLayout(int nStartWidth, int nStartAngle, int nPosX, int nPosY) {
+    public void calculateTrackLayout(int nStartWidth, int nStartAngle,
+                                     int nPosX, int nPosY,
+                                     boolean fLayoutMode) {
         int nWidthLength, nWidthEnd;
         double dANGLE_SCALE;
         nWidthLength = 0;
@@ -462,7 +590,7 @@ public class TrackSegments extends Vector {
  
         // ----------------------------------------------------------
         // Calculations following in-game calculations
-        TCCompileTrack(nStartWidth, nStartAngle, nPosX, nPosY);
+        TCCompileTrack(nStartWidth, nStartAngle, nPosX, nPosY, fLayoutMode);
 
         // convert pos to double for "old" calculations
         double dPosX, dPosY;
@@ -496,7 +624,7 @@ public class TrackSegments extends Vector {
       fPitSide is true if pits are on the left side of the track,
       and false if on right side.
     */
-    public void calculatePitlaneLayout(TrackSegments trackSegments, boolean fPitSide)
+    public void calculatePitlaneLayout(TrackSegments trackSegments, boolean fPitSide, boolean fLayoutMode)
     {
         // Find track segment that contains pit lane entry.
         TrackSegment tsPitlaneEntry = trackSegments.findPitlaneEntry();
@@ -532,7 +660,7 @@ public class TrackSegments extends Vector {
         calculateTrackLayout(nPITWIDTH,
                              tsPitlaneEntry.getAngleStart(),
                              nPitStartX,
-                             nPitStartY);
+                             nPitStartY, fLayoutMode);
     }
 
     /**
@@ -609,6 +737,91 @@ public class TrackSegments extends Vector {
         }
     }
 
+    /**
+        Calculates verge and track width for next Seg, if necessary.
+    */
+
+    protected void TCIncrCountersCalcVergeTrackWidth()
+    {
+        nSegNumber++;    // @@@ needed?
+
+        // Verge (run-off area) related data
+        bVergeWidthChangeCount++;
+        wTCVergeWidth_left = (short) (wTCVergeWidth_left + wTCVergeWidthChange_left);
+        wTCVergeWidth_right = (short) (wTCVergeWidth_right + wTCVergeWidthChange_right);
+
+        // track width related data
+        if ( wTCTrackWidthChangeRemainingTlus > 0 )
+        {
+            wTCTrackWidthChangeRemainingTlus--;
+            wTrk_Width = (short) (wTrk_Width + wTCTrackWidthChange);
+            wTrk_WidthPlus0x50 = (short) (wTrk_Width + 0x50);
+        }
+    }
+    
+    /**
+        Calculate X- and Y-Offsets for width of track and extra stripe
+        between track and run-off area (track border).
+        Offsets are stored in members of Seg <nSegNum>.
+    */
+
+    protected void TCCalcOffsetsByTrk_Width(int nSegNum)
+    {
+        int nOffsetX, nOffsetY;
+        Seg seg = m_segs[ nSegNum ];
+
+        // Offset in X direction
+        nOffsetX = F1GPMath.LookupCosRaw(wTCAbsAngleZ) * wTrk_Width;
+        nOffsetX = nOffsetX >> 17;
+        nOffsetX = (nOffsetX << 6) | ((wTrk_Width >> 5) & 0x3F);
+        seg.setTrackWidthX( (short) nOffsetX );
+        
+        // Offset in Y direction
+        nOffsetY = F1GPMath.LookupSinRaw(wTCAbsAngleZ) * wTrk_Width;
+        nOffsetY = nOffsetY >> 17;
+        nOffsetY = nOffsetY << 6;
+        seg.setTrackWidthY( (short) nOffsetY );
+
+        // Extra in X direction
+        nOffsetX = F1GPMath.LookupCosRaw(wTCAbsAngleZ) * wTrk_WidthPlus0x50;
+        nOffsetX = nOffsetX >> 17;
+        seg.setExtraSideX( (byte) (nOffsetX - (seg.getTrackWidthX() >> 6)));
+
+        // Extra in Y direction
+        nOffsetY = F1GPMath.LookupSinRaw(wTCAbsAngleZ) * wTrk_WidthPlus0x50;
+        nOffsetY = nOffsetY >> 17;
+        seg.setExtraSideY( (byte) (nOffsetY - (seg.getTrackWidthY() >> 6)));
+
+    }
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++                  Methods for command processing                   +++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    protected void TCTrackWidthChange(short wNumTlus, short wWidth, boolean bTrackCompilePass2)
+    {
+        if ( bTrackCompilePass2 )
+            // nothing to do in pass 2
+            return;
+
+        wTCTrackWidthChangeRemainingTlus = wNumTlus;
+        if ( wNumTlus == 0 )
+        {
+            // immediate change of track width
+            wTrk_Width = wWidth;
+            wTrk_WidthPlus0x50 = (short) (wTrk_Width + 0x50);
+            // No further change of track width
+            wTCTrackWidthChange = 0;
+        }
+        else
+        {
+            // smooth change over a number of Segs.
+            wTCTrackWidthChange = (short) ((wWidth - wTrk_Width) / wNumTlus);
+        }
+    }
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    
     // data members
     Seg m_segs[]; // track segments as used by in-game calculations
 
@@ -641,9 +854,19 @@ public class TrackSegments extends Vector {
     int dTCOffsetPitLanePosZ = 0;
     short wTrk_Width = 0;
     short wTrk_WidthPlus0x50 = (short) (wTrk_Width + 0x50);
+    short wTCTrackWidthChangeRemainingTlus = 0;
+    short wTCTrackWidthChange = 0;
+
     short wPoleWidth = 100;
     short wTCTrackDataFlags = 0;
+
     short wTCOldVergeWidth = 0;
+    byte bVergeWidthChangeCount = 0;
+    short wTCVergeWidth_left = 0;
+    short wTCVergeWidth_right = 0;
+    short wTCVergeWidthChange_left = 0;
+    short wTCVergeWidthChange_right = 0;
+
     short wTCNumKerbColours = 0;
     boolean bCreatingPitlaneSegments = false;
     byte bDefaultTextureFlagsPlus1 = 3;

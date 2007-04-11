@@ -23,7 +23,7 @@ package chequeredflag.data.track;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:29
- * $Id: Seg.java,v 1.6 2007/04/04 21:02:31 ksix Exp $
+ * $Id: Seg.java,v 1.7 2007/04/11 21:36:11 ksix Exp $
  */
 
 public class Seg {
@@ -32,9 +32,15 @@ public class Seg {
 	short wPosX;
 	short wPosZ;
 	short wPosY;
-	int wCCLineRAngle;
-	int wCCLine;
-	int wAngleZChangeMulHalfPI;
+        
+        short wLeftAndRightSideX;   // X/Y distance of track border from reference point (middle of the track)
+        short wLeftAndRightSideY;
+        byte  bExtraSideX;          // X/Y distance of run-off area from reference point (middle of the track)
+        byte  bExtraSideY;
+
+	int   wAngleZChangeMulHalfPI;
+	int   wCCLine;
+	int   wCCLineRAngle;
 	short bPosFine;	// 3 bits for x in low nibble, 3 bits for y in high nibble
 
         // for hiding details of x/y pos storage (bPosFine)
@@ -62,6 +68,17 @@ public class Seg {
 
         public int getAngleXChase()
         { return wAngleXChase; }
+
+        public short getTrackWidthX() { return wLeftAndRightSideX; };
+        public short getTrackWidthY() { return wLeftAndRightSideY; };
+        public void setTrackWidthX( short wTrackWidthX ) { wLeftAndRightSideX = wTrackWidthX; };
+        public void setTrackWidthY( short wTrackWidthY ) { wLeftAndRightSideY = wTrackWidthY; };
+
+        public byte getExtraSideX() { return bExtraSideX; };
+        public byte getExtraSideY() { return bExtraSideY; };
+        public void setExtraSideX( byte bExtraSideX ) { bExtraSideX = bExtraSideX; };
+        public void setExtraSideY( byte bExtraSideY ) { bExtraSideX = bExtraSideX; };
+
 
         public int getCCLine()
         { return wCCLine; };
