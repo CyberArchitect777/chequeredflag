@@ -464,35 +464,40 @@ public class TrackPanel extends javax.swing.JPanel {
                 g2d.setColor(Color.black);
             }
 
-            // draw a simple rectangle (polygon) in any case.
+            // draw a polygon in any case.
             // Each Seg is only one tlu.
             int aXPoints[] = new int[ 4 ];
             int aYPoints[] = new int[ 4 ];
             seg = trackSegments.getSegAt( i );
             segNext = trackSegments.getSegAt( i + 1 );
-            double dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getTrackWidth();
-            double dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getTrackWidth();
-            aXPoints[ 0 ] = new Double(((double)seg.getPosX() + dXDiff) * m_scale).intValue();
-            aYPoints[ 0 ] = new Double(((double)seg.getPosY() - dYDiff) * m_scale).intValue();
-            aXPoints[ 1 ] = new Double(((double)segNext.getPosX() + dXDiff) * m_scale).intValue();
-            aYPoints[ 1 ] = new Double(((double)segNext.getPosY() - dYDiff) * m_scale).intValue();
-            aXPoints[ 2 ] = new Double(((double)segNext.getPosX() - dXDiff) * m_scale).intValue();
-            aYPoints[ 2 ] = new Double(((double)segNext.getPosY() + dYDiff) * m_scale).intValue();
-            aXPoints[ 3 ] = new Double(((double)seg.getPosX() - dXDiff) * m_scale).intValue();
-            aYPoints[ 3 ] = new Double(((double)seg.getPosY() + dYDiff) * m_scale).intValue();
+            double dXDiff = seg.getTrackWidthX() >> 3;
+            double dYDiff = seg.getTrackWidthY() >> 3;
+            double dXDiffNext = segNext.getTrackWidthX() >> 3;
+            double dYDiffNext = segNext.getTrackWidthY() >> 3;
+            aXPoints[ 0 ] = scale( seg.getPosX() + dXDiff );
+            aYPoints[ 0 ] = scale( seg.getPosY() - dYDiff );
+            aXPoints[ 1 ] = scale( segNext.getPosX() + dXDiffNext );
+            aYPoints[ 1 ] = scale( segNext.getPosY() - dYDiffNext );
+            aXPoints[ 2 ] = scale( segNext.getPosX() - dXDiffNext );
+            aYPoints[ 2 ] = scale( segNext.getPosY() + dYDiffNext );
+            aXPoints[ 3 ] = scale( seg.getPosX() - dXDiff );
+            aYPoints[ 3 ] = scale( seg.getPosY() + dYDiff );
             g2d.drawPolygon( aXPoints, aYPoints, 4 );
 
-            // Draw CCLine
-            dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
-            dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
-            aXPoints[ 0 ] = new Double(((double)seg.getPosX() + dXDiff) * m_scale).intValue();
-            aYPoints[ 0 ] = new Double(((double)seg.getPosY() - dYDiff) * m_scale).intValue();
-            dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
-            dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
-            aXPoints[ 1 ] = new Double(((double)segNext.getPosX() + dXDiff) * m_scale).intValue();
-            aYPoints[ 1 ] = new Double(((double)segNext.getPosY() - dYDiff) * m_scale).intValue();
-            g2d.setColor(Color.red);
-            g2d.drawLine(aXPoints[ 0 ], aYPoints[ 0 ], aXPoints[ 1 ], aYPoints[ 1 ] );
+            if ( !m_track.getLayoutMode() )
+            {
+                // Draw CCLine
+                dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
+                dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
+                aXPoints[ 0 ] = scale( seg.getPosX() + dXDiff );
+                aYPoints[ 0 ] = scale( seg.getPosY() - dYDiff );
+                dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
+                dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
+                aXPoints[ 1 ] = scale( segNext.getPosX() + dXDiff );
+                aYPoints[ 1 ] = scale( segNext.getPosY() - dYDiff );
+                g2d.setColor(Color.red);
+                g2d.drawLine(aXPoints[ 0 ], aYPoints[ 0 ], aXPoints[ 1 ], aYPoints[ 1 ] );
+            }
         }
 
         // reset transformations
@@ -1086,6 +1091,13 @@ public class TrackPanel extends javax.swing.JPanel {
         }
         // reset painting color of context
         g2d.setColor( oldColor );
+    }
+
+    /**
+        Convert unscaled value to pixel value.
+    */
+    protected int scale(double dUnscaled) {
+        return new Double(dUnscaled * m_scale).intValue();
     }
 
 
