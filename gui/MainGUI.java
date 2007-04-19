@@ -455,6 +455,9 @@ public class MainGUI extends javax.swing.JFrame implements WindowListener
         // Open a track file from a parameter passed filename by using Klaus's track input processing
         
         File trackFile = new File(fileName);
+        Preferences userData = Preferences.userRoot();
+        Preferences cheqFlagData = userData.node("chequeredflag");
+        cheqFlagData.put("LastLoadedTrackDir", trackFile.getParent());
         currentTrack = new Track();
         boolean loadSuccess = currentTrack.load(trackFile);
            
@@ -494,6 +497,9 @@ public class MainGUI extends javax.swing.JFrame implements WindowListener
         boolean cancelCalled = false;
         try
         {
+            Preferences userData = Preferences.userRoot();
+            Preferences cheqFlagData = userData.node("chequeredflag");
+            fileDialog.setInitialDirectory(cheqFlagData.get("LastLoadedTrackDir", ""));
             fileName = fileDialog.showOpenDialog();
         }
         catch (Exception exceptionError)
