@@ -93,6 +93,7 @@ public class TrackSegments extends Vector {
     protected int ProcessTrackSegments( int nSegStart, boolean bTrackCompilePass2 )
     {
         int nSegsProcessed = 0;
+        int nSector = 1;
         for ( Enumeration e = elements(); e.hasMoreElements(); )
         {
             // get the next element
@@ -100,8 +101,10 @@ public class TrackSegments extends Vector {
             // Process commands
             ProcessTrackCommands( ts, nSegStart, bTrackCompilePass2 );
             // Process layout
-            nSegsProcessed = ProcessTrackLayout( ts, nSegStart, bTrackCompilePass2 );
+            nSegsProcessed = ProcessTrackLayout( ts, nSegStart, bTrackCompilePass2, nSector );
+
             nSegStart = nSegStart + nSegsProcessed;
+            nSector++;
         }
         
         // return total number of processed Segs
@@ -241,7 +244,11 @@ public class TrackSegments extends Vector {
         }
     };
 
-    protected int ProcessTrackLayout( TrackSegment ts, int nSegStart, boolean bTrackCompilePass2 )
+    /**
+      2007-04-12 KS: added parameter nSector (number of track segment) to store into Segs.
+    */
+
+    protected int ProcessTrackLayout( TrackSegment ts, int nSegStart, boolean bTrackCompilePass2, int nSector )
     {
         int nSegsProcessed;
         if ( bTrackCompilePass2 )
@@ -274,7 +281,7 @@ public class TrackSegments extends Vector {
             // Bridged wall continued?
             bTCSectorArgFlagsBridgedWallCntd = nTCSectorModifiedFlags & nTCSectorModifiedFlags_Save & 0x0030;
 
-            nSegsProcessed = TCProcessTrackSectorPass1( ts, nSegStart );
+            nSegsProcessed = TCProcessTrackSectorPass1( ts, nSegStart, nSector );
         }
         return nSegsProcessed;
     };
@@ -291,7 +298,7 @@ public class TrackSegments extends Vector {
         seg.setPos( dTCAbsPosX, dTCAbsPosY, dTCAbsPosZ );
     }
 
-    protected void TCInitSeg( int nSegIndex )
+    protected void TCInitSeg( int nSegIndex, int nSector )
     {
         Seg seg = m_segs[ nSegIndex ];
         seg.wAngleZ = (short) wTCAbsAngleZ_2;
@@ -301,6 +308,9 @@ public class TrackSegments extends Vector {
 
         seg.wCCLine = 0;
         seg.wCCLineRAngle = 0;
+
+        // Store number of corresponding track sector for highlighting
+        seg.m_nTrackSector = nSector;
     };
 
     /**
@@ -320,8 +330,12 @@ public class TrackSegments extends Vector {
         seg.wAngleZChangeMulHalfPI = nAngleChangeMulHalfPi;
     }
 
-    // returns number of Segs belonging to this TrackSegment.
-    protected int TCProcessTrackSectorPass1( TrackSegment ts, int nSegStart )
+    /**
+        returns number of Segs belonging to this TrackSegment.
+        2007-04-12 KS: added parameter nSector (number of track segment) to store into Segs.
+    */
+
+    protected int TCProcessTrackSectorPass1( TrackSegment ts, int nSegStart, int nSector )
     {
         TCCalcVergeWidth();
         TCSelectiveClearBufW1E920();
@@ -364,7 +378,7 @@ public class TrackSegments extends Vector {
        
             // TCPrepareSegFlags_91034();
             TCCalcOffsetsByTrk_Width(i);
-            TCInitSeg(i);
+            TCInitSeg(i, nSector);
             TCWriteAngleZChangeMulHalfPI(i - 1, wTCAbsAngleZ, wTCOldAbsAngleZ );
 
             // -----------------------------------------------------------

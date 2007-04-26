@@ -53,7 +53,7 @@ public class Track {
         m_Footer = new Footer();
 
         // In layout mode, Segs are not moved to make start and finish fit together.
-        m_fLayoutMode = false;
+        m_fLayoutMode = true;
     }
 
     public boolean load( File file )
@@ -714,12 +714,15 @@ public class Track {
         int s = 0;
         wTmpAngleZ = m_TrackSegments.getSegAt( s ).wAngleZ;
         CCLineSegment cclineSeg;
+        int nCCLineSector = 0;
 
         for (Enumeration e = m_CCLine.elements(); e.hasMoreElements(); ) {
                 cclineSeg = (CCLineSegment) e.nextElement();
 
                 int val3, val4, val5;
                 int nParam = 0;
+
+                nCCLineSector++;
 
                 if ((cclineSeg.m_nType & 0x80) != 0)   // starting sector
                         wSegPosX = (short) cclineSeg.m_nParam[ nParam++ ];
@@ -754,6 +757,7 @@ public class Track {
                     for (int i = 0; i < length; i++) {
                             seg.wCCLineRAngle = wTmpAngleZ - seg.wAngleZ;
                             seg.wCCLine = wSegPosX;
+                            seg.m_nCCLineSector = nCCLineSector;
 
                             s++;
                             if (s >= m_TrackSegments.nSegNumber)
