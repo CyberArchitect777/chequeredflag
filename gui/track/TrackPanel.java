@@ -125,7 +125,6 @@ public class TrackPanel extends javax.swing.JPanel {
         if ( m_fPaintNew )
         {
             // new paint uses Seg structures (thus in-game-like calculations).
-            // @@@ only for testing. not released yet!
             newPaintComponent( g );
         }
 
@@ -451,9 +450,11 @@ public class TrackPanel extends javax.swing.JPanel {
 
         for ( int i = 0; i <= trackSegments.getMaxTrackSegIndex() - 1; i++ )
         {
+            seg = trackSegments.getSegAt( i );
+            segNext = trackSegments.getSegAt( i + 1 );
+
             // Adjust settings for selected/unselected segments
-            // m_nSelectedTrackSegment is WHOLE segment, not only single Seg @@@
-            if ( i == m_nSelectedTrackSegment )
+            if (  seg.m_nTrackSector == m_nSelectedTrackSegment )
             {
                 // Paint selected segment in orange
                 g2d.setColor(Color.orange);
@@ -468,8 +469,6 @@ public class TrackPanel extends javax.swing.JPanel {
             // Each Seg is only one tlu.
             int aXPoints[] = new int[ 4 ];
             int aYPoints[] = new int[ 4 ];
-            seg = trackSegments.getSegAt( i );
-            segNext = trackSegments.getSegAt( i + 1 );
             double dXDiff = seg.getTrackWidthX() >> 3;
             double dYDiff = seg.getTrackWidthY() >> 3;
             double dXDiffNext = segNext.getTrackWidthX() >> 3;
@@ -495,7 +494,17 @@ public class TrackPanel extends javax.swing.JPanel {
                 dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
                 aXPoints[ 1 ] = scale( segNext.getPosX() + dXDiff );
                 aYPoints[ 1 ] = scale( segNext.getPosY() - dYDiff );
-                g2d.setColor(Color.red);
+
+                if ( seg.m_nCCLineSector == m_nSelectedCCLineSegment )
+                {
+                    // paint selected segment in magenta
+                    g2d.setColor(Color.GREEN);
+                }
+                else
+                {
+                    // default color is red.
+                    g2d.setColor(Color.RED);
+                }
                 g2d.drawLine(aXPoints[ 0 ], aYPoints[ 0 ], aXPoints[ 1 ], aYPoints[ 1 ] );
             }
         }
