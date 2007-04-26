@@ -23,7 +23,7 @@ package chequeredflag.data.track;
  * User: Rene
  * Date: 18-okt-2005
  * Time: 22:11:29
- * $Id: Seg.java,v 1.7 2007/04/11 21:36:11 ksix Exp $
+ * $Id: Seg.java,v 1.8 2007/04/26 19:54:05 ksix Exp $
  */
 
 public class Seg {
@@ -43,6 +43,32 @@ public class Seg {
 	int   wCCLineRAngle;
 	short bPosFine;	// 3 bits for x in low nibble, 3 bits for y in high nibble
 
+        // Number of corresponding track/pit sector.
+        // Used only here (not in game) for highlighting.
+        public int m_nTrackSector;
+        public int m_nCCLineSector; // same for CCLine
+
+        public Seg() {
+            wAngleZ = 0;
+            wAngleXChase = 0;
+            wPosX = 0;
+            wPosZ = 0;
+            wPosY = 0;
+
+            wLeftAndRightSideX = 0;
+            wLeftAndRightSideY = 0;
+            bExtraSideX = 0;
+            bExtraSideY = 0;
+
+            wAngleZChangeMulHalfPI = 0;
+            wCCLine = 0;
+            wCCLineRAngle = 0;
+            bPosFine = 0;
+
+            m_nTrackSector = 0;
+            m_nCCLineSector = 0;
+        }
+
         // for hiding details of x/y pos storage (bPosFine)
         public int getPosX() { return ((int) wPosX << 3) | bPosFine & 0x07; };
         public int getPosY() { return ((int) wPosY << 3) | ((bPosFine >> 4) & 0x07); };
@@ -59,9 +85,6 @@ public class Seg {
             wPosY = (short) (nNewPosY >> 3);
             wPosZ = (short) nNewPosZ;
         };
-
-        public int getTrackWidth()
-        { return 1700; } // @@@ not set yet
 
         public int getAngleZ()
         { return wAngleZ; };
@@ -85,4 +108,5 @@ public class Seg {
 
         public int getCCLineRAngle()
         { return wCCLineRAngle; }
+
 }
