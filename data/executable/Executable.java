@@ -49,12 +49,12 @@ public class Executable
                 
         switch(executableSize)
         {
-            case 321878: gameVersion = 1; System.out.println("1.05 European packed version detected"); break;
-            case 321748: gameVersion = 2; System.out.println("1.05 Italian packed version detected"); break;
-            case 321716: gameVersion = 3; System.out.println("1.05 US packed version detected"); break;
-            case 600480: gameVersion = 4; System.out.println("1.05 European unpacked version detected"); break;
-            case 600336: gameVersion = 5; System.out.println("1.05 Italian unpacked version detected"); break;
-            case 600320: gameVersion = 6; System.out.println("1.05 US unpacked version detected"); break;
+            case 600480: gameVersion = 1; System.out.println("1.05 European unpacked version detected"); break;
+            case 600336: gameVersion = 2; System.out.println("1.05 Italian unpacked version detected"); break;
+            case 600320: gameVersion = 3; System.out.println("1.05 US unpacked version detected"); break;
+            case 321878: gameVersion = 4; System.out.println("1.05 European packed version detected"); break;
+            case 321748: gameVersion = 5; System.out.println("1.05 Italian packed version detected"); break;
+            case 321716: gameVersion = 6; System.out.println("1.05 US packed version detected"); break;
             default: gameVersion = 7; break;
         }    
         
@@ -73,12 +73,9 @@ public class Executable
     {
         switch (gameVersion)
         {
-            case 1: return "1.05 European packed version";
-            case 2: return "1.05 Italian packed version";
-            case 3: return "1.05 US packed version";
-            case 4: return "1.05 European unpacked version";
-            case 5: return "1.05 Italian unpacked version";
-            case 6: return "1.05 US unpacked version";
+            case 1: return "1.05 European version";
+            case 2: return "1.05 Italian version";
+            case 3: return "1.05 US version";
             default: return "Unknown version";
         }
     }   
@@ -138,7 +135,7 @@ public class Executable
     public int loadData()
     {
         // Loads an F1GP/WC executable file. Returns a code to indicate the completed loading status
-        // Code: 0 - Success, 1 - Invalid File, 2 - Unknown Error
+        // Code: 0 - Success, 1 - Invalid File, 2 - Unknown Error, 3 - Packed Version
         
         if (gameVersion > 6)
         {
@@ -146,28 +143,35 @@ public class Executable
         }
         else
         {
-            String filePath = gameFile.getPath();
-            try
+            if (gameVersion > 3)
             {
-                RandomAccessFile binaryAccess = new RandomAccessFile(filePath, "r");
-                int operationSuccess = 0;
-                operationSuccess = operationSuccess + gameOptions.loadData(binaryAccess, gameVersion);
-                operationSuccess = operationSuccess + gameSettings.loadData(binaryAccess, gameVersion);
-                operationSuccess = operationSuccess + gamePoints.loadData(binaryAccess, gameVersion);
-                operationSuccess = operationSuccess + gameDrivers.loadData(binaryAccess, gameVersion);
-                if (operationSuccess == 0)
+                return 3;
+            }
+            else
+            {
+                String filePath = gameFile.getPath();
+                try
                 {
-                    return 0;
+                    RandomAccessFile binaryAccess = new RandomAccessFile(filePath, "r");
+                    int operationSuccess = 0;
+                    operationSuccess = operationSuccess + gameOptions.loadData(binaryAccess, gameVersion);
+                    operationSuccess = operationSuccess + gameSettings.loadData(binaryAccess, gameVersion);
+                    operationSuccess = operationSuccess + gamePoints.loadData(binaryAccess, gameVersion);
+                    operationSuccess = operationSuccess + gameDrivers.loadData(binaryAccess, gameVersion);
+                    if (operationSuccess == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 2;
+                    }
                 }
-                else
+                catch (Exception exceptionError)
                 {
                     return 2;
-                }
+                }            
             }
-            catch (Exception exceptionError)
-            {
-                return 2;
-            }            
         }
     }    
 }

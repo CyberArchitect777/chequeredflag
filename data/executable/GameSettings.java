@@ -73,8 +73,8 @@ public class GameSettings
             qualifyingTyresData1[1] = 0x74;
             qualifyingTyresData2[0] = 0x04;
         }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 44056, 44056, 44056, 48808, 48808, 48808, qualifyingTyresData1, qualifyingTyresData1);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 44083, 44083, 44083, 48835, 48835, 48835, qualifyingTyresData2, qualifyingTyresData2);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 48808, 48808, 48808, qualifyingTyresData1);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 48835, 48835, 48835, qualifyingTyresData2);
         return 0;
     }
     
@@ -83,7 +83,7 @@ public class GameSettings
         //byte[] dataValue = new byte[3];
         byte[] dataValues;
         qualifyingTyres = false;
-        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 44056, 44056, 44056, 48808, 48808, 48808, 1);
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 48808, 48808, 48808, 1);
         if (dataValues[0] == (byte)0x80)
         {
             qualifyingTyres = true;

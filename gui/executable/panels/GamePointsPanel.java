@@ -78,14 +78,6 @@ public class GamePointsPanel extends javax.swing.JPanel
         {
             pointsField[x] = new JTextField("");
         }
-        if (gameVersion < 4)
-        {
-            for (int x=6;x<26;x++)
-            {
-                pointsLabel[x].setEnabled(false);
-                pointsField[x].setEnabled(true);
-            }
-        }
         JPanel firstPagePanel = new JPanel();
         JPanel secondPagePanel = new JPanel();
         JPanel thirdPagePanel = new JPanel();

@@ -92,7 +92,7 @@ public class GameOptions
             fastFadeData[8] = 0x74;
             fastFadeData[9] = (byte)0xFB;           
         }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 304646, 304507, 304480, 578506, 578362, 578346, fastFadeData, fastFadeData);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 578506, 578362, 578346, fastFadeData);
         byte[] languageSelectionData1 = new byte[1];
         byte[] languageSelectionData2 = new byte[1];
         byte[] languageSelectionData3 = new byte[1];
@@ -115,9 +115,9 @@ public class GameOptions
             languageSelectionData2[0] = 0x2C;
             languageSelectionData3[0] = 0x1F;                    
         }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203440, 203338, 203396, 433528, 433414, 433480, languageSelectionData1, languageSelectionData1);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203450, 203398, 203406, 433538, 433474, 433490, languageSelectionData2, languageSelectionData2);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 203467, 203415, 203423, 433555, 433491, 433507, languageSelectionData3, languageSelectionData3);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 433528, 433414, 433480, languageSelectionData1);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 433538, 433474, 433490, languageSelectionData2);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 433555, 433491, 433507, languageSelectionData3);
         return 0;
     }
     
@@ -125,7 +125,7 @@ public class GameOptions
     {
         //byte[] dataValue = new byte[3];
         byte[] dataValues;
-        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 304646, 304507, 304480, 578506, 578362, 578346, 1);
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 578506, 578362, 578346, 1);
         System.out.println(dataValues);
         if (dataValues[0] == (byte)0x90)
         {
@@ -135,7 +135,7 @@ public class GameOptions
         {
             fastFade = false;
         }
-        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 203450, 203398, 203406, 433538, 433474, 433490, 1);
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 433538, 433474, 433490, 1);
         if (dataValues[0] == 0x00)
         {
             languageSelection = true;

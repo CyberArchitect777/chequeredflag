@@ -42,34 +42,20 @@ public class BinaryManager
     {
     }
     
-    public static void setDataBytes(int gameVersion, RandomAccessFile openFile, int europeanPackedVersion, int italianPackedVersion, int usPackedVersion, int europeanUnpackedVersion, int italianUnpackedVersion, int usUnpackedVersion, byte[] packedDataValues, byte[] unpackedDataValues)
+    public static void setDataBytes(int gameVersion, RandomAccessFile openFile, int europeanVersion, int italianVersion, int usVersion, byte[] dataValues)
     {
         try
         {
             switch (gameVersion)
             {
-                case 1: openFile.seek(europeanPackedVersion); /*System.out.println("Seeking to: " + europeanPackedVersion);*/ break;
-                case 2: openFile.seek(italianPackedVersion); /*System.out.println("Seeking to: " + italianPackedVersion);*/ break;
-                case 3: openFile.seek(usPackedVersion); /*System.out.println("Seeking to: " + usPackedVersion);*/ break;
-                case 4: openFile.seek(europeanUnpackedVersion); /*System.out.println("Seeking to: " + europeanUnpackedVersion);*/ break;
-                case 5: openFile.seek(italianUnpackedVersion); /*System.out.println("Seeking to: " + italianUnpackedVersion);*/ break;
-                case 6: openFile.seek(usUnpackedVersion); /*System.out.println("Seeking to: " + usUnpackedVersion);*/ break;
+                case 1: openFile.seek(europeanVersion); /*System.out.println("Seeking to: " + europeanVersion);*/ break;
+                case 2: openFile.seek(italianVersion); /*System.out.println("Seeking to: " + italianVersion);*/ break;
+                case 3: openFile.seek(usVersion); /*System.out.println("Seeking to: " + usVersion);*/ break;
             }
-            if (gameVersion < 4)
+            for (int x=0;x<dataValues.length;x++)
             {
-                for (int x=0;x<packedDataValues.length;x++)
-                {
-                    //System.out.println("Writing value: " + packedDataValues[x]);
-                    openFile.write(packedDataValues[x]);
-                }
-            }
-            else
-            {
-                for (int x=0;x<unpackedDataValues.length;x++)
-                {
-                    //System.out.println("Writing value: " + unpackedDataValues[x]);
-                    openFile.write(unpackedDataValues[x]);
-                }
+                //System.out.println("Writing value: " + dataValues[x]);
+                openFile.write(dataValues[x]);
             }
         }
         catch (Exception exceptionError)
@@ -78,7 +64,7 @@ public class BinaryManager
         }
     }
     
-    public static byte[] getDataBytes(int gameVersion, RandomAccessFile openFile, int europeanPackedVersion, int italianPackedVersion, int usPackedVersion, int europeanUnpackedVersion, int italianUnpackedVersion, int usUnpackedVersion, int numberBytes)
+    public static byte[] getDataBytes(int gameVersion, RandomAccessFile openFile, int europeanVersion, int italianVersion, int usVersion, int numberBytes)
     {
         byte[] dataValues = new byte[numberBytes];
         try
@@ -87,12 +73,9 @@ public class BinaryManager
             {
                 switch (gameVersion)
                 {
-                    case 1: openFile.seek(europeanPackedVersion+x); /*System.out.println("Seeking to: " + europeanPackedVersion+x);*/ break;
-                    case 2: openFile.seek(italianPackedVersion+x); /*System.out.println("Seeking to: " + italianPackedVersion+x);*/ break;
-                    case 3: openFile.seek(usPackedVersion+x); /*System.out.println("Seeking to: " + usPackedVersion+x);*/ break;
-                    case 4: openFile.seek(europeanUnpackedVersion+x); /*System.out.println("Seeking to: " + europeanUnpackedVersion+x);*/ break;
-                    case 5: openFile.seek(italianUnpackedVersion+x); /*System.out.println("Seeking to: " + italianUnpackedVersion+x);*/ break;
-                    case 6: openFile.seek(usUnpackedVersion+x); /*System.out.println("Seeking to: " + usUnpackedVersion+x);*/ break;
+                    case 1: openFile.seek(europeanVersion+x); /*System.out.println("Seeking to: " + europeanVersion+x);*/ break;
+                    case 2: openFile.seek(italianVersion+x); /*System.out.println("Seeking to: " + italianVersion+x);*/ break;
+                    case 3: openFile.seek(usVersion+x); /*System.out.println("Seeking to: " + usVersion+x);*/ break;
                 }
                 dataValues[x] = (byte)openFile.read();
                 //System.out.println("Reading value: " + dataValues[x]);

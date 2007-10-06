@@ -101,131 +101,57 @@ public class GameDrivers
             driverQualifyingData[x] = (byte)qualifyingGrip[x];
             driverRaceData[x] = (byte)raceGrip[x];
         }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 158420, 158368, 158376, 184036, 183972, 183988, driverQualifyingData, driverQualifyingData);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 158460, 158408, 158416, 184076, 184012, 184028, driverRaceData, driverRaceData);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 184036, 183972, 183988, driverQualifyingData);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 184076, 184012, 184028, driverRaceData);
         return 0;
     }
     
     public int loadData(RandomAccessFile binaryAccess, int gameVersion)
     {
         
-        // Detected grip data European packed = offset 158420, offset 158460
-        // Detected grip data Italian packed = offset 158368, offset 158408
-        // Detected grip data US packed = offset 158376, offset 158416
-        // Detected grip data European unpacked = offset 184036, offset 184076
-        // Detected grip data Italian unpacked = offset 183972, offset 184012
-        // Detected grip data US unpacked = offset 183988, offset 184028 
+        // Detected grip data European = offset 184036, offset 184076
+        // Detected grip data Italian = offset 183972, offset 184012
+        // Detected grip data US = offset 183988, offset 184028 
         
         byte[] dataValues;
-        int[] startingValue = new int[6];
-        startingValue[0] = 154976; // Packed European version
-        startingValue[1] = 154924; // Packed Italian version
-        startingValue[2] = 154932; // Packed US version
-        startingValue[3] = 180250; // Unpacked European version
-        startingValue[4] = 180160; // Unpacked Italian version
-        startingValue[5] = 180202; // Unpacked US version
-        if (gameVersion < 4)
+        int[] startingValue = new int[3];
+        startingValue[0] = 180250; // European version
+        startingValue[1] = 180160; // Italian version
+        startingValue[2] = 180202; // US version
+        int currentOffset = 0;
+        for (int x=0;x<40;x++)
         {
-            int currentOffset = 0;
-            for (int x=0;x<40;x++)
+            int currentByteCount = 0;
+            System.out.println(x);
+            boolean readEnd = false;
+            StringBuffer currentString = new StringBuffer();
+            dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, startingValue[0]+currentOffset, startingValue[1]+currentOffset, startingValue[2]+currentOffset, 23);
+            while (readEnd == false)
             {
-                dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, startingValue[0]+currentOffset, startingValue[1]+currentOffset, startingValue[2]+currentOffset, startingValue[3]+currentOffset, startingValue[4]+currentOffset, startingValue[5]+currentOffset, 23);
-                boolean zeroDetected = false;
-                int endString = -1;
-                int endData = -1;
-                for (int y=0;y<dataValues.length;y++)
+                if ((dataValues[currentByteCount] != 0x00) && (currentByteCount < 23))
                 {
-                    if (zeroDetected == true)
-                    {
-                        if (dataValues[y] == (byte)0xB2)
-                        {
-                            if (endString == -1) // If endString hasn't already been detected
-                            {
-                                endString = y-2;
-                            }
-                        }
-                        else
-                        {
-                            if (dataValues[y] == (byte)0xB0)
-                            {
-                                if (endData == -1) // If endData hasn't already been detected'
-                                {
-                                    endData = y+1;
-                                }
-                            }
-                            else
-                            {
-                                zeroDetected = false;
-                            }
-                        }
-                    }
-                    if (dataValues[y] == 0x00)
-                    {
-                        zeroDetected = true;
-                    }
-                }
-                StringBuffer currentString = new StringBuffer();
-                if (endString == -1)
-                {
-                    endString = 23;
-                }
-                for (int y=0;y<endString;y++)
-                {
-                    if (dataValues[y] != 0x00)
-                    {
-                        char currentCharacter = (char)dataValues[y];
-                        currentString.append(currentCharacter);
-                    }
-                }
-                driverNames.add(currentString.toString());
-                if (endData == -1)
-                {
-                    currentOffset = currentOffset + 24;
+                    char currentCharacter = (char)dataValues[currentByteCount];
+                    currentString.append(currentCharacter);
                 }
                 else
                 {
-                    currentOffset = currentOffset + endData;
+                    readEnd = true;
+                    driverNames.add(currentString.substring(0,currentString.length()));
                 }
+                currentByteCount++;
             }
+            currentOffset = currentOffset + 24;
         }
-        else
-        {
-            int currentOffset = 0;
-            for (int x=0;x<40;x++)
-            {
-                int currentByteCount = 0;
-                System.out.println(x);
-                boolean readEnd = false;
-                StringBuffer currentString = new StringBuffer();
-                dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, startingValue[0]+currentOffset, startingValue[1]+currentOffset, startingValue[2]+currentOffset, startingValue[3]+currentOffset, startingValue[4]+currentOffset, startingValue[5]+currentOffset, 23);
-                while (readEnd == false)
-                {
-                    if ((dataValues[currentByteCount] != 0x00) && (currentByteCount < 23))
-                    {
-                        char currentCharacter = (char)dataValues[currentByteCount];
-                        currentString.append(currentCharacter);
-                    }
-                    else
-                    {
-                        readEnd = true;
-                        driverNames.add(currentString.substring(0,currentString.length()));
-                    }
-                    currentByteCount++;
-                }
-                currentOffset = currentOffset + 24;
-            }
-        }
-        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 158420, 158368, 158376, 184036, 183972, 183988, 40);
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 184036, 183972, 183988, 40);
         for (int x=0;x<40;x++)
         {
             qualifyingGrip[x] = (int)dataValues[x];
         }
-        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 158460, 158408, 158416, 184076, 184012, 184028, 40);
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 184076, 184012, 184028, 40);
         for (int x=0;x<40;x++)
         {
             raceGrip[x] = (int)dataValues[x];
         }        
         return 0;
-    }      
-    
+    }
 }

@@ -64,17 +64,12 @@ public class GamePoints
     
     public int saveData(RandomAccessFile binaryAccess, int gameVersion)
     {
-        byte[] packedPointsData = new byte[6];
-        byte[] unpackedPointsData = new byte[26];
+        byte[] pointsData = new byte[26];
         for (int x=0;x<26;x++)
         {
-            unpackedPointsData[x] = (byte)gamePoints[x];
-            if (x < 6)
-            {
-                packedPointsData[x] = (byte)gamePoints[x];
-            }
+            pointsData[x] = (byte)gamePoints[x];
         }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 158341, 158289, 158297, 183940, 183876, 183892, packedPointsData, unpackedPointsData);
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 183940, 183876, 183892, pointsData);
         return 0;
     }
     
@@ -82,24 +77,10 @@ public class GamePoints
     {
         //byte[] dataValue = new byte[3];
         byte[] dataValues;
-        if (gameVersion < 4)
-        {
-            dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 158341, 158289, 158297, 183940, 183876, 183892, 6);
-        }
-        else
-        {
-            dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 158341, 158289, 158297, 183940, 183876, 183892, 26);
-        }
+        dataValues = BinaryManager.getDataBytes(gameVersion, binaryAccess, 183940, 183876, 183892, 26);
         for (int x=0;x<dataValues.length;x++)
         {
             gamePoints[x] = (int)dataValues[x];
-        }
-        if (gameVersion < 4)
-        {
-            for (int x=6;x<26;x++)
-            {
-                gamePoints[x] = 0;
-            }
         }
         return 0;
     }       
