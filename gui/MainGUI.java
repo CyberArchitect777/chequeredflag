@@ -68,7 +68,7 @@ public class MainGUI extends javax.swing.JFrame implements WindowListener
         
         // Start of normal commands
         
-        setSize(576,432);
+        setSize(800,572);
         setVisible(true);
         
         // Setting menu item visibility based on recent file availability
