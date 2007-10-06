@@ -103,6 +103,25 @@ public class GameDrivers
         }
         BinaryManager.setDataBytes(gameVersion, binaryAccess, 184036, 183972, 183988, driverQualifyingData);
         BinaryManager.setDataBytes(gameVersion, binaryAccess, 184076, 184012, 184028, driverRaceData);
+        byte[] driverByteName = new byte[23];
+        int currentOffset = 0;
+        for (int x=0;x<40;x++)
+        {
+            StringBuffer currentString = new StringBuffer((String)driverNames.get(x));
+            for (int y=0;y<23;y++)
+            {
+                if (y < currentString.length())
+                {
+                    driverByteName[y] = (byte)currentString.charAt(y);
+                }
+                else
+                {
+                    driverByteName[y] = (byte)0x00;
+                }
+            }
+            BinaryManager.setDataBytes(gameVersion, binaryAccess, 180250+currentOffset, 180186+currentOffset, 180202+currentOffset, driverByteName);
+            currentOffset = currentOffset + 24;            
+        }        
         return 0;
     }
     
@@ -116,7 +135,7 @@ public class GameDrivers
         byte[] dataValues;
         int[] startingValue = new int[3];
         startingValue[0] = 180250; // European version
-        startingValue[1] = 180160; // Italian version
+        startingValue[1] = 180186; // Italian version
         startingValue[2] = 180202; // US version
         int currentOffset = 0;
         for (int x=0;x<40;x++)

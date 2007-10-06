@@ -241,14 +241,14 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         
         int windowX = executableEditorWindow.getWidth();
         int windowY = executableEditorWindow.getHeight();
-        if (windowX > 700)
+        /*if (windowX > 700)
         {
             windowX = 700;
         }
         if (windowY > 500)
         {
             windowY = 500;
-        }
+        }*/
         executableEditorPane.setBounds(0,0,windowX,windowY);
         executableEditorPane.setDividerLocation(0.42);
         executableEditorPane.updateUI();

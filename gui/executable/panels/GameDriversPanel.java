@@ -76,6 +76,11 @@ public class GameDriversPanel extends javax.swing.JPanel
         driversPanel = new javax.swing.JPanel();
         driverScrollPane = new javax.swing.JScrollPane();
         driverList = new javax.swing.JList();
+        namePanel = new javax.swing.JPanel();
+        nameDataPanel = new javax.swing.JPanel();
+        driverNameLabel = new javax.swing.JLabel();
+        driverNameField = new javax.swing.JTextField();
+        nameChangeButton = new javax.swing.JButton();
         attributesPanel = new javax.swing.JPanel();
         attributesLabelPanel = new javax.swing.JPanel();
         attributesDesc = new javax.swing.JLabel();
@@ -96,7 +101,7 @@ public class GameDriversPanel extends javax.swing.JPanel
         descText.setText("<html>The controls below allow the editing of both the names and attributes of all drivers. Please note that driver names can only be loaded and saved to a names file. It is not possible to directly change this information in the executable.</html>");
         add(descText, java.awt.BorderLayout.NORTH);
 
-        driversPanel.setLayout(new java.awt.GridLayout(2, 1));
+        driversPanel.setLayout(new java.awt.GridLayout(3, 1));
 
         driverList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -112,6 +117,32 @@ public class GameDriversPanel extends javax.swing.JPanel
         driverScrollPane.setViewportView(driverList);
 
         driversPanel.add(driverScrollPane);
+
+        namePanel.setLayout(new java.awt.GridBagLayout());
+
+        nameDataPanel.setLayout(new java.awt.GridLayout(1, 3, 10, 0));
+
+        driverNameLabel.setText("Driver Name");
+        nameDataPanel.add(driverNameLabel);
+
+        nameDataPanel.add(driverNameField);
+
+        nameChangeButton.setText("Change Name");
+        nameChangeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nameChangeButtonActionPerformed(evt);
+            }
+        });
+
+        nameDataPanel.add(nameChangeButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 100.0;
+        gridBagConstraints.weighty = 100.0;
+        namePanel.add(nameDataPanel, gridBagConstraints);
+
+        driversPanel.add(namePanel);
 
         attributesPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -209,6 +240,16 @@ public class GameDriversPanel extends javax.swing.JPanel
 
     }// </editor-fold>//GEN-END:initComponents
 
+    private void nameChangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameChangeButtonActionPerformed
+
+        // Handles the event for the change name button
+        
+        gameDrivers.setDriverName(driverSelectionHistory[0], driverNameField.getText());
+        driverList.revalidate();
+        driverList.repaint();
+        
+    }//GEN-LAST:event_nameChangeButtonActionPerformed
+
     private void qualifyingFieldChange(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_qualifyingFieldChange
 
         int currentQualifyingGrip = new Integer(qualifyingGripField.getText()).intValue();
@@ -280,6 +321,8 @@ public class GameDriversPanel extends javax.swing.JPanel
         updateFromCurrentValues(driverSelectionHistory[1]);
         qualifyingGripField.setText(new Integer(gameDrivers.getQualifyingGrip(driverList.getSelectedIndex())).toString());
         raceGripField.setText(new Integer(gameDrivers.getRaceGrip(driverList.getSelectedIndex())).toString());
+        driverNameField.setText(gameDrivers.getDriverName(driverList.getSelectedIndex()));
+        
         
     }//GEN-LAST:event_driverListSelectionChange
          
@@ -293,8 +336,13 @@ public class GameDriversPanel extends javax.swing.JPanel
     private javax.swing.JPanel dataPanel;
     private javax.swing.JLabel descText;
     private javax.swing.JList driverList;
+    private javax.swing.JTextField driverNameField;
+    private javax.swing.JLabel driverNameLabel;
     private javax.swing.JScrollPane driverScrollPane;
     private javax.swing.JPanel driversPanel;
+    private javax.swing.JButton nameChangeButton;
+    private javax.swing.JPanel nameDataPanel;
+    private javax.swing.JPanel namePanel;
     private javax.swing.JTextField qualifyingGripField;
     private javax.swing.JLabel qualifyingGripLabel;
     private javax.swing.JButton qualifyingGripMinus;
