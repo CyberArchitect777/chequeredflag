@@ -94,34 +94,68 @@ public class GameTeams
     
     public int saveData(RandomAccessFile binaryAccess, int gameVersion)
     {
-        /*byte[] driverQualifyingData = new byte[40];
-        byte[] driverRaceData = new byte[40];
-        for (int x=0;x<40;x++)
+        byte[] bhpSettingData = new byte[40];
+        int currentCounter = 0;
+        for (int x=0;x<40;x=x+2)
         {
-            driverQualifyingData[x] = (byte)qualifyingGrip[x];
-            driverRaceData[x] = (byte)raceGrip[x];
-        }
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 184036, 183972, 183988, driverQualifyingData);
-        BinaryManager.setDataBytes(gameVersion, binaryAccess, 184076, 184012, 184028, driverRaceData);
-        byte[] driverByteName = new byte[23];
-        int currentOffset = 0;
-        for (int x=0;x<40;x++)
-        {
-            StringBuffer currentString = new StringBuffer((String)driverNames.get(x));
-            for (int y=0;y<23;y++)
+            String currentHexSetting = Integer.toHexString(bhpSetting[currentCounter]);
+            System.out.println("Main - " + currentHexSetting);
+            if (currentHexSetting.length() < 3)
             {
-                if (y < currentString.length())
+                bhpSettingData[x+1] = (byte)0x00;
+                int firstValue = Integer.parseInt(currentHexSetting, 16);
+                bhpSettingData[x] = (byte)firstValue;
+            }
+            else
+            {
+                if (currentHexSetting.length() == 3)
                 {
-                    driverByteName[y] = (byte)currentString.charAt(y);
+                    int secondValue = Integer.parseInt(currentHexSetting.substring(0,1), 16);
+                    int firstValue = Integer.parseInt(currentHexSetting.substring(1), 16);
+                    bhpSettingData[x+1] = (byte)secondValue;
+                    bhpSettingData[x] = (byte)firstValue;
                 }
                 else
                 {
-                    driverByteName[y] = (byte)0x00;
+                    if (currentHexSetting.length() == 4)
+                    {
+                        int secondValue = Integer.parseInt(currentHexSetting.substring(0,2), 16);
+                        int firstValue = Integer.parseInt(currentHexSetting.substring(2), 16);
+                        bhpSettingData[x+1] = (byte)secondValue;
+                        bhpSettingData[x] = (byte)firstValue;
+                    }
                 }
             }
-            BinaryManager.setDataBytes(gameVersion, binaryAccess, 180250+currentOffset, 180186+currentOffset, 180202+currentOffset, driverByteName);
-            currentOffset = currentOffset + 24;            
-        }*/
+            currentCounter++;
+        }
+        BinaryManager.setDataBytes(gameVersion, binaryAccess, 183996, 183932, 183948, bhpSettingData);
+        byte[] teamEngineByteName = new byte[12];
+        int currentOffset = 0;
+        for (int x=0;x<40;x++)
+        {
+            StringBuffer currentString;
+            if (x < 20)
+            {
+                currentString = new StringBuffer((String)teamNames.get(x));
+            }
+            else
+            {
+                currentString = new StringBuffer((String)engineNames.get(x-20));
+            }
+            for (int y=0;y<12;y++)
+            {
+                if (y < currentString.length())
+                {
+                    teamEngineByteName[y] = (byte)currentString.charAt(y);
+                }
+                else
+                {
+                    teamEngineByteName[y] = (byte)0x00;
+                }
+            }
+            BinaryManager.setDataBytes(gameVersion, binaryAccess, 181210+currentOffset, 181146+currentOffset, 181162+currentOffset, teamEngineByteName);
+            currentOffset = currentOffset + 13;
+        }
         return 0;
     }
     

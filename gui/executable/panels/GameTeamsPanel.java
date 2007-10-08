@@ -162,8 +162,7 @@ public class GameTeamsPanel extends javax.swing.JPanel {
             currentBHPSetting++;
             bhpSettingField.setText(new Integer(currentBHPSetting).toString());
             updateFromCurrentValues(teamSelectionHistory[0]);
-        }
-        
+        }        
     }//GEN-LAST:event_bhpSettingPlusActionPerformed
 
     private void bhpSettingMinusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bhpSettingMinusActionPerformed
@@ -171,7 +170,7 @@ public class GameTeamsPanel extends javax.swing.JPanel {
         int currentBHPSetting = new Integer(bhpSettingField.getText()).intValue();
         if (currentBHPSetting > 0)
         {
-            currentBHPSetting++;
+            currentBHPSetting--;
             bhpSettingField.setText(new Integer(currentBHPSetting).toString());
             updateFromCurrentValues(teamSelectionHistory[0]);
         }
@@ -179,11 +178,17 @@ public class GameTeamsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_bhpSettingMinusActionPerformed
 
     private void engineChangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_engineChangeButtonActionPerformed
-// TODO add your handling code here:
+
+        // Handles the event for the change engine name button
+        
+        gameTeams.setEngineName(teamSelectionHistory[0], engineNameField.getText());
+            
     }//GEN-LAST:event_engineChangeButtonActionPerformed
 
     private void teamChangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamChangeButtonActionPerformed
-// Handles the event for the change name button
+        
+
+        // Handles the event for the change team name button
         
         gameTeams.setTeamName(teamSelectionHistory[0], teamNameField.getText());
         teamList.revalidate();
