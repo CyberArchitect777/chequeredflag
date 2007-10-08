@@ -40,6 +40,7 @@ public class Executable
     private GameSettings gameSettings;
     private GamePoints gamePoints;
     private GameDrivers gameDrivers;
+    private GameTeams gameTeams;
     
     /** Creates a new instance of Executable */
     public Executable(File loadedFile)
@@ -62,6 +63,7 @@ public class Executable
         gameSettings = new GameSettings();
         gamePoints = new GamePoints();
         gameDrivers = new GameDrivers();
+        gameTeams = new GameTeams();
     }
     
     public int returnGameVersionID()
@@ -100,6 +102,11 @@ public class Executable
         return gameDrivers;
     }
     
+    public GameTeams getGameTeams()
+    {
+        return gameTeams;
+    }
+    
     public boolean saveData()
     {
         // Saves data back into a F1GP/WC executable file. Returns a code to indicate the completed saving status
@@ -114,6 +121,7 @@ public class Executable
             operationSuccess = operationSuccess + gameSettings.saveData(binaryAccess, gameVersion);
             operationSuccess = operationSuccess + gamePoints.saveData(binaryAccess, gameVersion);
             operationSuccess = operationSuccess + gameDrivers.saveData(binaryAccess, gameVersion);
+            operationSuccess = operationSuccess + gameTeams.saveData(binaryAccess, gameVersion);
             binaryAccess.close();
             if (operationSuccess == 0)
             {
@@ -158,6 +166,7 @@ public class Executable
                     operationSuccess = operationSuccess + gameSettings.loadData(binaryAccess, gameVersion);
                     operationSuccess = operationSuccess + gamePoints.loadData(binaryAccess, gameVersion);
                     operationSuccess = operationSuccess + gameDrivers.loadData(binaryAccess, gameVersion);
+                    operationSuccess = operationSuccess + gameTeams.loadData(binaryAccess, gameVersion);
                     if (operationSuccess == 0)
                     {
                         return 0;

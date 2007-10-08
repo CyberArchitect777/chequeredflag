@@ -113,6 +113,13 @@ public class ExecutableTreeSelector extends javax.swing.JInternalFrame
                             {
                                 parentExecutableWindow.changePage(5);
                             }
+                            else
+                            {
+                                if (selectedNode.toString() == "Teams")
+                                {
+                                    parentExecutableWindow.changePage(6);
+                                }
+                            }
                         }
                     }
                 }
@@ -136,6 +143,8 @@ public class ExecutableTreeSelector extends javax.swing.JInternalFrame
         rootNode.add(gameOptions);
         DefaultMutableTreeNode gameDrivers = new DefaultMutableTreeNode("Drivers");
         rootNode.add(gameDrivers);
+        DefaultMutableTreeNode gameTeams = new DefaultMutableTreeNode("Teams");
+        rootNode.add(gameTeams);        
     }
     
     private void createTree()

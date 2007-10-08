@@ -50,6 +50,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
     private GameSettingsPanel gameSettings;
     private GamePointsPanel gamePoints;
     private GameDriversPanel gameDrivers;
+    private GameTeamsPanel gameTeams;
     private CardLayout cardLayout;
     
     /** Creates new form ExecutableWindow */
@@ -71,12 +72,14 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         gameSettings = new GameSettingsPanel(currentExecutable.getGameSettings());
         gamePoints = new GamePointsPanel(currentExecutable.getGamePoints(), currentExecutable.returnGameVersionID()); 
         gameDrivers = new GameDriversPanel(currentExecutable.getGameDrivers());
+        gameTeams = new GameTeamsPanel(currentExecutable.getGameTeams());
         ExecutableInfoPanel executableInfo = new ExecutableInfoPanel(currentExecutable.returnGameVersionString());
         multiPageContainer.add("Executable Info", executableInfo);
         multiPageContainer.add("Game Settings", gameSettings);
         multiPageContainer.add("Game Options", gameOptions);
         multiPageContainer.add("Points", gamePoints);
         multiPageContainer.add("Drivers", gameDrivers);
+        multiPageContainer.add("Teams", gameTeams);
         ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info");
         executableSelector.setVisible(true);
         multiPageContainer.setVisible(true);
@@ -157,6 +160,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         gameSettings.confirmSettings();
         gamePoints.confirmSettings();
         //gameDrivers.confirmSettings(); Not required, updated automatically.
+        //gameTeams.confirmSettings(); Not required, updated automatically
         currentExecutable.saveData();        
         
     }//GEN-LAST:event_saveExecutableItemActionPerformed
@@ -170,6 +174,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
             case 3: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Game Options"); break;
             case 4: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Points"); break;
             case 5: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Drivers"); break;
+            case 6: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Teams"); break;
             default: ((CardLayout)multiPageContainer.getLayout()).show(multiPageContainer, "Executable Info"); break;  
         }
     }

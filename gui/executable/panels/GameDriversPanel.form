@@ -16,7 +16,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="descText">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;The controls below allow the editing of both the names and attributes of all drivers. Please note that driver names can only be loaded and saved to a names file. It is not possible to directly change this information in the executable.&lt;/html&gt;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;The controls below allow the editing of both the names and attributes of all drivers.&lt;/html&gt;"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
