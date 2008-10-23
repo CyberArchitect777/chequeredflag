@@ -7,6 +7,7 @@
 package chequeredflag.gui.executable.panels;
 
 import chequeredflag.data.executable.GameTeams;
+import chequeredflag.data.executable.GameDrivers;
 
 /**
  *
@@ -15,14 +16,16 @@ import chequeredflag.data.executable.GameTeams;
 public class GameTeamsPanel extends javax.swing.JPanel {
     
     private GameTeams gameTeams;
+    private GameDrivers gameDrivers;
     private int[] teamSelectionHistory;
     
     /** Creates new form GameTeamsPanel */
-    public GameTeamsPanel(GameTeams passedGameTeams) 
+    public GameTeamsPanel(GameTeams passedGameTeams, GameDrivers passedGameDrivers) 
     {
         initComponents();
         teamSelectionHistory = new int[2];
         gameTeams = passedGameTeams;
+        gameDrivers = passedGameDrivers;
         bhpSettingField.setText(new Integer(gameTeams.getBHPSetting(0)).toString());
         teamList.setListData(gameTeams.getAllTeamNames());
         teamList.setSelectedIndex(0);

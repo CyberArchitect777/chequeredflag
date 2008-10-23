@@ -72,7 +72,7 @@ public class ExecutableWindow extends javax.swing.JInternalFrame implements Inte
         gameSettings = new GameSettingsPanel(currentExecutable.getGameSettings());
         gamePoints = new GamePointsPanel(currentExecutable.getGamePoints(), currentExecutable.returnGameVersionID()); 
         gameDrivers = new GameDriversPanel(currentExecutable.getGameDrivers());
-        gameTeams = new GameTeamsPanel(currentExecutable.getGameTeams());
+        gameTeams = new GameTeamsPanel(currentExecutable.getGameTeams(), currentExecutable.getGameDrivers());
         ExecutableInfoPanel executableInfo = new ExecutableInfoPanel(currentExecutable.returnGameVersionString());
         multiPageContainer.add("Executable Info", executableInfo);
         multiPageContainer.add("Game Settings", gameSettings);
