@@ -696,6 +696,7 @@ public class Track {
         calculateGameCCLine();
     }
 
+    // "Globals"
     private int length, radius;
     private short shiftx;
     private short wTmpAngleZ;
@@ -711,15 +712,15 @@ public class Track {
             // no CCLine in (track/pit) layout mode.
             return;
 
-        int s = 0;
-        wTmpAngleZ = m_TrackSegments.getSegAt( s ).wAngleZ;
+        int nTrackSegNum = 0;
+        wTmpAngleZ = m_TrackSegments.getSegAt( nTrackSegNum ).wAngleZ;
         CCLineSegment cclineSeg;
         int nCCLineSector = 0;
 
         for (Enumeration e = m_CCLine.elements(); e.hasMoreElements(); ) {
                 cclineSeg = (CCLineSegment) e.nextElement();
 
-                int val3, val4, val5;
+                int nShift;
                 int nParam = 0;
 
                 nCCLineSector++;
@@ -727,30 +728,29 @@ public class Track {
                 if ((cclineSeg.m_nType & 0x80) != 0)   // starting sector
                         wSegPosX = (short) cclineSeg.m_nParam[ nParam++ ];
 
-                val3 = cclineSeg.m_nParam[ nParam++ ];  // shift
+                // shift or correction value: modification at start of sector.
+                nShift = cclineSeg.m_nParam[ nParam++ ];
 
-                val4 = cclineSeg.m_nParam[ nParam++ ];
-                radius = val4;
+                radius = cclineSeg.m_nParam[ nParam++ ];
 
                 if ((cclineSeg.m_nType & 0x40) != 0) {
                         // 32bit radius
-                        val5 = cclineSeg.m_nParam[ nParam++ ] & 0x0FFFF;
-                        radius = (val4 << 16) | val5;   // radius1
+                        radius = (radius << 16) | (cclineSeg.m_nParam[ nParam++ ] & 0x0FFFF);
                 }
 
-                radius <<= 3;
+                radius <<= 3; // * 8
 
                 // shift longitudinal or by angle
                 if (radius != 0)  // curve segment
-                        shiftx = (short) (val3 << 2);
+                        shiftx = (short) (nShift << 2);
                 else {	// straight segment
                         shiftx = 0;
-                        wTmpAngleZ += (short) val3;
+                        wTmpAngleZ += (short) nShift;
                 }
 
                 length = ((cclineSeg.m_nType & 0x3f) << 8) | cclineSeg.m_nTlu;
 
-                Seg seg = m_TrackSegments.getSegAt( s );
+                Seg seg = m_TrackSegments.getSegAt( nTrackSegNum );
                 ProcessCCLineSector(seg);
 
                 try {
@@ -759,11 +759,11 @@ public class Track {
                             seg.wCCLine = wSegPosX;
                             seg.m_nCCLineSector = nCCLineSector;
 
-                            s++;
-                            if (s >= m_TrackSegments.nSegNumber)
-                                    s = 1;	// cyclic (should restart at 0??)
+                            nTrackSegNum++;
+                            if (nTrackSegNum >= m_TrackSegments.nSegNumber)
+                                    nTrackSegNum = 1;	// cyclic (should restart at 0??)
 
-                            seg = m_TrackSegments.getSegAt( s );
+                            seg = m_TrackSegments.getSegAt( nTrackSegNum );
                             ProcessCCLineSegment(seg);
                     }
                 }
@@ -778,54 +778,56 @@ public class Track {
         ProcessCCLineSector
     */
 
-    private int tmpX = 0, tmpY = 0;
+    private int tmpX = 0, tmpY = 0; // "Globals"
     private int tmpCos = 0, tmpSin = 0;
     private int tmp1 = 0, tmp2 = 0, tmp5 = 0, tmp6 = 0;
 
-
+    // calculate tmpX and tmpY: coordinates
     private void ProcessCCLineSector(Seg pSeg) {
         short wSegPosY = (short) ((wSegPosX * pSeg.wAngleZChangeMulHalfPI) >> 15);
 
         tmpSin = F1GPMath.LookupSin(pSeg.wAngleZ);
         tmpCos = F1GPMath.LookupCos(pSeg.wAngleZ);
 
-        tmp5 = ((wSegPosY * tmpCos) - (wSegPosX * tmpSin)) >> 14;
+        tmp5 = ((wSegPosY * tmpCos) - (wSegPosX * tmpSin)) >> 14; // sin/cos scaled by 14 bits
         tmp6 = ((wSegPosX * tmpCos) + (wSegPosY * tmpSin)) >> 14;
 
         tmp5 += pSeg.getPosY();
         tmp6 += pSeg.getPosX();
 
+        // wTmpAngleZ and shiftx are values of current ccLine sector.
         tmp5 += (F1GPMath.LookupCos((short) wTmpAngleZ) * shiftx) >> 14;
         tmpY = tmp5;
 
         tmp6 += (F1GPMath.LookupSin((short) wTmpAngleZ) * shiftx) >> 14;
         tmpX = tmp6;
 
-        tmp2 = radius;
+        if (radius != 0) {
 
-        if (tmp2 != 0) {
-                tmp2 = Math.abs(tmp2);
-                tmp5 = tmp2;
+            int nAngle;
+            if (radius >= 0)
+                nAngle = wTmpAngleZ + 0x4000;   // + 90 degrees
+            else
+                nAngle = wTmpAngleZ - 0x4000;   // - 90 degrees
 
-                if (radius >= 0)
-                        tmpCos = wTmpAngleZ + 0x4000;
-                else
-                        tmpCos = wTmpAngleZ - 0x4000;
+            // results stored in tmpSin and tmpCos (32bit values: sin/cos shifted by 30 bits)
+            sinAndCosBig(nAngle);
 
-                sinAndCosBig();
+            long ll = (long) tmpSin * (long) Math.abs( radius );
+            //    tmpX += ((ll >> 16) * 4) >> 16;
+            tmpX += (ll >> 30);
 
-                long ll = (long) tmpSin * (long) tmp2;
-                //    tmpX += ((ll >> 16) * 4) >> 16;
-                tmpX += (ll >> 30);
-
-                ll = (long) tmpCos * (long) tmp5;
-                //    tmpY += ((ll >> 16) * 4) >> 16;
-                tmpY += (ll >> 30);
+            ll = (long) tmpCos * (long) Math.abs( radius );
+            //    tmpY += ((ll >> 16) * 4) >> 16;
+            tmpY += (ll >> 30);
         }
     }
 
     /**
-        ProcessCCLineSegment
+        ProcessCCLineSegment.
+        Uses "Globals" tmpX, tmpY.
+        Modifies "Globals" wTmpAngleZ, wSegPosX.
+        Calculate position and angle of ccLine at next track Seg start.
     */
 
     void ProcessCCLineSegment( Seg seg )
@@ -835,19 +837,20 @@ public class Track {
 
         int invPI = 0x517D; // 0x10000 / PI
         int a1 = seg.wAngleZ - (((seg.wAngleZChangeMulHalfPI >> 1) * invPI) >> 15);
-        tmpCos = a1;
+        tmpCos = a1; // actually an angle!
 
         // convert to degrees for debugging...
         double dAngleDeg = ((double) a1 / 0x10000) * 360.0;
 
         // sinBig( tmpCos ) stored in tmpCos
         // cosBig( tmpCos ) stored in tmpSin
-        sinAndCosBig();
+        sinAndCosBig(tmpCos);
 
         tmp5 = (int) ((((long) tmpCos * (long) nXDiff) - ((long) tmpSin * (long) nYDiff)) >> 30);
         tmp6 = (int) ((((long) tmpCos * (long) nYDiff) + ((long) tmpSin * (long) nXDiff)) >> 30);
 
         if (radius == 0) {
+            // ccLine straight
             int tmp = wTmpAngleZ - a1;
             tmp1 = F1GPMath.LookupSinbig((short) tmp);
             tmp2 = F1GPMath.LookupCosbig((short) tmp);
@@ -905,56 +908,57 @@ public class Track {
 
 
     /**
-        Calculate 32Bit Sin and Cos from tmpCos.
+        Calculate 32Bit Sin and Cos from tmpCos (16 bit angle value).
         If Cos is below 0.5, Sin is read from the lookup tables and Cos is
         calculated from it.
         Otherwise Cos is read from lookup table and Sin is calculated from it.
+        Returns results in tmpSin and tmpCos (shifted by 30 bits).
     */
-    private void sinAndCosBig() {
-            short oldCos = (short) tmpCos;
-            short index = (short) ((-tmpCos) + (short) 0x4000);
+    private void sinAndCosBig(int nAngle) {
+            short oldCos = (short) nAngle;
+            short index = (short) ((-nAngle) + (short) 0x4000);
 
             if (index < 0)
-                    index = (short) -index;
+                index = (short) -index;
 
-            int i = (index >> 2) & 0x3FFE; // also remove sign bits that could be present (e.g. tmpCos = C000h)
+            int i = (index >> 2) & 0x3FFE; // also remove sign bits that could be present (e.g. nAngle = C000h)
             short val = CosLookupTable.get(i / 2);
 
             if (val < 0)
-                    val = (short) -val;
+                val = (short) -val;
 
             if (val < 0x2000) {
-                    // Calculate Cos from Sin
-                    tmpCos = F1GPMath.LookupSinbig((short) tmpCos);
+                // Calculate Cos from Sin
+                tmpCos = F1GPMath.LookupSinbig((short) nAngle);
 
-                    if (oldCos < 0)
-                            oldCos = (short) -oldCos;
+                if (oldCos < 0)
+                        oldCos = (short) -oldCos;
 
-                    int j = (oldCos >> 2) & 0x3FFE;// also remove sign bits that could be present
-                    oldCos = CosLookupTable.get(j / 2);
-                    getOppositeEdgeLength();
+                int j = (oldCos >> 2) & 0x3FFE;// also remove sign bits that could be present
+                oldCos = CosLookupTable.get(j / 2);
+                getOppositeEdgeLength();
 
-                    if (oldCos < 0)
-                            tmpSin = -tmpSin;
+                if (oldCos < 0)
+                        tmpSin = -tmpSin;
 
-                    // swap tmpCos and tmpSin
-                    int temp = tmpSin;
-                    tmpSin = tmpCos;
-                    tmpCos = temp;
+                // swap tmpCos and tmpSin
+                int temp = tmpSin;
+                tmpSin = tmpCos;
+                tmpCos = temp;
             } else {
-                    // Calculate Sin from Cos
-                    tmpCos = F1GPMath.LookupCosbig((short) tmpCos);
-                    oldCos = (short) (-oldCos + 0x4000);
+                // Calculate Sin from Cos
+                tmpCos = F1GPMath.LookupCosbig((short) nAngle);
+                oldCos = (short) (-oldCos + 0x4000);
 
-                    if (oldCos < 0)
-                            oldCos = (short) -oldCos;
+                if (oldCos < 0)
+                    oldCos = (short) -oldCos;
 
-                    int j = (oldCos >> 2) & 0x3FFE; // also remove sign bits that could be present
-                    oldCos = CosLookupTable.get(j / 2);
-                    getOppositeEdgeLength();
+                int j = (oldCos >> 2) & 0x3FFE; // also remove sign bits that could be present
+                oldCos = CosLookupTable.get(j / 2);
+                getOppositeEdgeLength();
 
-                    if (oldCos < 0)
-                            tmpSin = -tmpSin;
+                if (oldCos < 0)
+                    tmpSin = -tmpSin;
             }
     }
 
