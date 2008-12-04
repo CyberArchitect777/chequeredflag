@@ -473,7 +473,7 @@ public class TrackSegments extends Vector {
         // Number of segments (0..nLastSeg)
         nNumSegs = nLastSeg + 1;
 
-        for ( int i = 0; i <= nLastSeg; i++ )
+        for ( int i = 1; i <= nLastSeg; i++ )
         {
             // Calculate new offset values
             nRestX = nRestX + nDiffX;
