@@ -490,14 +490,14 @@ public class TrackPanel extends javax.swing.JPanel {
                 dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * seg.getCCLine();
                 aXPoints[ 0 ] = scale( seg.getPosX() + dXDiff );
                 aYPoints[ 0 ] = scale( seg.getPosY() - dYDiff );
-                dXDiff = Math.cos( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
-                dYDiff = Math.sin( seg.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
-                aXPoints[ 1 ] = scale( segNext.getPosX() + dXDiff );
-                aYPoints[ 1 ] = scale( segNext.getPosY() - dYDiff );
+                dXDiffNext = Math.cos( segNext.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
+                dYDiffNext = Math.sin( segNext.getAngleZ() * ANGLE_SCALE_RAD ) * segNext.getCCLine();
+                aXPoints[ 1 ] = scale( segNext.getPosX() + dXDiffNext );
+                aYPoints[ 1 ] = scale( segNext.getPosY() - dYDiffNext );
 
                 if ( seg.m_nCCLineSector == m_nSelectedCCLineSegment )
                 {
-                    // paint selected segment in magenta
+                    // paint selected segment
                     g2d.setColor(Color.GREEN);
                 }
                 else
